@@ -1,0 +1,9 @@
+{
+	"id": "betterchat",
+	"name": "BetterChat",
+	"version": "1.0.0",
+    "inject": "index.html",
+    "injection_point": "HEAD",
+    "inject_at": "TAIL",
+    "sources": "src/"
+}
