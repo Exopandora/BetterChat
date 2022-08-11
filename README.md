@@ -27,7 +27,7 @@ BetterChat supports automatic embedding of any audio or video content. It also s
 ### Twitter Embed ###
 ![Twitter Embed](images/embed_twitter.png)
 
-A list of supported audio and video formats can be found [here](https://www.chromium.org/audio-video/#codec-and-container-support).
+Due to technical limitations not all video and audio formats are supported at the moment.
 
 ## Styling ##
 Custom styling for the image preview can be changed in the `style.css`.
