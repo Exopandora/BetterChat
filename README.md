@@ -39,10 +39,11 @@ Notes:
 * The installation process needs to be repeated after each TeamSpeak update
 ### Installer ###
 Installation steps:
-1. Download and start the installer from [here](https://github.com/FelixVolo/TS5AddonInstaller/releases)
-2. Select your TeamSpeak installation directory
-3. Select "BetterChat"
-4. Click on "Install"
+1. Download the installer for your operating system from [here](https://github.com/FelixVolo/TS5AddonInstaller/releases)
+2. Start the installer
+3. Select your TeamSpeak installation directory
+4. Select "BetterChat"
+5. Click on "Install"
 
 ### Manual ###
 Installation steps:
@@ -56,6 +57,6 @@ Installation steps:
 ## Configuration ##
 BetterChat can be enabled and disabled while TeamSpeak is running.
 Just go to the settings menu inside TeamSpeak and navigate to Behavior.
-There you can toggle specific features, like BBCode support or Rich Embeds, or enable and disable entire addon.
+There you can toggle specific features, like BBCode support or Rich Embeds, or enable and disable the addon entirely.
 
 ![BetterChat Settings](images/settings.png)
