@@ -529,7 +529,13 @@
 					//url is between tags
 					return null;
 				}
-			} else if(bbSection.openingTagStart > match.index && bbSection.openingTagStart < match.index + match[0].length) {
+			} else if(bbSection.bbCode == bbCodes.code) {
+				if(match.index > bbSection.openingTagEnd && match.index + match[0].length <= bbSection.closingTagEnd) {
+					//url is between tags
+					return null;
+				}
+			}
+			if(bbSection.openingTagStart > match.index && bbSection.openingTagStart < match.index + match[0].length) {
 				//opening tag is inside link, shorten the link
 				match[0] = match[0].substring(0, bbSection.openingTagStart - match.index);
 			} else if(bbSection.closingTagStart > match.index && bbSection.closingTagStart < match.index + match[0].length) {
