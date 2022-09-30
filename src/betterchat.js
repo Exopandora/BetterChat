@@ -812,7 +812,7 @@
 	
 	function modifyMessageNode(node) {
 		for(const childNode of node.childNodes) {
-			if(childNode.tagName == "SAPN" && childNode.classList.contains("ts-parsed-text-content-emoji")) {
+			if(childNode.tagName == "SPAN" && childNode.classList.contains("ts-parsed-text-content-emoji")) {
 				return;
 			}
 		}
