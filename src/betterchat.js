@@ -782,7 +782,7 @@
 				const url = new URL(link.href);
 				if(url.protocol != "https:" && url.protocol != "http:" || url.hostname == "youtube.com" || url.hostname == "youtu.be" || url.hostname == "giphy.com") {
 					continue;
-				} else if(url.hostname == "twitter.com" && url.pathname != "/home" && url.pathname != "/explore" && url.pathname != "/notifications" && url.pathname != "/messages" && !url.pathname.startsWith("/i/")) {
+				} else if((url.hostname == "twitter.com" || url.hostname == "mobile.twitter.com") && url.pathname != "/home" && url.pathname != "/explore" && url.pathname != "/notifications" && url.pathname != "/messages" && !url.pathname.startsWith("/i/")) {
 					promises.set(link.href, createTwitterEmbed(url.href));
 				} else {
 					promises.set(link.href, createMediaEmbed(url.href));
