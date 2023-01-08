@@ -38,6 +38,7 @@ Notes:
 > * Manual installation only works for TeamSpeak 5 beta 70
 > * Depending on your installation directory you may need elevated permission privileges
 > * The installation process needs to be repeated after each TeamSpeak update
+> * Please check the [compatibility](https://github.com/Exopandora/BetterChat#compatibility) section before installing BetterChat
 
 ### Installer ###
 Installation steps:
