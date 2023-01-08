@@ -5,7 +5,7 @@ BetterChat is an unofficial addon for TeamSpeak 5 and aims to provide a better c
 BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3. Currently the following tags are supported:
 
 | Name | Syntax  | Example |
-| - | - | - |
+| ---- | ------- | ------- |
 | bold  | [b]text[/b] | ![bold](images/bold.png) |
 | code | [code]text[/code] | ![code](images/code.png) |
 | color | [color=hexcode]text[/color] or [color=color]text[/color] | ![color](images/color.png) |
@@ -27,7 +27,7 @@ BetterChat supports automatic embedding of any audio or video content. It also s
 ### Twitter Embed ###
 ![Twitter Embed](images/embed_twitter.png)
 
-Due to technical limitations not all video and audio formats are supported at the moment.
+Not all video and audio formats are supported at the moment, due to technical limitations.
 
 ## Styling ##
 Custom styling for the image preview can be changed in the `style.css`.
@@ -35,8 +35,10 @@ Rich embeds use the already existing css classes of the TeamSpeak client and sho
 
 ## Installation ##
 Notes:
-* Depending on your installation directory you may need elevated permission privileges
-* The installation process needs to be repeated after each TeamSpeak update
+> * Manual installation only works for TeamSpeak 5 beta 70
+> * Depending on your installation directory you may need elevated permission privileges
+> * The installation process needs to be repeated after each TeamSpeak update
+
 ### Installer ###
 Installation steps:
 1. Download the installer for your operating system from [here](https://github.com/FelixVolo/TS5AddonInstaller/releases)
@@ -49,9 +51,9 @@ Installation steps:
 Installation steps:
 1. Navigate to your TeamSpeak installation directory
 2. Navigate to `./html/client_ui/`
-3. Open `index.html` in that directory with an editor and copy all the contents from the `index.html` of this repository before `</head>` and save the file
+3. Open `index.html` in that directory with an editor and copy all contents from the `index.html` of this repository before `</head>` and save the file
 4. Create a new folder named `betterchat`
-5. Copy all the contents from `src/` into the newly created folder
+5. Copy all contents from `src/` into the newly created folder
 6. And you are done! You can now start TeamSpeak
 
 ## Configuration ##
@@ -60,3 +62,10 @@ Just go to the settings menu inside TeamSpeak and navigate to Behavior.
 There you can toggle specific features, like BBCode support or Rich Embeds, or enable and disable the addon entirely.
 
 ![BetterChat Settings](images/settings.png)
+
+## Compatibility ##
+| TeamSpeak | Windows | Linux | MacOS |
+| --------- | ------- | ----- | ----- |
+| Beta 72 | 2.0.0 | 2.0.0 | n/a |
+| Beta 71 | ❌ | ❌ | n/a |
+| Beta 70 | 1.0.0 - 1.0.4 | 1.0.0 - 1.0.4 | 1.0.0 - 1.0.4 |

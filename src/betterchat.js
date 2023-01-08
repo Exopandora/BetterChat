@@ -5,18 +5,23 @@
 	const tippyDefaultProps = {
 		delay: 150,
 		duration: 150,
-		arrow: "<div class=\"tooltip-arrow\" style=\"margin: 0px;\"></div>",
-		offset: [0, 0],
+		arrow: "<div class=\"v-popper__arrow-outer\"></div><div class=\"v-popper__arrow-inner\"></div>",
+		offset: [0, 5],
 		maxWidth: "none",
 		onCreate(instance) {
-			const box = instance.popper.querySelector(".tippy-box");
-			if(box != null && !box.classList.contains("tooltip")) {
-				box.classList.add("tooltip");
-				box.setAttribute("x-placement", "top");
+			instance.popper.classList.add("ts-disable-pointer-events", "v-popper__popper");
+			instance.popper.setAttribute("data-popper-placement", "top");
+			const box = instance.popper.querySelector("div.tippy-box");
+			if(box != null && !box.classList.contains("v-popper__wrapper")) {
+				box.classList.add("v-popper__wrapper");
 			}
-			const content = instance.popper.querySelector(".tippy-content");
-			if(content != null && !content.classList.contains("tooltip-inner")) {
-				content.classList.add("tooltip-inner");
+			const content = instance.popper.querySelector("div.tippy-content");
+			if(content != null && !content.classList.contains("v-popper__inner")) {
+				content.classList.add("v-popper__inner");
+			}
+			const arrow = instance.popper.querySelector("div.tippy-svg-arrow");
+			if(arrow != null && !arrow.classList.contains("v-popper__arrow-container")) {
+				arrow.classList.add("v-popper__arrow-container");
 			}
 		}
 	};
@@ -301,7 +306,7 @@
 		if(href.match(/^\w+:\/\/\S+$/) == null) {
 			href = "https://" + href;
 		}
-		const invalid = href.match(/^((?:(?:(?:https?|ts3file|ts3server|teamspeak):\/\/)|(?:www\.))[^\s<>\[\]]+[^<>.,:;"')\[\]\s])$/) == null;
+		const invalid = href.match(/^(?:https?|ts3file|ts3server|teamspeak):\/\/\S+$/) == null;
 		if(invalid) {
 			a.classList.add("betterchat-invalid-link");
 		}
@@ -810,6 +815,13 @@
 		return htmlElements;
 	}
 	
+	function onMessageHeightChanged(node) {
+		const virtualListItem = node.closest("div.tsv-virtual-list-item");
+		if(virtualListItem != null && virtualListItem.__vue__) {
+			virtualListItem.__vue__.onItemChanged();
+		}
+	}
+	
 	function modifyMessageNode(node) {
 		for(const childNode of node.childNodes) {
 			if(childNode.tagName == "SPAN" && childNode.classList.contains("ts-parsed-text-content-emoji")) {
@@ -829,12 +841,20 @@
 		if(settings.getValueForKey("embeds")) {
 			createAttachments(node.parentElement.querySelectorAll("a")).then(attachments => {
 				if(attachments.length > 0) {
-					var container = node.closest("div.ts-rendered-message").querySelector("div.ts-chat-message-attachment-container");
-					var list = container.querySelector("div.ts-chat-message-attachments");
-					if(list == null) {
-						list = document.createElement("div");
-						list.classList.add("ts-chat-message-attachments");
-						container.appendChild(list);
+					const renderedMessage = node.closest("div.ts-rendered-message");
+					var container = renderedMessage.querySelector("div.ts-chat-message-attachment-container");
+					if(container == null) {
+						container = document.createElement("div");
+						container.classList.add("ts-chat-message-attachment-container", "ts-chat-message-attachments", "ts-timestamp-margin-left");
+						const chatRoomEventBody = renderedMessage.querySelector("div.ts-chat-room-event-body");
+						if(chatRoomEventBody != null) {
+							const tsvflex = document.createElement("div");
+							tsvflex.classList.add("tsv-flex");
+							tsvflex.appendChild(container);
+							chatRoomEventBody.appendChild(tsvflex);
+						} else {
+							node.parentNode.insertBefore(container, node.nextSibling);
+						}
 					}
 					for(const attachment of attachments) {
 						const inner = document.createElement("div");
@@ -843,10 +863,14 @@
 						const outer = document.createElement("div");
 						outer.classList.add("ts-chat-message-attachment");
 						outer.appendChild(inner);
-						list.appendChild(outer);
+						container.appendChild(outer);
 					}
 				}
+			}).then(() => {
+				onMessageHeightChanged(node);
 			});
+		} else {
+			onMessageHeightChanged(node);
 		}
 		node.dataset.parsed = true;
 	}
