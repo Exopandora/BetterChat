@@ -34,8 +34,6 @@ Custom styling for the image preview can be changed in the `style.css`.
 Rich embeds use the already existing css classes of the TeamSpeak client and should be compatible with already existing themes.
 
 ## Installation ##
-⚠️ The current version of TeamSpeak 5 (beta-71) is incompatible at the moment
-
 Notes:
 > * Manual installation only works for TeamSpeak 5 beta 70
 > * Depending on your installation directory you may need elevated permission privileges
