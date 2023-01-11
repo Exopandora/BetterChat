@@ -162,9 +162,9 @@
 			} else {
 				element = document.createElement("video");
 				container.classList.add("ts-attachment-video-content");
+				element.style.height = "100%";
+				element.style.width = "100%";
 			}
-			element.style.height = "100%";
-			element.style.width = "100%";
 			element.setAttribute("controls", "");
 			element.src = this.node.src;
 			container.appendChild(element);
