@@ -823,6 +823,9 @@
 	}
 	
 	function modifyMessageNode(node) {
+		if(node.classList.contains("ts-chat-message-system-body-contents")) {
+			return;
+		}
 		for(const childNode of node.childNodes) {
 			if(childNode.tagName == "SPAN" && childNode.classList.contains("ts-parsed-text-content-emoji")) {
 				return;
@@ -838,7 +841,7 @@
 				node.appendChild(htmlElement);
 			}
 		}
-		if(settings.getValueForKey("embeds")) {
+		if(settings.getValueForKey("embeds") && !node.classList.contains("ts-reply-original") && !node.classList.contains("ts-reply-shortened")) {
 			createAttachments(node.parentElement.querySelectorAll("a")).then(attachments => {
 				if(attachments.length > 0) {
 					const renderedMessage = node.closest("div.ts-rendered-message");
@@ -956,9 +959,11 @@
 							if(mutation.target.localName == "span" && mutation.target.classList.contains("ts-chat-message-content") && mutation.target.classList.contains("ts-parsed-text-content") && !isModifiedMessageNode(mutation.target)) {
 								modifyMessageNode(mutation.target);
 							} else if(node.querySelector) {
-								const message = node.querySelector(".ts-chat-message-content.ts-parsed-text-content")
-								if(message != null && !isModifiedMessageNode(message)) {
-									modifyMessageNode(message);
+								const messages = node.querySelectorAll(".ts-chat-message-content.ts-parsed-text-content");
+								for(const message of messages) {
+									if(!isModifiedMessageNode(message)) {
+										modifyMessageNode(message);
+									}
 								}
 							}
 						} catch(e) {
