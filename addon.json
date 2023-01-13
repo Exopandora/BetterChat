@@ -1,7 +1,7 @@
 {
 	"id": "betterchat",
 	"name": "BetterChat",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"inject": "index.html",
 	"injection_point": "HEAD",
 	"inject_at": "TAIL",
