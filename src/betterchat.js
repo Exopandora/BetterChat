@@ -149,22 +149,32 @@
 		}
 	}
 	
-	class MultimediaAttachment extends Attachment {
+	class VideoAttachment extends Attachment {
 		constructor(node) {
 			super(node);
 		}
 		
 		newInstance() {
 			const container = document.createElement("div");
-			var element;
-			if(this.node.videoWidth == 0 && this.node.videoHeight == 0) {
-				element = document.createElement("audio");
-			} else {
-				element = document.createElement("video");
-				container.classList.add("ts-attachment-video-content");
-				element.style.height = "100%";
-				element.style.width = "100%";
-			}
+			const element = document.createElement("video");
+			container.classList.add("ts-attachment-video-content");
+			element.style.height = "100%";
+			element.style.width = "100%";
+			element.setAttribute("controls", "");
+			element.src = this.node.src;
+			container.appendChild(element);
+			return container;
+		}
+	}
+	
+	class AudioAttachment extends Attachment {
+		constructor(node) {
+			super(node);
+		}
+		
+		newInstance() {
+			const container = document.createElement("div");
+			const element = document.createElement("audio");
 			element.setAttribute("controls", "");
 			element.src = this.node.src;
 			container.appendChild(element);
@@ -200,6 +210,29 @@
 				event.preventDefault();
 			};
 			return node;
+		}
+	}
+	
+	class MultimediaAttachment extends Attachment {
+		constructor(node) {
+			super(node);
+		}
+		
+		newInstance() {
+			const container = document.createElement("div");
+			var element;
+			if(this.node.videoWidth == 0 && this.node.videoHeight == 0) {
+				element = document.createElement("audio");
+			} else {
+				element = document.createElement("video");
+				container.classList.add("ts-attachment-video-content");
+				element.style.height = "100%";
+				element.style.width = "100%";
+			}
+			element.setAttribute("controls", "");
+			element.src = this.node.src;
+			container.appendChild(element);
+			return container;
 		}
 	}
 	
@@ -738,46 +771,151 @@
 		window.addEventListener("resize", onWindowResize);
 	}
 	
-	function createImageEmbed(url) {
-		return new Promise((resolve, reject) => {
-			const img = document.createElement("img");
-			img.onload = () => {
-				img.classList.add("display");
-				img.style.cursor = "pointer";
-				const backing = document.createElement("img");
-				backing.src = url;
-				backing.classList.add("backing");
-				const container = document.createElement("div");
-				container.classList.add("ts-chat-message-attachment-image");
-				container.appendChild(backing);
-				container.appendChild(img);
-				const integration = document.createElement("div");
-				integration.classList.add("ts-chat-message-attachment-integration");
-				integration.appendChild(container);
-				resolve(new ImageAttachment(integration, url, img.naturalWidth, img.naturalHeight));
+	function createImageEmbed(url, resolve, reject) {
+		const img = document.createElement("img");
+		img.onload = () => {
+			img.classList.add("display");
+			img.style.cursor = "pointer";
+			const backing = document.createElement("img");
+			backing.src = url;
+			backing.classList.add("backing");
+			const container = document.createElement("div");
+			container.classList.add("ts-chat-message-attachment-image");
+			container.appendChild(backing);
+			container.appendChild(img);
+			const integration = document.createElement("div");
+			integration.classList.add("ts-chat-message-attachment-integration");
+			integration.appendChild(container);
+			resolve(new ImageAttachment(integration, url, img.naturalWidth, img.naturalHeight));
+		}
+		img.onerror = () => reject();
+		img.src = url;
+	}
+	
+	function createVideoEmbed(url, resolve, reject) {
+		const video = document.createElement("video");
+		video.oncanplay = () => resolve(new VideoAttachment(video));
+		video.onerror = () => reject();
+		video.src = url;
+	}
+	
+	function createAudioEmbed(url, resolve, reject) {
+		const audio = document.createElement("audio");
+		audio.oncanplay = () => resolve(new AudioAttachment(audio));
+		audio.onerror = () => reject();
+		audio.src = url;
+	}
+	
+	function createMultimediaEmbed(url, resolve, reject) {
+		const video = document.createElement("video");
+		video.oncanplay = () => resolve(new MultimediaAttachment(video));
+		video.onerror = () => reject();
+		video.src = url;
+	}
+	
+	function truncate(string, size) {
+		if(string.length > size) {
+			return string.substring(0, Math.max(0, size - 3)) + "...";
+		}
+		return string;
+	}
+	
+	function createGenericEmbed(url, html, resolve, reject) {
+		const data = parseMetadata(url, html);
+		const attachmentContainer = document.createElement("div");
+		attachmentContainer.classList.add("betterchat-attachment-container");
+		const attachmentHeader = document.createElement("div");
+		attachmentHeader.classList.add("betterchat-attachment-header");
+		if(data.icon) {
+			const faviconContainer = document.createElement("div");
+			faviconContainer.classList.add("betterchat-attachment-favicon-container");
+			const favicon = document.createElement("img");
+			favicon.classList.add("betterchat-attachment-favicon");
+			favicon.src = data.icon;
+			faviconContainer.appendChild(favicon);
+			attachmentHeader.appendChild(faviconContainer);
+		}
+		const titleContainer = document.createElement("div");
+		titleContainer.classList.add("betterchat-attachment-title-container");
+		const title = document.createElement("a");
+		title.href = url;
+		title.target = "_blank";
+		title.textContent = truncate(data.title || url, 150);
+		titleContainer.appendChild(title);
+		attachmentHeader.appendChild(titleContainer);
+		const attachmentContentContainer = document.createElement("div");
+		attachmentContentContainer.classList.add("betterchat-attachment-content-container");
+		const hasDescription = data.description && data.description.trim() != "";
+		if(data.image) {
+			const imageContainer = document.createElement("div");
+			imageContainer.classList.add("betterchat-attachment-image-container");
+			if(hasDescription) {
+				imageContainer.classList.add("betterchat-attachment-image-container-description");
 			}
-			img.onerror = () => reject();
-			img.src = url;
-		});
+			const imageLink = document.createElement("a");
+			imageLink.href = url;
+			imageLink.target = "_blank";
+			imageLink.style.display = "inline-block";
+			const image = document.createElement("img");
+			image.classList.add("betterchat-attachment-image");
+			image.src = data.image;
+			imageLink.appendChild(image);
+			imageContainer.appendChild(imageLink);
+			attachmentContentContainer.appendChild(imageContainer);
+		}
+		if(hasDescription) {
+			const description = document.createElement("div");
+			description.classList.add("betterchat-attachment-description")
+			description.textContent = truncate(data.description, data.image ? 200 : 500);
+			attachmentContentContainer.appendChild(description);
+		}
+		attachmentContainer.appendChild(attachmentHeader);
+		attachmentContainer.appendChild(attachmentContentContainer);
+		resolve(new Attachment(attachmentContainer));
 	}
 	
-	function createMultimediaEmbed(url) {
+	function createEmbed(url) {
 		return new Promise((resolve, reject) => {
-			const video = document.createElement("video");
-			video.oncanplay = () => resolve(new MultimediaAttachment(video));
-			video.onerror = () => reject();
-			video.src = url;
+			fetch(url.href, {
+				method: "GET",
+				headers: {
+					"User-Agent": navigator.userAgent,
+					"Accept": "*/*",
+					'Accept-Language': "*",
+					'Origin': url
+				},
+				signal: AbortSignal.timeout(5000)
+			}).then(response => {
+				if(response.status == 200 && response.headers.has("Content-Type")) {
+					const contentType = response.headers.get("Content-Type");
+					if(contentType.startsWith("image/")) {
+						createImageEmbed(url.href, resolve, reject);
+						return;
+					} else if(contentType.startsWith("video/")) {
+						createVideoEmbed(url.href, resolve, reject);
+						return;
+					} else if(contentType.startsWith("audio/")) {
+						createAudioEmbed(url.href, resolve, reject);
+						return;
+					} else if(contentType == "application/ogg") {
+						createMultimediaEmbed(url.href, resolve, reject);
+						return;
+					} else if(contentType.startsWith("text/html") || contentType.startsWith("application/xhtml+xml") || contentType.startsWith("application/xml")) {
+						response.text().then(text => createGenericEmbed(url.href, text, resolve, reject));
+						return;
+					}
+				}
+				reject();
+			}).catch(() => reject());
 		});
-	}
-	
-	function createMediaEmbed(url) {
-		return Promise.any([createImageEmbed(url), createMultimediaEmbed(url)]);
 	}
 	
 	async function createAttachments(linkNodes) {
 		const promises = new Map();
 		for(const link of linkNodes) {
-			if(attachmentCache.has(link.href)) {
+			if(link.href.match(/^https?:\/\/localhost/g) != null) {
+				continue;
+			} else if(attachmentCache.has(link.href)) {
 				promises.set(link.href, attachmentCache.get(link.href));
 				continue;
 			} else if(promises.has(link.href)) {
@@ -785,12 +923,12 @@
 			}
 			try {
 				const url = new URL(link.href);
-				if(url.protocol != "https:" && url.protocol != "http:" || url.hostname == "youtube.com" || url.hostname == "youtu.be" || url.hostname == "giphy.com") {
+				if(url.protocol != "https:" && url.protocol != "http:" || url.hostname == "youtube.com" || url.hostname == "www.youtube.com" || url.hostname == "youtu.be" || url.hostname == "giphy.com") {
 					continue;
-				} else if((url.hostname == "twitter.com" || url.hostname == "mobile.twitter.com") && url.pathname != "/home" && url.pathname != "/explore" && url.pathname != "/notifications" && url.pathname != "/messages" && (!url.pathname.startsWith("/i/") || url.pathname.startsWith("/i/status"))) {
+				} else if(url.hostname == "twitter.com" && !url.pathname.startsWith("/home") && !url.pathname.startsWith("/explore") && !url.pathname.startsWith("/notifications") && !url.pathname.startsWith("/messages") && (!url.pathname.startsWith("/i/") || url.pathname.startsWith("/i/status"))) {
 					promises.set(link.href, createTwitterEmbed(url.href));
 				} else {
-					promises.set(link.href, createMediaEmbed(url.href));
+					promises.set(link.href, createEmbed(url));
 				}
 			} catch(e) {
 				continue;

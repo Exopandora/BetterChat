@@ -32,3 +32,63 @@
 .ts-chat-room-event-compact .betterchat-invalid-link {
 	color: gold !important;
 }
+
+.betterchat-attachment-container {
+	margin: 5px;
+	white-space: normal;
+}
+
+.betterchat-attachment-header {
+	display: flex;
+	flex-direction: row;
+}
+
+.betterchat-attachment-favicon-container {
+	margin: 6.2px 0px 10px 10px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.betterchat-attachment-favicon {
+	width: 16px;
+	height: 16px;
+}
+
+.betterchat-attachment-title-container {
+	margin: 6.2px 10px 10px 10px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.betterchat-attachment-content-container {
+	display: flex;
+	flex-direction: row;
+}
+
+.betterchat-attachment-image-container {
+	justify-content: center;
+	margin: 10px 10px 10px 10px;
+}
+
+.betterchat-attachment-image-container .betterchat-attachment-image-container-description {
+	margin: 10px 0px 10px 10px;
+}
+
+.betterchat-attachment-image {
+	max-width: 100%;
+	max-height: 100%;
+	min-width: 80%;
+	min-height: 80%;
+	object-fit: contain;
+	border-radius: var(--tsv-border-radius-large);
+}
+
+.betterchat-attachment-description {
+	margin: 5px 10px 10px 10px;
+	font-size: var(--tsv-font-size-small);
+	text-align: justify;
+	display: flex;
+	align-items: center;
+}
