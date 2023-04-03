@@ -101,6 +101,28 @@ const attachmentGenerator = (function() {
 		}
 	}
 	
+	class GenericAttachment extends Attachment {
+		constructor(node, url) {
+			super(node);
+			this.url = url;
+		}
+		
+		newInstance() {
+			const node = this.node.cloneNode(true);
+			const title = node.querySelector("div.betterchat-attachment-title-container a");
+			tooltipManager.createTooltip(title, "Links to: " + this.url);
+			const img = node.querySelector("img.betterchat-attachment-image");
+			if(img != null) {
+				img.onclick = event => {
+					showImagePreview(img.src, img.naturalWidth, img.naturalHeight);
+					event.stopPropagation();
+					event.preventDefault();
+				};
+			}
+			return node;
+		}
+	}
+	
 	function createImageEmbed(url, resolve, reject) {
 		const img = document.createElement("img");
 		img.onload = () => {
@@ -210,7 +232,7 @@ const attachmentGenerator = (function() {
 		}
 		attachmentContainer.appendChild(attachmentHeader);
 		attachmentContainer.appendChild(attachmentContentContainer);
-		resolve(new Attachment(attachmentContainer));
+		resolve(new GenericAttachment(attachmentContainer, url));
 	}
 	
 	function createEmbed(url) {
