@@ -130,7 +130,7 @@ const messageParser = (function() {
 				const bbCodeInstance = bbCodeMap.get(bbCode);
 				if(isClosingTag && bbValue == null || bbCodeInstance.isValidValue(bbValue)) {
 					const bbTag = new BBTag(bbCodeInstance, bbValue, ignore, isClosingTag, reader.cursor - 1, tagReader.cursor + 1);
-					if(bbTags.length == 0 || bbTags[bbTags.length - 1].bbCode != bbCodes.code.bbCode || bbTags[bbTags.length - 1].isClosingTag || bbCode == bbCodes.code.bbCode) {
+					if(bbTags.length == 0 || bbTags[bbTags.length - 1].bbCode != bbCodes.code || bbTags[bbTags.length - 1].isClosingTag || bbCode == bbCodes.code.code) {
 						bbTags.push(bbTag);
 					}
 					reader.cursor = tagReader.cursor + 1;
