@@ -267,7 +267,7 @@ const attachmentGenerator = (function() {
 					}
 				}
 				reject();
-			}).catch(() => reject());
+			}).catch(e => reject());
 		});
 	}
 	
