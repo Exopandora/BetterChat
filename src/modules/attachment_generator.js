@@ -114,9 +114,11 @@ const attachmentGenerator = (function() {
 			const img = node.querySelector("img.betterchat-attachment-image");
 			if(img != null) {
 				img.onclick = event => {
-					showImagePreview(img.src, img.naturalWidth, img.naturalHeight);
-					event.stopPropagation();
-					event.preventDefault();
+					if(event.shiftKey) {
+						showImagePreview(img.src, img.naturalWidth, img.naturalHeight);
+						event.stopPropagation();
+						event.preventDefault();
+					}
 				};
 			}
 			return node;
