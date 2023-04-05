@@ -36,7 +36,8 @@
 .betterchat-attachment-container {
 	margin: 5px;
 	white-space: normal;
-	word-break: break-word;
+	word-break: normal;
+	overflow-wrap: break-word;
 }
 
 .betterchat-attachment-header {
