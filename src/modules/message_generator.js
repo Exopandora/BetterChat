@@ -181,13 +181,13 @@ const messageGenerator = (function() {
 			} else if('index' in segmentEdge) {
 				htmlElements[htmlElements.length - 1].push(emojis[segmentEdge.index].node);
 			} else if(segmentEdge.isClosingTag) {
-				if(segmentEdge.bbCode.isNesting) {
+				if(hasNestedGeneration(segmentEdge.bbCode)) {
 					htmlElements[htmlElements.length - 2].push(applyStyle(nestedBbCodes.pop(), htmlElements.pop(), bbSectionsMap.get(segmentEdge.sectionId).value));
 				} else {
 					sectionIds.delete(segmentEdge.sectionId);
 				}
 			} else {
-				if(segmentEdge.bbCode.isNesting) {
+				if(hasNestedGeneration(segmentEdge.bbCode)) {
 					htmlElements.push([]);
 					nestedBbCodes.push(segmentEdge.bbCode);
 				} else {
@@ -199,6 +199,10 @@ const messageGenerator = (function() {
 			htmlElements[htmlElements.length - 1].push(createHtmlElement(message.substring(cursor), []));
 		}
 		return htmlElements[0];
+	}
+	
+	function hasNestedGeneration(bbCode) {
+		return bbCode.code == bbCodes.url.code || bbCode.code == bbCodes.spoiler.code;
 	}
 	
 	function applyStyle(bbCode, element, value) {
