@@ -6,6 +6,6 @@
 	"injection_point": "HEAD",
 	"inject_at": "TAIL",
 	"sources": "src/",
-	"installer": "~2.0.0",
+	"installer": "^2.0.0",
 	"teamspeak": "5.0.0-beta72 | 5.0.0-beta73"
 }
