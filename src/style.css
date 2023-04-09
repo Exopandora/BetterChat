@@ -90,7 +90,6 @@
 .betterchat-attachment-description {
 	margin: 5px 10px 10px 10px;
 	font-size: var(--tsv-font-size-small);
-	text-align: justify;
 	display: flex;
 	align-items: center;
 }
