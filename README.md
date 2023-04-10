@@ -1,5 +1,5 @@
 # BetterChat #
-BetterChat is an unofficial addon for TeamSpeak 5 and aims to provide a better chat experience for the TeamSpeak 5 client. It enables support for BBCodes, improving messages sent by TeamSpeak 3 users, and automatic rich embeds for video, audio, image and twitter content. It works in both compact and detailed view.
+BetterChat is an unofficial addon for TeamSpeak 5 and aims to provide a better chat experience for the TeamSpeak 5 client. It enables support for BBCodes, improving messages sent by TeamSpeak 3 users, and automatic rich embeds for any website, including dedicated embeds for video, audio, image and twitter content. It works in both compact and detailed view.
 
 ## BBCode support ##  
 BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3. Currently the following tags are supported:
@@ -16,7 +16,7 @@ BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3. Current
 | url | [url]link[/url] or [url=link]text[/url] | ![url](images/bbcodes/url.png) |
 
 ## Rich Embeds ##
-BetterChat supports automatic embedding of any audio or video content. It also supports image and twitter embedding. Due to technical reasons it is not possible to automatically create embeds for other resources.
+BetterChat supports automatic rich embeds for any website, including dedicated embeds for video, audio, image and twitter content. Due to technical limitations, not all video and audio formats are supported at the moment.
 
 ### Video Embed ###
 ![Video Embed](images/embeds/video.png)
@@ -29,8 +29,6 @@ BetterChat supports automatic embedding of any audio or video content. It also s
 
 ### Generic Embed ###
 ![Generic Embed](images/embeds/generic.png)
-
-Not all video and audio formats are supported at the moment, due to technical limitations.
 
 ## Styling ##
 Custom styling for the image preview can be changed in the `style.css`.
