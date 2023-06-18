@@ -223,6 +223,6 @@ const messageParser = (function() {
 	}
 	
 	return {
-		parseMessage,
+		parseMessage
 	};
 })();
