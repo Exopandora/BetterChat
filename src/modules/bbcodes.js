@@ -37,7 +37,7 @@ const bbCodes = (function() {
 		underline: new BBCode("u", null),
 		italic: new BBCode("i", null),
 		strike: new BBCode("s", null),
-		color: new BBCode("color", value => cssColors.includes(value.toLowerCase()) || value.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)),
+		color: new BBCode("color", value => value != null && (cssColors.includes(value.toLowerCase()) || value.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/))),
 		spoiler: new BBCode("spoiler", null),
 		code: new BBCode("code", null)
 	};
