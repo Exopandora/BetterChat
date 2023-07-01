@@ -29,8 +29,8 @@ const messageParser = (function() {
 			this.cursor = cursor;
 		}
 		
-		canRead(offset = 1) {
-			return this.cursor + offset <= this.string.length;
+		canRead(offset = 0) {
+			return this.cursor + offset < this.string.length;
 		}
 		
 		peek(offset = 0) {
@@ -95,6 +95,9 @@ const messageParser = (function() {
 	
 	function locateBBTags(message) {
 		var bbTags = [];
+		if(message.length < 8) {
+			return bbTags;
+		}
 		const reader = new StringReader(message);
 		while(reader.canRead()) {
 			if(reader.read() != '[') {
