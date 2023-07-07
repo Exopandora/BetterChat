@@ -182,6 +182,90 @@
 		root.appendChild(content);
 	}
 	
+	function findActiveConnection(connections){
+		for(const connection of connections) {
+			if(connection.activeDetailItem?.chat.isVisible && connection.activeDetailItem?.chat.is_active) {
+				return connection;
+			}
+		}
+		return null;
+	}
+
+	function findOwnMessages(connection, ownID) {
+		return connection.activeDetailItem.chat.messages
+			.filter(message => (message.sender?.uid == ownID || message.sender?.uuid == ownID) && !message.isSystem)
+			.reverse();
+	}
+	
+	function findNextMessage(prevMessage, messages) {
+		if(prevMessage == null) {
+			return messages[0];
+		}
+		const index = messages.findIndex(message => message.id == prevMessage.id);
+		if(index < 0 || index == messages.length - 1) {
+			return null;
+		}
+		return messages[index + 1];
+	}
+	
+	function findPrevMessage(prevMessage, messages) {
+		if(prevMessage == null) {
+			return null;
+		}
+		const index = messages.findIndex(message => message.id == prevMessage.id);
+		if(index > 0 && index < messages.length) {
+			return messages[index - 1];
+		}
+		return null;
+	}
+	
+	function setChatInputText(message, node) {
+		const p = node.querySelector("p");
+		if(p != null) {
+			if(message != null) {
+				p.innerText = message.original;
+			} else {
+				p.innerText = '';
+			}
+		}
+	}
+	
+	function onChatInputAdded(node) {
+		const appController = document.body.querySelector("#app").__vue__.appController;
+		var prevConnectionId = null;
+		var prevMessage = null;
+		node.addEventListener("keydown", event => {
+			const activeConnection = findActiveConnection(appController.connections);
+			if(activeConnection == null) {
+				return;
+			}
+			if(prevConnectionId != activeConnection.id) {
+				prevConnectionId = activeConnection.id;
+				prevMessage = null;
+			}
+			const ownID = activeConnection.connectInfo.relatedIdentity.unique_id;	
+			if(event.key === "ArrowUp" && (node.textContent.length == 0 || node.textContent == prevMessage.original)) {
+				const messages = findOwnMessages(activeConnection, ownID);
+				const message = findNextMessage(prevMessage, messages);
+				if(message != null) {
+					setChatInputText(message, node);
+					prevMessage = message;
+				}
+				event.preventDefault();
+				event.stopImmediatePropagation();
+			} else if(event.key === "ArrowDown" && prevMessage != null && node.classList.contains("ProseMirror-focused") && node.textContent == prevMessage.original && document.getSelection().extentOffset == 0) {
+				const messages = findOwnMessages(activeConnection, ownID);
+				const message = findPrevMessage(prevMessage, messages);
+				setChatInputText(message, node);
+				prevMessage = message;
+				event.preventDefault();
+				event.stopImmediatePropagation();
+			} else if(event.key !== "ArrowUp" && event.key !== "ArrowDown") {
+				prevMessage = null;
+			}
+		});
+	}
+	
 	const chatMessageObserver = {
 		observer: new MutationObserver((mutations, self) => {
 			for(const mutation of mutations) {
@@ -245,6 +329,8 @@
 								if(header != null && header.innerText == "Behavior") {
 									appendSettingsToView();
 								}
+							} else if(node.classList.contains("ProseMirror")) {
+								onChatInputAdded(node);
 							}
 						}
 					}
