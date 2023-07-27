@@ -193,7 +193,7 @@
 
 	function findOwnMessages(connection, ownID) {
 		return connection.activeDetailItem.chat.messages
-			.filter(message => (message.sender?.uid == ownID || message.sender?.uuid == ownID) && !message.isSystem)
+			.filter(message => (message.sender?.uid == ownID || message.sender?.uuid == ownID) && !message.sender.isQueryClient && !message.isSystem)
 			.reverse();
 	}
 	
@@ -219,14 +219,10 @@
 		return null;
 	}
 	
-	function setChatInputText(message, node) {
-		const p = node.querySelector("p");
-		if(p != null) {
-			if(message != null) {
-				p.innerText = message.original;
-			} else {
-				p.innerText = '';
-			}
+	function setChatInputText(message, chatInputContainer) {
+		chatInputContainer.clearContent();
+		if(message != null) {
+			chatInputContainer.insertUnparsedContent(message.original);
 		}
 	}
 	
@@ -236,27 +232,26 @@
 		var prevMessage = null;
 		node.addEventListener("keydown", event => {
 			const activeConnection = findActiveConnection(appController.connections);
-			if(activeConnection == null) {
-				return;
-			}
 			if(prevConnectionId != activeConnection.id) {
 				prevConnectionId = activeConnection.id;
 				prevMessage = null;
 			}
-			const ownID = activeConnection.connectInfo.relatedIdentity.unique_id;	
-			if(event.key === "ArrowUp" && (node.textContent.length == 0 || node.textContent == prevMessage.original)) {
+			const ownID = activeConnection.connectInfo.relatedIdentity.unique_id;
+			const chatInputContainer = node.closest("div.ts-chat-input-container")?.__vue__
+			const currentText = chatInputContainer?.actualMsg;
+			if(event.key === "ArrowUp" && (currentText.length == 0 || currentText == prevMessage?.original)) {
 				const messages = findOwnMessages(activeConnection, ownID);
 				const message = findNextMessage(prevMessage, messages);
 				if(message != null) {
-					setChatInputText(message, node);
+					setChatInputText(message, chatInputContainer);
 					prevMessage = message;
 				}
 				event.preventDefault();
 				event.stopImmediatePropagation();
-			} else if(event.key === "ArrowDown" && prevMessage != null && node.classList.contains("ProseMirror-focused") && node.textContent == prevMessage.original && document.getSelection().extentOffset == 0) {
+			} else if(event.key === "ArrowDown" && currentText == prevMessage?.original) {
 				const messages = findOwnMessages(activeConnection, ownID);
 				const message = findPrevMessage(prevMessage, messages);
-				setChatInputText(message, node);
+				setChatInputText(message, chatInputContainer);
 				prevMessage = message;
 				event.preventDefault();
 				event.stopImmediatePropagation();
