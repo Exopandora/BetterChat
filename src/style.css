@@ -17,6 +17,7 @@
 	display: block;
 	position: relative;
 	overflow: hidden;
+	background: var(--tsv-shaded-bg);
 }
 
 .betterchat-image-preview-link {
