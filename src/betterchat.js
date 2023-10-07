@@ -190,7 +190,7 @@
 		}
 		return null;
 	}
-
+	
 	function findOwnMessages(connection, ownID) {
 		return connection.activeDetailItem.chat.messages
 			.filter(message => (message.sender?.uid == ownID || message.sender?.uuid == ownID) && !message.sender.isQueryClient && !message.isSystem)
@@ -320,8 +320,8 @@
 								tooltipManager.destroyAll();
 								chatMessageObserver.observe(node);
 							} else if(node.classList.contains("ts-appearance-settings")) {
-								const header = document.querySelector("div.tsv-bar.tsv-header-bar-below-tools div.tsv-item-text");
-								if(header != null && header.innerText == "Behavior") {
+								const chatIcon = document.querySelector("div.tsv-bar.tsv-header-bar-below-tools svg.tsv-icon-settings-chat");
+								if(chatIcon != null) {
 									appendSettingsToView();
 								}
 							} else if(node.classList.contains("ProseMirror")) {
