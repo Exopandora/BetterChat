@@ -110,6 +110,13 @@
 		node.dataset.parsed = true;
 	}
 	
+	function removeAttachments(node) {
+		for(const attachment of node.querySelectorAll(".ts-chat-message-attachment-container")) {
+			attachment.remove();
+		}
+		onMessageHeightChanged(node);
+	}
+	
 	function isModifiedMessageNode(node) {
 		return node.dataset.parsed;
 	}
@@ -274,6 +281,12 @@
 								for(const message of messages) {
 									if(!isModifiedMessageNode(message)) {
 										modifyMessageNode(message);
+									}
+								}
+								if(node.closest) {
+									const messageNode = node.closest(".ts-rendered-message");
+									if(messageNode?.__vue__?.isRedacted) {
+										removeAttachments(messageNode);
 									}
 								}
 							}
