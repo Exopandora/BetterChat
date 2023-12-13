@@ -7,5 +7,5 @@
 	"inject_at": "TAIL",
 	"sources": "src/",
 	"installer": "^2.3.0",
-	"teamspeak": "5.0.0-beta75 | 5.0.0-beta76"
+	"teamspeak": "5.0.0-beta75 | 5.0.0-beta76 | 5.0.0-beta77"
 }
