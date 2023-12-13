@@ -68,6 +68,7 @@ There you can toggle specific features, like BBCode support or Rich Embeds, or e
 ## Compatibility ##
 | TeamSpeak | Windows | Linux | MacOS |
 | --------- | ------- | ----- | ----- |
+| Beta 77 | 2.5.0+ | 2.5.0+ | 2.5.0+ |
 | Beta 76 | 2.4.0+ | 2.4.0+ | 2.4.0+ |
 | Beta 75 | 2.3.0+ | 2.3.0+ | 2.3.0+ |
 | Beta 74 | 2.1.0 - 2.2.1 | 2.1.0 - 2.2.1 | 2.1.0 - 2.2.1 |
