@@ -6,14 +6,15 @@ BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3. Current
 
 | Name | Syntax  | Example |
 | ---- | ------- | ------- |
-| bold  | [b]text[/b] | ![bold](images/bbcodes/bold.png) |
-| code | [code]text[/code] | ![code](images/bbcodes/code.png) |
-| color | [color=hexcode]text[/color] or [color=color]text[/color] | ![color](images/bbcodes/color.png) |
-| italic | [i]text[/i] | ![italic](images/bbcodes/italic.png) |
-| spoiler | [spoiler]text[/spoiler] | ![spoiler](images/bbcodes/spoiler.png) |
-| strike | [s]text[/s] | ![strike](images/bbcodes/strike.png) |
-| underline | [u]text[/u] | ![underline](images/bbcodes/underline.png) |
-| url | [url]link[/url] or [url=link]text[/url] | ![url](images/bbcodes/url.png) |
+| bold  | [b]bold[/b] | ![bold](images/bbcodes/bold.png) |
+| code | [code]code[/code] | ![code](images/bbcodes/code.png) |
+| color | [color=#00F]hexcode[/color] or [color=blue]css color[/color] | ![color](images/bbcodes/color.png) |
+| italic | [i]italic[/i] | ![italic](images/bbcodes/italic.png) |
+| spoiler | [spoiler]spoiler[/spoiler] | ![spoiler](images/bbcodes/spoiler.png) |
+| strike | [s]strike[/s] | ![strike](images/bbcodes/strike.png) |
+| underline | [u]underline[/u] | ![underline](images/bbcodes/underline.png) |
+| url | [url]https://example.com[/url] or [url=https://example.com]text[/url] | ![url](images/bbcodes/url.png) |
+| pre | [pre]inline code[/pre] | ![pre](images/bbcodes/pre.png) |
 
 ## Rich Embeds ##
 BetterChat supports automatic rich embeds for any website, including dedicated embeds for video, audio, image and twitter content. Due to technical limitations, not all video and audio formats are supported at the moment.
@@ -21,7 +22,7 @@ BetterChat supports automatic rich embeds for any website, including dedicated e
 ### Video Embed ###
 ![Video Embed](images/embeds/video.png)
 
-### Audio Embed ### 
+### Audio Embed ###
 ![Audio Embed](images/embeds/audio.png)
 
 ### Twitter Embed ###
