@@ -11,7 +11,7 @@ const messageParser = (function() {
 	}
 	
 	class BBSection {
-		constructor(id, bbCode, value, ignore, openingTagStart, openingTagEnd, closingTagStart, closingTagEnd) {
+		constructor(id, bbCode, value, ignore, openingTagStart, openingTagEnd, closingTagStart, closingTagEnd, substitute = false) {
 			this.id = id;
 			this.bbCode = bbCode;
 			this.value = value;
@@ -20,11 +20,17 @@ const messageParser = (function() {
 			this.openingTagEnd = openingTagEnd;
 			this.closingTagStart = closingTagStart;
 			this.closingTagEnd = closingTagEnd;
+			this.substitute = substitute;
+		}
+		
+		intersectsWith(other) {
+			return this.openingTagStart <= other.openingTagStart && this.closingTagEnd >= other.openingTagEnd //this contains opening tag of other
+					|| this.openingTagStart <= other.closingTagStart && this.closingTagEnd >= other.closingTagEnd;  //this contains closing tag of other
 		}
 	}
 	
 	class StringReader {
-		constructor(string, cursor=0) {
+		constructor(string, cursor = 0) {
 			this.string = string;
 			this.cursor = cursor;
 		}
@@ -50,29 +56,65 @@ const messageParser = (function() {
 		}
 	}
 	
+	function createBBSection(id, message, messagePart, bbCode, substitution) {
+		return new BBSection(
+			id,
+			bbCode,
+			null,
+			false,
+			message.length,
+			message.length,
+			message.length + messagePart.length,
+			message.length + messagePart.length,
+			substitution
+		);
+	}
+	
 	function gatherMessageContents(node) {
 		var message = "";
-		var emojis = [];
+		const emojis = [];
+		const bbSections = [];
 		for(const childNode of node.childNodes) {
 			if(childNode.tagName == "A") {
 				message += childNode.textContent;
 			} else if(childNode.tagName == "STRONG") {
-				message += "[b]" + childNode.textContent + "[/b]";
+				bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.bold));
+				message += childNode.textContent;
 			} else if(childNode.tagName == "DEL") {
-				message += "[s]" + childNode.textContent + "[/s]";
+				bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.strike));
+				message += childNode.textContent;
 			} else if(childNode.tagName == "EM") {
-				message += "[i]" + childNode.textContent + "[/i]";
+				bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.italic));
+				message += childNode.textContent;
 			} else if(childNode.tagName == "P" && childNode.classList.contains("spoiler")) {
-				const [childMessage, childEmojis] = gatherMessageContents(childNode);
-				for(const emoji of childEmojis) {
+				const [childMessage, childEmonijs, childBbSections] = gatherMessageContents(childNode);
+				for(const emoji of childEmonijs) {
 					emojis.push({
 						index: message.length + emoji.index,
 						node: emoji.node
 					});
 				}
-				message += "[spoiler]" + childMessage + "[/spoiler]";
+				for(const bbSection of childBbSections) {
+					bbSections.push(new BBSection(
+						bbSections.length,
+						bbSection.bbCode,
+						bbSection.value,
+						bbSection.ignore,
+						bbSection.openingTagStart + message.length,
+						bbSection.openingTagEnd + message.length,
+						bbSection.closingTagStart + message.length,
+						bbSection.closingTagEnd + message.length,
+						bbSection.substitution
+					));
+				}
+				bbSections.push(createBBSection(bbSections.length, message, childMessage, bbCodes.spoiler));
+				message += childMessage;
 			} else if(childNode.tagName == "PRE") {
-				message += "[code]" + childNode.textContent + "[/code]";
+				bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.code));
+				message += childNode.textContent;
+			} else if(childNode.tagName == "CODE") {
+				bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.pre));
+				message += childNode.textContent;
 			} else if(childNode.tagName == "IMG" && childNode.dataset.type == "emoji") {
 				emojis.push({
 					index: message.length,
@@ -82,7 +124,7 @@ const messageParser = (function() {
 				message += childNode.textContent;
 			}
 		}
-		return [message, emojis];
+		return [message, emojis, bbSections];
 	}
 	
 	function isAllowedBBCodeChar(char) {
@@ -132,10 +174,7 @@ const messageParser = (function() {
 			if(bbCode != null && bbCodeMap.has(bbCode)) { //validate parsed result
 				const bbCodeInstance = bbCodeMap.get(bbCode);
 				if(isClosingTag && bbValue == null || bbCodeInstance.isValidValue(bbValue)) {
-					const bbTag = new BBTag(bbCodeInstance, bbValue, ignore, isClosingTag, reader.cursor - 1, tagReader.cursor + 1);
-					if(bbTags.length == 0 || bbTags[bbTags.length - 1].bbCode != bbCodes.code || bbTags[bbTags.length - 1].isClosingTag || bbCode == bbCodes.code.code) {
-						bbTags.push(bbTag);
-					}
+					bbTags.push(new BBTag(bbCodeInstance, bbValue, ignore, isClosingTag, reader.cursor - 1, tagReader.cursor + 1));
 					reader.cursor = tagReader.cursor + 1;
 				}
 			}
@@ -143,26 +182,37 @@ const messageParser = (function() {
 		return bbTags;
 	}
 	
-	function createBBSections(bbTags) {
-		var bbSections = new Map();
-		var id = 0;
-		while(bbTags.length > 0) {
-			const startTag = bbTags.shift();
-			if(startTag.isClosingTag) {
+	function isTagInSuppressedSection(bbTag, bbSections) {
+		return bbSections.some(section => section.bbCode.suppressNested && bbTag.start >= section.openingTagStart && bbTag.end <= section.closingTagEnd);
+	}
+	
+	function createBBSections(bbTags, initial) {
+		var bbSections = initial.slice(0);
+		var queue = bbTags.slice(0);
+		while(queue.length > 0) {
+			const startTag = queue.shift();
+			if(startTag.isClosingTag || isTagInSuppressedSection(startTag, bbSections)) {
 				continue;
 			}
 			//find closing bbcode tag
 			var depth = 0;
-			for(var x = 0; x < bbTags.length; x++) {
-				const endTag = bbTags[x];
-				if(startTag.bbCode.code != endTag.bbCode.code) { //bbcodes do not match, continue
+			for(var x = 0; x < queue.length; x++) {
+				const endTag = queue[x];
+				if(startTag.bbCode.code != endTag.bbCode.code || isTagInSuppressedSection(endTag, bbSections)) { //bbcodes do not match, continue
 					continue;
 				}
 				if(endTag.isClosingTag) {
 					if(depth == 0) { //closing bbcode tag found
-						bbTags.splice(x, 1);
-						const bbSection = new BBSection(id++, startTag.bbCode, startTag.bbValue, startTag.ignore, startTag.start, startTag.end, endTag.start, endTag.end);
-						bbSections.set(bbSection.id, bbSection);
+						const bbSection = new BBSection(bbSections.length, startTag.bbCode, startTag.bbValue, startTag.ignore, startTag.start, startTag.end, endTag.start, endTag.end);
+						if(startTag.bbCode.suppressNested) {
+							for(const section of initial) {
+								if(bbSection.intersectsWith(section)) {
+									section.substitute = true;
+								}
+							}
+						}
+						queue.splice(x, 1);
+						bbSections.push(bbSection);
 						break;
 					} else { //closing bbcode tag found but incorrect depth
 						depth--;
@@ -172,7 +222,7 @@ const messageParser = (function() {
 				}
 			}
 		}
-		return bbSections;
+		return new Map(bbSections.map(x => [x.id, x]));
 	}
 	
 	function findMissingUrls(message, bbSections) {
@@ -201,8 +251,8 @@ const messageParser = (function() {
 					//url is between tags
 					return null;
 				}
-			} else if(bbSection.bbCode == bbCodes.code) {
-				if(match.index > bbSection.openingTagEnd && match.index + match[0].length <= bbSection.closingTagEnd) {
+			} else if(bbSection.bbCode.suppressNested) {
+				if(match.index >= bbSection.openingTagEnd && match.index + match[0].length <= bbSection.closingTagEnd) {
 					//url is between tags
 					return null;
 				}
@@ -219,9 +269,9 @@ const messageParser = (function() {
 	}
 	
 	function parseMessage(node) {
-		const [message, emojis] = gatherMessageContents(node);
+		const [message, emojis, bbSections] = gatherMessageContents(node);
 		const bbTags = locateBBTags(message);
-		const bbSectionsMap = findMissingUrls(message, createBBSections(bbTags));
+		const bbSectionsMap = findMissingUrls(message, createBBSections(bbTags, bbSections));
 		return [message, emojis, bbSectionsMap];
 	}
 	

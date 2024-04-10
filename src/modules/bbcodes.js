@@ -1,7 +1,8 @@
 const bbCodes = (function() {
 	class BBCode {
-		constructor(code, valueValidator) {
+		constructor(code, suppressNested = false, valueValidator = null) {
 			this.code = code;
+			this.suppressNested = suppressNested;
 			this.valueValidator = valueValidator;
 		}
 		
@@ -32,14 +33,15 @@ const bbCodes = (function() {
 	].map(color => color.toLowerCase());
 	
 	const bbCodes = {
-		url: new BBCode("url", value => value == null || value.match(/\S+:\/\/\S+/)),
-		bold: new BBCode("b", null),
-		underline: new BBCode("u", null),
-		italic: new BBCode("i", null),
-		strike: new BBCode("s", null),
-		color: new BBCode("color", value => value != null && (cssColors.includes(value.toLowerCase()) || value.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/))),
-		spoiler: new BBCode("spoiler", null),
-		code: new BBCode("code", null)
+		url: new BBCode("url", false, value => value == null || value.match(/\S+:\/\/\S+/)),
+		bold: new BBCode("b"),
+		underline: new BBCode("u"),
+		italic: new BBCode("i"),
+		strike: new BBCode("s"),
+		color: new BBCode("color", false, value => value != null && (cssColors.includes(value.toLowerCase()) || value.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/))),
+		spoiler: new BBCode("spoiler"),
+		code: new BBCode("code", true),
+		pre: new BBCode("pre", true)
 	};
 	
 	return bbCodes;

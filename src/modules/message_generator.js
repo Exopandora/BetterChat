@@ -108,6 +108,13 @@ const messageGenerator = (function() {
 		return pre;
 	}
 	
+	function applyInlineCodeFormatting(element) {
+		const code = document.createElement("code");
+		code.classList.add("inline-code");
+		code.appendChild(element);
+		return code;
+	}
+	
 	function createSegmentEdges(emojis, bbSectionsMap) {
 		const segmentEdges = [];
 		for(const bbSection of bbSectionsMap.values()) {
@@ -138,7 +145,8 @@ const messageGenerator = (function() {
 			segmentEdges.push({
 				start: emojis[x].index,
 				end: emojis[x].index,
-				index: x
+				index: x,
+				noElementCreation: true
 			});
 		}
 		segmentEdges.sort((a, b) => {
@@ -166,23 +174,29 @@ const messageGenerator = (function() {
 		const htmlElements = [[]];
 		const nestedBbCodes = [];
 		const sectionIds = new Set();
+		var textElements = [];
 		var cursor = 0;
 		for(const segmentEdge of segmentEdges) {
 			const text = message.substring(cursor, segmentEdge.start);
 			cursor = segmentEdge.end;
 			if(text.length > 0) {
-				const bbSections = Array.from(sectionIds).map(sectionId => {
-					return bbSectionsMap.get(sectionId);
-				});
-				htmlElements[htmlElements.length - 1].push(createHtmlElement(text, bbSections));
+				textElements.push(createText(text));
+			}
+			if('index' in segmentEdge) {
+				textElements.push(emojis[segmentEdge.index].node);
 			}
 			if('noElementCreation' in segmentEdge) {
 				continue;
-			} else if('index' in segmentEdge) {
-				htmlElements[htmlElements.length - 1].push(emojis[segmentEdge.index].node);
-			} else if(segmentEdge.isClosingTag) {
+			}
+			if(textElements.length > 0) {
+				const bbSections = Array.from(sectionIds).map(sectionId => bbSectionsMap.get(sectionId));
+				htmlElements[htmlElements.length - 1].push(createHtmlElement(textElements, bbSections));
+				textElements = [];
+			}
+			if(segmentEdge.isClosingTag) {
 				if(hasNestedGeneration(segmentEdge.bbCode)) {
-					htmlElements[htmlElements.length - 2].push(applyStyle(nestedBbCodes.pop(), htmlElements.pop(), bbSectionsMap.get(segmentEdge.sectionId).value));
+					const htmlElement = applyStyle(nestedBbCodes.pop(), htmlElements.pop(), bbSectionsMap.get(segmentEdge.sectionId).value);
+					htmlElements[htmlElements.length - 1].push(htmlElement);
 				} else {
 					sectionIds.delete(segmentEdge.sectionId);
 				}
@@ -196,7 +210,10 @@ const messageGenerator = (function() {
 			}
 		}
 		if(cursor < message.length) {
-			htmlElements[htmlElements.length - 1].push(createHtmlElement(message.substring(cursor), []));
+			textElements.push(createText(message.substring(cursor)));
+		}
+		if(textElements.length > 0) {
+			htmlElements[htmlElements.length - 1].push(createHtmlElement(textElements, []));
 		}
 		return htmlElements[0];
 	}
@@ -223,6 +240,8 @@ const messageGenerator = (function() {
 				return applySpoilerFormatting(element);
 			case bbCodes.code:
 				return applyCodeFormatting(element);
+			case bbCodes.pre:
+				return applyInlineCodeFormatting(element);
 		}
 	}
 	
@@ -232,8 +251,16 @@ const messageGenerator = (function() {
 		return span;
 	}
 	
-	function createHtmlElement(text, bbSections) {
-		var htmlElement = createText(text);
+	function createHtmlElement(elements, bbSections) {
+		var htmlElement;
+		if(elements.length == 1) {
+			htmlElement = elements[0];
+		} else {
+			htmlElement = document.createElement("span");
+			for(const element of elements) {
+				htmlElement.appendChild(element);
+			}
+		}
 		for(const bbSection of bbSections) {
 			htmlElement = applyStyle(bbSection.bbCode, htmlElement, bbSection.value);
 		}
