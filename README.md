@@ -13,7 +13,7 @@ BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3. Current
 | spoiler | [spoiler]spoiler[/spoiler] | ![spoiler](images/bbcodes/spoiler.png) |
 | strike | [s]strike[/s] | ![strike](images/bbcodes/strike.png) |
 | underline | [u]underline[/u] | ![underline](images/bbcodes/underline.png) |
-| url | [url]https://example.com[/url] or [url=https://example.com]text[/url] | ![url](images/bbcodes/url.png) |
+| url | [url]ht<span>tps://example.com[/url] or [url=ht<span>tps://example.com]text[/url] | ![url](images/bbcodes/url.png) |
 | pre | [pre]inline code[/pre] | ![pre](images/bbcodes/pre.png) |
 
 ## Rich Embeds ##
