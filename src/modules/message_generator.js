@@ -102,9 +102,15 @@ const messageGenerator = (function() {
 	function applyCodeFormatting(element) {
 		const pre = document.createElement("pre");
 		const code = document.createElement("code");
-		code.appendChild(element);
 		pre.appendChild(code);
-		hljs.highlightElement(code);
+		document.body.querySelector("#app").__vue__.$options.directives.highlightjs.bind(code, {
+			value: {
+				code: element.textContent,
+				lang: undefined,
+				onlyUpdate: false,
+				withLangHtml: false
+			}
+		});
 		return pre;
 	}
 	
