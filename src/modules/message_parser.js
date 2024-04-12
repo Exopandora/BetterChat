@@ -186,7 +186,7 @@ const messageParser = (function() {
 		return bbSections.some(section => section.bbCode.suppressNested && bbTag.start >= section.openingTagStart && bbTag.end <= section.closingTagEnd);
 	}
 	
-	function createBBSections(bbTags, initial) {
+	function createBBSections(bbTags, initial, emojis) {
 		var bbSections = initial.slice(0);
 		var queue = bbTags.slice(0);
 		while(queue.length > 0) {
@@ -208,6 +208,11 @@ const messageParser = (function() {
 							for(const section of initial) {
 								if(bbSection.intersectsWith(section)) {
 									section.substitute = true;
+								}
+							}
+							for(const emoji of emojis) {
+								if(emoji.index >= bbSection.openingTagEnd && emoji.index <= bbSection.closingTagStart) {
+									emoji.substitute = true;
 								}
 							}
 						}

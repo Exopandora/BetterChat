@@ -148,12 +148,22 @@ const messageGenerator = (function() {
 			}
 		}
 		for(var x = 0; x < emojis.length; x++) {
-			segmentEdges.push({
-				start: emojis[x].index,
-				end: emojis[x].index,
-				index: x,
-				noElementCreation: true
-			});
+			const emoji = emojis[x];
+			if(!emoji.substitute) {
+				segmentEdges.push({
+					start: emoji.index,
+					end: emoji.index,
+					index: x,
+					noElementCreation: true
+				});
+			} else {
+				segmentEdges.push({
+					start: emoji.index,
+					end: emoji.index,
+					noElementCreation: true,
+					substitution: ":" + emoji.node.__vue__.tsEmoji.shortcodes[0] + ":"
+				});
+			}
 		}
 		segmentEdges.sort((a, b) => {
 			if(a.start == b.start) {
@@ -190,6 +200,9 @@ const messageGenerator = (function() {
 			}
 			if('index' in segmentEdge) {
 				textElements.push(emojis[segmentEdge.index].node);
+			}
+			if('substitution' in segmentEdge) {
+				textElements.push(createText(segmentEdge.substitution));
 			}
 			if('noElementCreation' in segmentEdge) {
 				continue;
