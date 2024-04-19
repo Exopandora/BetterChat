@@ -230,7 +230,7 @@ const messageParser = (function() {
 		return new Map(bbSections.map(x => [x.id, x]));
 	}
 	
-	function findMissingUrls(message, bbSections) {
+	function locatePlainUrls(message, bbSections) {
 		var urlSections = [];
 		var urlRegex = /(\w+:\/\/\S+)/g;
 		var id = Math.max(Array.from(bbSections.keys())) + 1;
@@ -243,7 +243,6 @@ const messageParser = (function() {
 		for(const bbSection of urlSections) {
 			bbSections.set(bbSection.id, bbSection);
 		}
-		return bbSections;
 	}
 	
 	function evaluateUrl(match, bbSections) {
@@ -276,7 +275,8 @@ const messageParser = (function() {
 	function parseMessage(node) {
 		const [message, emojis, bbSections] = gatherMessageContents(node);
 		const bbTags = locateBBTags(message);
-		const bbSectionsMap = findMissingUrls(message, createBBSections(bbTags, bbSections));
+		const bbSectionsMap = createBBSections(bbTags, bbSections, emojis);
+		locatePlainUrls(message, bbSectionsMap);
 		return [message, emojis, bbSectionsMap];
 	}
 	
