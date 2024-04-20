@@ -13,7 +13,7 @@ const messageGenerator = (function() {
 		if(href.match(/^\w+:\/\/\S+$/) == null) {
 			href = "https://" + href;
 		}
-		const invalid = href.match(/^(?:https?|ts3file|ts3server|teamspeak):\/\/\S+$/) == null;
+		const invalid = href.match(/^((?:(?:(?:https?|ts3file|ts3server|teamspeak):\/\/)|(?:www\.))[^\s<>\[\]]+[^<>.,:;"')\[\]\s])$/) == null;
 		if(invalid) {
 			a.classList.add("betterchat-invalid-link");
 		}
@@ -120,7 +120,7 @@ const messageGenerator = (function() {
 		code.appendChild(element);
 		return code;
 	}
-	
+
 	function markdownCodeForBbCode(bbCode) {
 		switch(bbCode) {
 			case bbCodes.bold:
