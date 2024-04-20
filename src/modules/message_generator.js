@@ -121,24 +121,59 @@ const messageGenerator = (function() {
 		return code;
 	}
 	
+	function markdownCodeForBbCode(bbCode) {
+		switch(bbCode) {
+			case bbCodes.bold:
+				return "**";
+			case bbCodes.italic:
+				return "__";
+			case bbCodes.strike:
+				return "~~";
+			case bbCodes.spoiler:
+				return "||";
+			case bbCodes.code:
+				return "```";
+			case bbCodes.pre:
+				return "`";
+			default:
+				return "";
+		}
+	}
+	
 	function createSegmentEdges(emojis, bbSectionsMap) {
 		const segmentEdges = [];
 		for(const bbSection of bbSectionsMap.values()) {
 			if(!bbSection.ignore) {
-				segmentEdges.push({
-					bbCode: bbSection.bbCode,
-					start: bbSection.openingTagStart,
-					end: bbSection.openingTagEnd,
-					sectionId: bbSection.id,
-					isClosingTag: false
-				});
-				segmentEdges.push({
-					bbCode: bbSection.bbCode,
-					start: bbSection.closingTagStart,
-					end: bbSection.closingTagEnd,
-					sectionId: bbSection.id,
-					isClosingTag: true
-				});
+				if(!bbSection.substitute) {
+					segmentEdges.push({
+						bbCode: bbSection.bbCode,
+						start: bbSection.openingTagStart,
+						end: bbSection.openingTagEnd,
+						sectionId: bbSection.id,
+						isClosingTag: false
+					});
+					segmentEdges.push({
+						bbCode: bbSection.bbCode,
+						start: bbSection.closingTagStart,
+						end: bbSection.closingTagEnd,
+						sectionId: bbSection.id,
+						isClosingTag: true
+					});
+				} else {
+					const substitution = markdownCodeForBbCode(bbSection.bbCode);
+					segmentEdges.push({
+						start: bbSection.openingTagStart,
+						end: bbSection.openingTagEnd,
+						substitution: substitution,
+						noElementCreation: true
+					});
+					segmentEdges.push({
+						start: bbSection.closingTagStart,
+						end: bbSection.closingTagEnd,
+						substitution: substitution,
+						noElementCreation: true
+					});
+				}
 			} else {
 				segmentEdges.push({
 					start: bbSection.openingTagStart - 1,
