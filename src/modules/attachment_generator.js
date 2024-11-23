@@ -288,7 +288,7 @@ const attachmentGenerator = (function() {
 				const url = new URL(link);
 				if(url.protocol != "https:" && url.protocol != "http:" || url.hostname == "youtube.com" || url.hostname == "www.youtube.com" || url.hostname == "youtu.be" || url.hostname == "giphy.com") {
 					continue;
-				} else if(url.hostname == "twitter.com" && !url.pathname.startsWith("/home") && !url.pathname.startsWith("/explore") && !url.pathname.startsWith("/notifications") && !url.pathname.startsWith("/messages") && (!url.pathname.startsWith("/i/") || url.pathname.startsWith("/i/status"))) {
+				} else if((url.hostname == "twitter.com" || url.hostname == "x.com") && !url.pathname.startsWith("/home") && !url.pathname.startsWith("/explore") && !url.pathname.startsWith("/notifications") && !url.pathname.startsWith("/messages") && (!url.pathname.startsWith("/i/") || url.pathname.startsWith("/i/status"))) {
 					promises.set(link, createTwitterEmbed(url.href));
 				} else {
 					promises.set(link, createEmbed(url));
