@@ -63,14 +63,12 @@ There you can toggle specific features, like BBCode support or Rich Embeds, or e
 ## Compatibility ##
 
 ### TeamSpeak 6 ###
-
 | TeamSpeak | Windows | Linux | MacOS |
 | --------- | ------- | ----- | ----- |
 | Beta 2 | 3.0.0+ | 3.0.0+ | 3.0.0+ |
 
 ### TeamSpeak 5 ###
-
-> [!NOTE]]
+> [!NOTE]
 > Installation for TeamSpeak 5 requires the [TS5AddonInstaller](https://github.com/FelixVolo/TS6AddonInstaller/releases)
 
 | TeamSpeak | Windows | Linux | MacOS |
