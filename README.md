@@ -11,7 +11,7 @@ Currently, the following tags are supported:
 | ---- | ------- | ------- |
 | bold  | [b]bold[/b] | ![bold](images/bbcodes/bold.png) |
 | code | [code]code[/code] | ![code](images/bbcodes/code.png) |
-| color | [color=#00F]hexcode[/color] or [color=blue]css color[/color] | ![color](images/bbcodes/color.png) |
+| color | [color=#FFA500]hexcode[/color] or [color=orange]css color[/color] | ![color](images/bbcodes/color.png) |
 | italic | [i]italic[/i] | ![italic](images/bbcodes/italic.png) |
 | spoiler | [spoiler]spoiler[/spoiler] | ![spoiler](images/bbcodes/spoiler.png) |
 | strike | [s]strike[/s] | ![strike](images/bbcodes/strike.png) |
