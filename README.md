@@ -1,8 +1,11 @@
 # BetterChat #
-BetterChat is an unofficial addon for TeamSpeak 5 and aims to provide a better chat experience for the TeamSpeak 5 client. It enables support for BBCodes, improving messages sent by TeamSpeak 3 users, and automatic rich embeds for any website, including dedicated embeds for video, audio, image and twitter content. It works in both compact and detailed view.
+BetterChat is an unofficial addon for TeamSpeak 6 and aims to provide a better chat experience for the TeamSpeak 6 client.
+It enables support for BBCodes, improving messages sent by TeamSpeak 3 users, and automatic rich embeds for any website, including dedicated embeds for video, audio, image and twitter content.
+It works in both compact and detailed view.
 
 ## BBCode support ##  
-BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3. Currently the following tags are supported:
+BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3.
+Currently, the following tags are supported:
 
 | Name | Syntax  | Example |
 | ---- | ------- | ------- |
@@ -17,7 +20,8 @@ BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3. Current
 | pre | [pre]inline code[/pre] | ![pre](images/bbcodes/pre.png) |
 
 ## Rich Embeds ##
-BetterChat supports automatic rich embeds for any website, including dedicated embeds for video, audio, image and twitter content. Due to technical limitations, not all video and audio formats are supported at the moment.
+BetterChat supports automatic rich embeds for any website, including dedicated embeds for video, audio, image and twitter content.
+Due to technical limitations, not all video and audio formats are supported at the moment.
 
 ### Video Embed ###
 ![Video Embed](images/embeds/video.png)
@@ -36,28 +40,18 @@ Custom styling for the image preview can be changed in the `style.css`.
 Rich embeds use the already existing css classes of the TeamSpeak client and should be compatible with already existing themes.
 
 ## Installation ##
-Notes:
-> * Manual installation only works for TeamSpeak 5 beta 70
+> [!NOTE]
 > * Depending on your installation directory you may need elevated permission privileges
 > * The installation process needs to be repeated after each TeamSpeak update
 > * Please check the [compatibility](https://github.com/Exopandora/BetterChat#compatibility) section before installing BetterChat
 
 ### Installer ###
 Installation steps:
-1. Download the installer for your operating system from [here](https://github.com/FelixVolo/TS5AddonInstaller/releases)
+1. Download the TS6AddonInstaller for your operating system from [here](https://github.com/Exopandora/TS6AddonInstaller/releases)
 2. Start the installer
 3. Select your TeamSpeak installation directory
 4. Select "BetterChat"
 5. Click on "Install"
-
-### Manual ###
-Installation steps:
-1. Navigate to your TeamSpeak installation directory
-2. Navigate to `./html/client_ui/`
-3. Open `index.html` in that directory with an editor and copy all contents from the `index.html` of this repository before `</head>` and save the file
-4. Create a new folder named `betterchat`
-5. Copy all contents from `src/` into the newly created folder
-6. And you are done! You can now start TeamSpeak
 
 ## Configuration ##
 BetterChat can be enabled and disabled while TeamSpeak is running.
@@ -67,9 +61,21 @@ There you can toggle specific features, like BBCode support or Rich Embeds, or e
 ![BetterChat Settings](images/settings.png)
 
 ## Compatibility ##
+
+### TeamSpeak 6 ###
+
 | TeamSpeak | Windows | Linux | MacOS |
 | --------- | ------- | ----- | ----- |
-| Beta 77 | 2.5.0+ | 2.5.0+ | 2.5.0+ |
+| Beta 2 | 3.0.0+ | 3.0.0+ | 3.0.0+ |
+
+### TeamSpeak 5 ###
+
+> [!NOTE]]
+> Installation for TeamSpeak 5 requires the [TS5AddonInstaller](https://github.com/FelixVolo/TS6AddonInstaller/releases)
+
+| TeamSpeak | Windows | Linux | MacOS |
+| --------- | ------- | ----- | ----- |
+| Beta 77 | 2.5.0-2.6.1 | 2.5.0-2.6.1 | 2.5.0-2.6.1 |
 | Beta 76 | 2.4.0+ | 2.4.0+ | 2.4.0+ |
 | Beta 75 | 2.3.0+ | 2.3.0+ | 2.3.0+ |
 | Beta 74 | 2.1.0 - 2.2.1 | 2.1.0 - 2.2.1 | 2.1.0 - 2.2.1 |

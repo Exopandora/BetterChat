@@ -53,7 +53,7 @@
 		}
 	}
 	
-	function modifyMessageNode(node) {
+	function modifyMessageContent(node) {
 		if(node.classList.contains("ts-chat-message-system-body-contents")) {
 			return;
 		}
@@ -131,47 +131,59 @@
 		return header;
 	}
 	
-	function createSettingsContentWrapper() {
+	function createSettingsWidgetWrapper() {
+		const widgetWrapper = document.createElement("div");
+		widgetWrapper.classList.add("ts-widget-wrapper");
+		return widgetWrapper;
+	}
+	
+	function createSettingsCardWidget() {
 		const content = document.createElement("div");
 		content.classList.add("ts-card", "ts-widget", "full");
 		return content;
 	}
 	
 	function createToggleSetting(title, description, configKey) {
+		const titleSpan = document.createElement("span");
+		titleSpan.innerText = title;
+		const descriptionP = document.createElement("p");
+		descriptionP.classList.add("ts-card-subtitle");
+		descriptionP.innerText = description;
+		const label = document.createElement("label");
+		label.classList.add("tsv-flex-column");
+		label.for = "ts-toggle-4";
+		label.appendChild(titleSpan);
+		label.appendChild(descriptionP);
 		const input = document.createElement("input");
 		input.type = "checkbox";
 		const toggleInner = document.createElement("div");
-		const updateToggleInner = enabled => {
-			if(enabled) {
-				toggleInner.classList.add("checked");
-			} else if(toggleInner.classList.contains("checked")) {
-				toggleInner.classList.remove("checked");
-			}
-		};
-		updateToggleInner(settings.getValueForKey(configKey));
 		toggleInner.classList.add("ts-toggle-inner", "visible");
 		toggleInner.appendChild(input);
 		const toggle = document.createElement("div");
-		toggle.classList.add("ts-toggle");
+		toggle.classList.add("ts-toggle", "visible");
+		const updateToggle = enabled => {
+			if(enabled) {
+				toggle.classList.add("checked");
+				toggleInner.classList.add("checked");
+			} else if(toggle.classList.contains("checked")) {
+				toggle.classList.remove("checked");
+				toggleInner.classList.remove("checked");
+			}
+		};
+		updateToggle(settings.getValueForKey(configKey));
 		toggle.appendChild(toggleInner);
-		const titleLabel = document.createElement("label");
-		titleLabel.innerText = title;
 		const toggleWrapper = document.createElement("div");
 		toggleWrapper.classList.add("ts-toggle-wrapper", "ts-flex", "row");
 		toggleWrapper.onclick = () => {
 			const enabled = !settings.getValueForKey(configKey);
 			settings.setValueForKey(configKey, enabled);
-			updateToggleInner(enabled);
+			updateToggle(enabled);
 		};
-		toggleWrapper.appendChild(titleLabel);
+		toggleWrapper.appendChild(label);
 		toggleWrapper.appendChild(toggle);
-		const subtitle = document.createElement("p");
-		subtitle.classList.add("ts-card-subtitle");
-		subtitle.innerText = description;
 		const container = document.createElement("div");
 		container.classList.add("ts-card-setting-container");
 		container.appendChild(toggleWrapper);
-		container.appendChild(subtitle);
 		return container;
 	}
 	
@@ -180,13 +192,15 @@
 		if(root == null) {
 			return;
 		}
-		const header = createSettingsCategoryHeader("BetterChat");
-		root.appendChild(header);
-		const content = createSettingsContentWrapper();
-		content.appendChild(createToggleSetting("Enable BetterChat", "Enables advanced chat features", "enabled"));
-		content.appendChild(createToggleSetting("Rich Embeds", "Load rich embeds for links in chat messages", "embeds"));
-		content.appendChild(createToggleSetting("BBCode support", "Support BBCode styling for chat messages", "chatStyling"));
-		root.appendChild(content);
+		const settingsHeader = createSettingsCategoryHeader("BetterChat");
+		const cardWidget = createSettingsCardWidget();
+		cardWidget.appendChild(createToggleSetting("Enable BetterChat", "Enables advanced chat features", "enabled"));
+		cardWidget.appendChild(createToggleSetting("Rich Embeds", "Load rich embeds for links in chat messages", "embeds"));
+		cardWidget.appendChild(createToggleSetting("BBCode support", "Support BBCode styling for chat messages", "chatStyling"));
+		const widgetWrapper = createSettingsWidgetWrapper();
+		widgetWrapper.appendChild(settingsHeader);
+		widgetWrapper.appendChild(cardWidget);
+		root.appendChild(widgetWrapper);
 	}
 	
 	function findActiveConnection(connections){
@@ -268,73 +282,47 @@
 		});
 	}
 	
-	const chatMessageObserver = {
-		observer: new MutationObserver((mutations, self) => {
-			for(const mutation of mutations) {
-				if(mutation.type == "childList" && settings.getValueForKey("enabled")) {
-					for(const node of mutation.addedNodes) {
-						try {
-							if(mutation.target.localName == "span" && mutation.target.classList.contains("ts-chat-message-content") && mutation.target.classList.contains("ts-parsed-text-content") && !isModifiedMessageNode(mutation.target)) {
-								modifyMessageNode(mutation.target);
-							} else if(node.querySelector) {
-								const messages = node.querySelectorAll(".ts-chat-message-content.ts-parsed-text-content");
-								for(const message of messages) {
-									if(!isModifiedMessageNode(message)) {
-										modifyMessageNode(message);
-									}
-								}
-								if(node.closest) {
-									const messageNode = node.closest(".ts-rendered-message");
-									if(messageNode?.__vue__?.isRedacted) {
-										removeAttachments(messageNode);
-									}
-								}
-							}
-						} catch(e) {
-							continue;
-						}
+	function modifyRenderedMessage(node) {
+		try {
+			if(node.querySelector && settings.getValueForKey("enabled")) {
+				const messages = node.querySelectorAll(".ts-chat-message-content.ts-parsed-text-content");
+				for(const message of messages) {
+					if(!isModifiedMessageNode(message)) {
+						modifyMessageContent(message);
 					}
 				}
+				if(node?.__vue__?.isRedacted) {
+					removeAttachments(node);
+				}
 			}
-		}),
-		observe(node) {
-			this.observer.observe(node, {
-				childList: true,
-				attributes: false,
-				characterData: false,
-				subtree: true
-			});
-		},
-		disconnect() {
-			this.observer.disconnect();
+		} catch(e) {
+			return;
 		}
-	};
+	}
+	
 	const documentObserver = {
 		observer: new MutationObserver((mutations, self) => {
 			for(const mutation of mutations) {
 				if(mutation.type == "childList") {
 					for(const node of mutation.removedNodes) {
 						if(node.nodeType == Node.ELEMENT_NODE && node.tagName == "DIV") {
-							if((node.classList.contains("ts-chat-container") || node.classList.contains("tsv-activity-detail")) && document.querySelectorAll("div.ts-chat-container").length == 0) {
-								chatMessageObserver.disconnect();
+							if(node.classList.contains("tsv-view") && node.classList.contains("tsv-item-view") && node.classList.contains("tsv-view-transparent")) {
 								tooltipManager.destroyAll();
 							}
 						}
 					}
 					for(const node of mutation.addedNodes) {
 						if(node.nodeType == Node.ELEMENT_NODE && node.tagName == "DIV") {
-							if(node.classList.contains("tsv-activity-detail")) {
-								const chat = node.querySelector("div.ts-chat-container");
-								if(chat != null) {
-									tooltipManager.destroyAll();
-									chatMessageObserver.observe(node);
+							if(node.classList.contains("ts-rendered-message")) {
+								modifyRenderedMessage(node);
+							} else if(node.classList.contains("tsv-virtual-list-item")) {
+								const renderedMessage = node.querySelector(".ts-rendered-message");
+								if(renderedMessage) {
+									modifyRenderedMessage(renderedMessage);
 								}
-							} else if(node.classList.contains("ts-chat-container")) {
-								tooltipManager.destroyAll();
-								chatMessageObserver.observe(node);
 							} else if(node.classList.contains("ts-appearance-settings")) {
-								const chatIcon = document.querySelector("div.tsv-bar.tsv-header-bar-below-tools svg.tsv-icon-settings-chat");
-								if(chatIcon != null) {
+								const chatSettingsIcon = document.querySelector("div.tsv-settings div.tsv-settings-categories .tsv-selected svg.tsv-icon-settings-chat");
+								if(chatSettingsIcon != null) {
 									appendSettingsToView();
 								}
 							} else if(node.classList.contains("ProseMirror")) {
