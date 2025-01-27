@@ -98,6 +98,7 @@
 .ts-chat-message-attachment-inner:has(.twitter-tweet) {
     background: transparent;
     border-color: transparent;
+	min-width: 300px !important;
 }
 
 .ts-chat-message-attachment-inner:has(audio) {
