@@ -53,7 +53,7 @@
 		}
 	}
 	
-	function modifyMessageContent(node) {
+	function modifyMessageNode(node) {
 		if(node.classList.contains("ts-chat-message-system-body-contents")) {
 			return;
 		}
@@ -282,13 +282,13 @@
 		});
 	}
 	
-	function modifyRenderedMessage(node) {
+	function onMessageAdded(node) {
 		try {
 			if(node.querySelector && settings.getValueForKey("enabled")) {
 				const messages = node.querySelectorAll(".ts-chat-message-content.ts-parsed-text-content");
 				for(const message of messages) {
 					if(!isModifiedMessageNode(message)) {
-						modifyMessageContent(message);
+						modifyMessageNode(message);
 					}
 				}
 				if(node?.__vue__?.isRedacted) {
@@ -305,8 +305,8 @@
 			for(const mutation of mutations) {
 				if(mutation.type == "childList") {
 					for(const node of mutation.removedNodes) {
-						if(node.nodeType == Node.ELEMENT_NODE && node.tagName == "DIV") {
-							if(node.classList.contains("tsv-view") && node.classList.contains("tsv-item-view") && node.classList.contains("tsv-view-transparent")) {
+						if(node.nodeType == Node.ELEMENT_NODE) {
+							if(node.tagName == "DIV" && node.classList.contains("tsv-view") && node.classList.contains("tsv-item-view") && node.classList.contains("tsv-view-transparent")) {
 								tooltipManager.destroyAll();
 							}
 						}
@@ -314,11 +314,11 @@
 					for(const node of mutation.addedNodes) {
 						if(node.nodeType == Node.ELEMENT_NODE && node.tagName == "DIV") {
 							if(node.classList.contains("ts-rendered-message")) {
-								modifyRenderedMessage(node);
+								onMessageAdded(node);
 							} else if(node.classList.contains("tsv-virtual-list-item")) {
 								const renderedMessage = node.querySelector(".ts-rendered-message");
 								if(renderedMessage) {
-									modifyRenderedMessage(renderedMessage);
+									onMessageAdded(renderedMessage);
 								}
 							} else if(node.classList.contains("ts-appearance-settings")) {
 								const chatSettingsIcon = document.querySelector("div.tsv-settings div.tsv-settings-categories .tsv-selected svg.tsv-icon-settings-chat");
