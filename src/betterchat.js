@@ -248,6 +248,9 @@
 	}
 	
 	function onChatInputAdded(node) {
+		if(!settings.getValueForKey("enabled")) {
+			return;
+		}
 		const appController = document.body.querySelector("#app").__vue__.appController;
 		var prevConnectionId = null;
 		var prevMessage = null;
