@@ -253,6 +253,9 @@
 		var prevMessage = null;
 		node.addEventListener("keydown", event => {
 			const activeConnection = findActiveConnection(appController.connections);
+			if(activeConnection == null) {
+				return;
+			}
 			if(prevConnectionId != activeConnection.id) {
 				prevConnectionId = activeConnection.id;
 				prevMessage = null;
