@@ -69,7 +69,7 @@ There you can toggle specific features, like BBCode support or Rich Embeds, or e
 
 ### TeamSpeak 5 ###
 > [!NOTE]
-> Installation for TeamSpeak 5 requires the [TS5AddonInstaller](https://github.com/FelixVolo/TS6AddonInstaller/releases)
+> Installation for TeamSpeak 5 requires the [TS5AddonInstaller](https://github.com/FelixVolo/TS5AddonInstaller/releases)
 
 | TeamSpeak | Windows | Linux | MacOS |
 | --------- | ------- | ----- | ----- |
