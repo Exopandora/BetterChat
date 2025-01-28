@@ -300,6 +300,16 @@
 		}
 	}
 	
+	function onMessageRemoved(chatMessageContent, previousSibling) {
+		if(isModifiedMessageNode(chatMessageContent)) {
+			tooltipManager.destroyTooltip(chatMessageContent, true);
+			const renderedMessage = previousSibling.closest(".ts-rendered-message");
+			if(renderedMessage != null) {
+				removeAttachments(renderedMessage);
+			}
+		}
+	}
+	
 	const documentObserver = {
 		observer: new MutationObserver((mutations, self) => {
 			for(const mutation of mutations) {
@@ -308,6 +318,8 @@
 						if(node.nodeType == Node.ELEMENT_NODE) {
 							if(node.tagName == "DIV" && node.classList.contains("tsv-view") && node.classList.contains("tsv-item-view") && node.classList.contains("tsv-view-transparent")) {
 								tooltipManager.destroyAll();
+							} else if(node.tagName == "SPAN" && node.classList.contains("ts-chat-message-content") && node.classList.contains("ts-parsed-text-content")) {
+								onMessageRemoved(node, mutation.previousSibling);
 							}
 						}
 					}

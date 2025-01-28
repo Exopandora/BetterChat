@@ -6,13 +6,18 @@ const tooltipManager = (function() {
 		return suppressChildTooltips(element);
 	}
 	
-	function destroyTooltip(element) {
+	function destroyTooltip(element, recursive=false) {
 		if(element._tippy) {
 			element._tippy.destroy();
 		}
 		const index = tooltips.indexOf(element._tippy);
 		if(index > -1) {
 			array.splice(index, 1);
+		}
+		if(recursive) {
+			for(const child of element.childNodes) {
+				destroyTooltip(child, recursive);
+			}
 		}
 	}
 	
