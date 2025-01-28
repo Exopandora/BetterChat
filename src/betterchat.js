@@ -266,7 +266,7 @@
 			const ownID = activeConnection.activeDetailItem.chat.identity;
 			const chatInputContainer = node.closest("div.ts-chat-input-container")?.__vue__
 			const currentText = chatInputContainer?.actualMsg;
-			if(event.key === "ArrowUp" && (currentText.length == 0 || currentText == prevMessage?.original)) {
+			if(event.key === "ArrowUp" && (currentText?.length == 0 || currentText == prevMessage?.original)) {
 				const messages = findOwnMessages(activeConnection, ownID);
 				const message = findNextMessage(prevMessage, messages);
 				if(message != null) {
