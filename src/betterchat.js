@@ -214,7 +214,7 @@
 	
 	function findOwnMessages(connection, ownID) {
 		return connection.activeDetailItem.chat.messages
-			.filter(message => (message.sender?.uid == ownID || message.sender?.uuid == ownID) && !message.sender.isQueryClient && !message.isSystem)
+			.filter(message => message.sender?.uid == ownID && !message.sender.isQueryClient && !message.isSystem)
 			.reverse();
 	}
 	
@@ -263,7 +263,7 @@
 				prevConnectionId = activeConnection.id;
 				prevMessage = null;
 			}
-			const ownID = activeConnection.connectInfo.relatedIdentity.unique_id;
+			const ownID = activeConnection.activeDetailItem.chat.identity;
 			const chatInputContainer = node.closest("div.ts-chat-input-container")?.__vue__
 			const currentText = chatInputContainer?.actualMsg;
 			if(event.key === "ArrowUp" && (currentText.length == 0 || currentText == prevMessage?.original)) {
