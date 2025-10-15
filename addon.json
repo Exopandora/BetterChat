@@ -1,11 +1,11 @@
 {
 	"id": "betterchat",
 	"name": "BetterChat",
-	"version": "3.0.1",
+	"version": "3.1.0",
 	"inject": "index.html",
 	"injection_point": "HEAD",
 	"inject_at": "TAIL",
 	"sources": "src/",
-	"installer": "^3.0.0",
-	"teamspeak": "6.0.0-beta2"
+	"installer": "^3.1.0",
+	"teamspeak": "6.0.0-beta3"
 }

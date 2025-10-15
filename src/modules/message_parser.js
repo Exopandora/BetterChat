@@ -115,7 +115,7 @@ const messageParser = (function() {
 			} else if(childNode.tagName == "CODE") {
 				bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.pre));
 				message += childNode.textContent;
-			} else if(childNode.tagName == "IMG" && childNode.dataset.type == "emoji") {
+			} else if(childNode.tagName == "svg" && childNode.dataset.type == "emoji") {
 				emojis.push({
 					index: message.length,
 					node: childNode
