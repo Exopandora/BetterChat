@@ -65,6 +65,9 @@ There you can toggle specific features, like BBCode support or Rich Embeds, or e
 ### TeamSpeak 6 ###
 | TeamSpeak | Windows | Linux | MacOS |
 | --------- | ------- | ----- | ----- |
+| Beta 3.4 | 3.4.0+ | 3.4.0+ | 3.4.0+ |
+| Beta 3.3 | ❌ | ❌ | ❌ |
+| Beta 3.2 | 3.3.0+ | 3.3.0+ | 3.3.0+ |
 | Beta 3.1 | 3.2.0+ | 3.2.0+ | 3.2.0+ |
 | Beta 3 | 3.1.0+ | 3.1.0+ | 3.1.0+ |
 | Beta 2 | 3.0.0+ | 3.0.0+ | 3.0.0+ |
