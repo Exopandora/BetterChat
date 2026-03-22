@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "esbuild": "^0.27.4",
+    "esbuild-copy-static-files": "^0.1.0",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "clean": "npx rimraf ./build ./bundle",
+    "build": "npm run clean && npx tsc",
+    "debug": "npm run build && cross-env DEBUG=true node esbuild.mjs",
+    "bundle": "npm run build && cross-env node esbuild.mjs"
+  }
+}

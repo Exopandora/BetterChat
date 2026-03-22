@@ -60,6 +60,14 @@ There you can toggle specific features, like BBCode support or Rich Embeds, or e
 
 ![BetterChat Settings](images/settings.png)
 
+## Building from source ##
+Clone the repository and run the following commands in the root directory of this repository:
+```shell
+npm install
+npm run bundle
+```
+The resulting files can be found in the `bundle` directory.
+
 ## Compatibility ##
 
 ### TeamSpeak 6 ###
