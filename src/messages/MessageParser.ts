@@ -26,7 +26,6 @@ class BBTag {
 }
 
 export class BBSection {
-    id: number;
     bbCode: BBCode;
     value: string | null;
     ignore: boolean;
@@ -34,10 +33,9 @@ export class BBSection {
     openingTagEnd: number;
     closingTagStart: number;
     closingTagEnd: number
-    substitute: boolean;
+    convertToMarkdown: boolean;
 
     constructor(
-        id: number,
         bbCode: BBCode,
         value: string | null,
         ignore: boolean,
@@ -45,9 +43,8 @@ export class BBSection {
         openingTagEnd: number,
         closingTagStart: number,
         closingTagEnd: number,
-        substitute: boolean = false,
+        convertToMarkdown: boolean = false,
     ) {
-        this.id = id;
         this.bbCode = bbCode;
         this.value = value;
         this.ignore = ignore;
@@ -55,7 +52,7 @@ export class BBSection {
         this.openingTagEnd = openingTagEnd;
         this.closingTagStart = closingTagStart;
         this.closingTagEnd = closingTagEnd;
-        this.substitute = substitute;
+        this.convertToMarkdown = convertToMarkdown;
     }
 
     intersectsWith(other: BBSection): boolean {
@@ -94,15 +91,12 @@ class StringReader {
     }
 }
 
-// TODO: refactor
 function createBBSection(
-    id: number,
     message: string,
     messagePart: string,
     bbCode: BBCode,
 ): BBSection {
     return new BBSection(
-        id,
         bbCode,
         null,
         false,
@@ -110,12 +104,11 @@ function createBBSection(
         message.length,
         message.length + messagePart.length,
         message.length + messagePart.length,
-        false,
     );
 }
 
 export type Emoji = {
-    index: number;
+    messageOffset: number;
     node: HTMLElement;
     substitute: boolean;
 }
@@ -135,13 +128,13 @@ function gatherMessageContents(node: HTMLElement): MessageContents {
         if(childNode.tagName == "A") {
             message += childNode.textContent;
         } else if(childNode.tagName == "STRONG") {
-            bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.bold));
+            bbSections.push(createBBSection(message, childNode.textContent, bbCodes.bold));
             message += childNode.textContent;
         } else if(childNode.tagName == "DEL") {
-            bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.strike));
+            bbSections.push(createBBSection(message, childNode.textContent, bbCodes.strike));
             message += childNode.textContent;
         } else if(childNode.tagName == "EM") {
-            bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.italic));
+            bbSections.push(createBBSection(message, childNode.textContent, bbCodes.italic));
             message += childNode.textContent;
         } else if(childNode.tagName == "P" && childNode.classList.contains("spoiler")) {
             const childContents = gatherMessageContents(childNode);
@@ -150,7 +143,7 @@ function gatherMessageContents(node: HTMLElement): MessageContents {
             const childBbSections = childContents.bbSections;
             for(const emoji of childEmojis) {
                 emojis.push({
-                    index: message.length + emoji.index,
+                    messageOffset: message.length + emoji.messageOffset,
                     node: emoji.node,
                     substitute: false,
                 });
@@ -158,7 +151,6 @@ function gatherMessageContents(node: HTMLElement): MessageContents {
             for(const bbSection of childBbSections) {
                 // TODO: refactor id remapping
                 bbSections.push(new BBSection(
-                    bbSections.length,
                     bbSection.bbCode,
                     bbSection.value,
                     bbSection.ignore,
@@ -166,20 +158,20 @@ function gatherMessageContents(node: HTMLElement): MessageContents {
                     bbSection.openingTagEnd + message.length,
                     bbSection.closingTagStart + message.length,
                     bbSection.closingTagEnd + message.length,
-                    bbSection.substitute,
+                    bbSection.convertToMarkdown,
                 ));
             }
-            bbSections.push(createBBSection(bbSections.length, message, childMessage, bbCodes.spoiler));
+            bbSections.push(createBBSection(message, childMessage, bbCodes.spoiler));
             message += childMessage;
         } else if(childNode.tagName == "PRE") {
-            bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.code));
+            bbSections.push(createBBSection(message, childNode.textContent, bbCodes.code));
             message += childNode.textContent;
         } else if(childNode.tagName == "CODE") {
-            bbSections.push(createBBSection(bbSections.length, message, childNode.textContent, bbCodes.pre));
+            bbSections.push(createBBSection(message, childNode.textContent, bbCodes.pre));
             message += childNode.textContent;
         } else if(childNode.tagName == "svg" && childNode.dataset.type == "emoji") {
             emojis.push({
-                index: message.length,
+                messageOffset: message.length,
                 node: childNode,
                 substitute: false,
             });
@@ -218,8 +210,8 @@ function locateBBTags(message: string): BBTag[] {
         while(tagReader.canRead() && isAllowedBBCodeChar(tagReader.peek())) {
             tagReader.skip();
         }
-        let bbCode = null;
-        let bbValue = null;
+        let bbCode: string | null = null;
+        let bbValue: string | null  = null;
         if(!isClosingTag && tagReader.canRead() && tagReader.peek() == '=') { // parse value
             const valueReader = tagReader.copy();
             valueReader.skip();
@@ -249,7 +241,7 @@ function isTagInSuppressedSection(bbTag: BBTag, bbSections: BBSection[]): boolea
     return bbSections.some(section => section.bbCode.suppressNested && bbTag.start >= section.openingTagStart && bbTag.end <= section.closingTagEnd);
 }
 
-function createBBSections(bbTags: BBTag[], initial: BBSection[], emojis: Emoji[]): Map<number, BBSection> {
+function createBBSections(bbTags: BBTag[], initial: BBSection[], emojis: Emoji[]): BBSection[] {
     const bbSections = initial.slice(0);
     const queue = bbTags.slice(0);
     while(queue.length > 0) {
@@ -266,15 +258,15 @@ function createBBSections(bbTags: BBTag[], initial: BBSection[], emojis: Emoji[]
             }
             if(endTag.isClosingTag) {
                 if(depth == 0) { // closing bbcode tag found
-                    const bbSection = new BBSection(bbSections.length, startTag.bbCode, startTag.bbValue, startTag.ignore, startTag.start, startTag.end, endTag.start, endTag.end);
+                    const bbSection = new BBSection(startTag.bbCode, startTag.bbValue, startTag.ignore, startTag.start, startTag.end, endTag.start, endTag.end);
                     if(startTag.bbCode.suppressNested) {
                         for(const section of initial) {
                             if(bbSection.intersectsWith(section)) {
-                                section.substitute = true;
+                                section.convertToMarkdown = true;
                             }
                         }
                         for(const emoji of emojis) {
-                            if(emoji.index >= bbSection.openingTagEnd && emoji.index <= bbSection.closingTagStart) {
+                            if(emoji.messageOffset >= bbSection.openingTagEnd && emoji.messageOffset <= bbSection.closingTagStart) {
                                 emoji.substitute = true;
                             }
                         }
@@ -290,30 +282,27 @@ function createBBSections(bbTags: BBTag[], initial: BBSection[], emojis: Emoji[]
             }
         }
     }
-    return new Map(bbSections.map(x => [x.id, x]));
+    return bbSections;
 }
 
-function locatePlainUrls(message: string, bbSections: Map<number, BBSection>) {
+function locatePlainUrls(message: string, bbSections: BBSection[]): BBSection[] {
     const urlSections = [];
     const urlRegex = /(\w+:\/\/\S+)/g;
-    let id = Math.max(...bbSections.keys()) + 1;
     let match;
     while((match = urlRegex.exec(message)) != null) {
         const url = evaluateUrl(match, bbSections);
         if(url != null && url.index != null) {
-            urlSections.push(new BBSection(id++, bbCodes.url, null, false, url.index, url.index, url.index + url[0].length, url.index + url[0].length));
+            urlSections.push(new BBSection(bbCodes.url, null, false, url.index, url.index, url.index + url[0].length, url.index + url[0].length));
         }
     }
-    for(const bbSection of urlSections) {
-        bbSections.set(bbSection.id, bbSection);
-    }
+    return urlSections;
 }
 
-function evaluateUrl(match: RegExpMatchArray, bbSections: Map<number, BBSection>): RegExpMatchArray | null {
+function evaluateUrl(match: RegExpMatchArray, bbSections: BBSection[]): RegExpMatchArray | null {
     if(match.index == null) {
         return null
     }
-    for(const bbSection of bbSections.values()) {
+    for(const bbSection of bbSections) {
         if(bbSection.bbCode == bbCodes.url) {
             if(bbSection.openingTagStart < match.index && bbSection.openingTagEnd > match.index && bbSection.openingTagEnd <= match.index + match[0].length) {
                 // url is inside opening tag
@@ -342,17 +331,17 @@ function evaluateUrl(match: RegExpMatchArray, bbSections: Map<number, BBSection>
 type ParsedMessage = {
     message: string;
     emojis: Emoji[];
-    bbSectionsMap: Map<number, BBSection>;
+    bbSections: BBSection[];
 }
 
 export function parseMessage(node: HTMLElement): ParsedMessage {
     const contents = gatherMessageContents(node);
     const bbTags = locateBBTags(contents.message);
-    const bbSectionsMap = createBBSections(bbTags, contents.bbSections, contents.emojis);
-    locatePlainUrls(contents.message, bbSectionsMap);
+    const bbSections = createBBSections(bbTags, contents.bbSections, contents.emojis);
+    const urlSections = locatePlainUrls(contents.message, bbSections);
     return {
         message: contents.message,
         emojis: contents.emojis,
-        bbSectionsMap
+        bbSections: bbSections.concat(urlSections),
     };
 }

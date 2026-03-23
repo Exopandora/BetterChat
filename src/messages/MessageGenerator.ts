@@ -146,138 +146,125 @@ function markdownCodeForBbCode(bbCode: BBCode): string {
     }
 }
 
-class SegmentEdge {
-    bbCode: BBCode | null;
+abstract class SegmentEdge {
     start: number;
     end: number;
-    sectionId: number | null;
-    isClosingTag: boolean;
-    noElementCreation: boolean;
-    substitution: string | null;
-    index: number | null;
 
-    constructor(
-        options: {
-            bbCode?: BBCode,
-            start: number,
-            end: number,
-            sectionId?: number,
-            isClosingTag?: boolean ,
-            noElementCreation?: boolean,
-            substitution?: string,
-            index?: number,
-        }
+    protected constructor(
+        start: number,
+        end: number,
     ) {
-        this.bbCode = options.bbCode ?? null;
-        this.start = options.start;
-        this.end = options.end;
-        this.sectionId = options.sectionId ?? null;
-        this.isClosingTag = options.isClosingTag ?? false;
-        this.noElementCreation = options.noElementCreation ?? false;
-        this.substitution = options.substitution ?? null;
-        this.index = options.index ?? null;
+        this.start = start;
+        this.end = end;
     }
 }
 
-function createSegmentEdges(emojis: Emoji[], bbSectionsMap: Map<number, BBSection>) {
+class BBCodeEdge extends SegmentEdge {
+    bbSection: BBSection;
+    isClosingTag: boolean;
+
+    constructor(
+        start: number,
+        end: number,
+        bbSection: BBSection,
+        isClosingTag: boolean
+    ) {
+        super(start, end);
+        this.bbSection = bbSection;
+        this.isClosingTag = isClosingTag;
+    }
+}
+
+class PlaceholderEdge extends SegmentEdge {
+    placeholder: HTMLElement | null;
+
+    constructor(start: number, end: number, placeholder: HTMLElement | null = null) {
+        super(start, end);
+        this.placeholder = placeholder;
+    }
+}
+
+function createSegmentEdges(emojis: Emoji[], bbSections: BBSection[]) {
     const segmentEdges: SegmentEdge[] = [];
-    for(const bbSection of bbSectionsMap.values()) {
+    for(const bbSection of bbSections) {
         if(!bbSection.ignore) {
-            if(!bbSection.substitute) {
+            if(!bbSection.convertToMarkdown) {
                 segmentEdges.push(
-                    new SegmentEdge({
-                        bbCode: bbSection.bbCode,
-                        start: bbSection.openingTagStart,
-                        end: bbSection.openingTagEnd,
-                        sectionId: bbSection.id,
-                        isClosingTag: false
-                    })
+                    new BBCodeEdge(
+                        bbSection.openingTagStart,
+                        bbSection.openingTagEnd,
+                        bbSection,
+                        false,
+                    )
                 );
                 segmentEdges.push(
-                    new SegmentEdge({
-                        bbCode: bbSection.bbCode,
-                        start: bbSection.closingTagStart,
-                        end: bbSection.closingTagEnd,
-                        sectionId: bbSection.id,
-                        isClosingTag: true
-                    })
+                    new BBCodeEdge(
+                        bbSection.closingTagStart,
+                        bbSection.closingTagEnd,
+                        bbSection,
+                        true,
+                    )
                 );
             } else {
-                const substitution = markdownCodeForBbCode(bbSection.bbCode);
+                const markdown = markdownCodeForBbCode(bbSection.bbCode);
                 segmentEdges.push(
-                    new SegmentEdge({
-                        start: bbSection.openingTagStart,
-                        end: bbSection.openingTagEnd,
-                        substitution: substitution,
-                        noElementCreation: true
-                    })
+                    new PlaceholderEdge(
+                        bbSection.openingTagStart,
+                        bbSection.openingTagEnd,
+                        createText(markdown),
+                    )
                 );
                 segmentEdges.push(
-                    new SegmentEdge({
-                        start: bbSection.closingTagStart,
-                        end: bbSection.closingTagEnd,
-                        substitution: substitution,
-                        noElementCreation: true
-                    })
+                    new PlaceholderEdge(
+                        bbSection.closingTagStart,
+                        bbSection.closingTagEnd,
+                        createText(markdown),
+                    )
                 );
             }
         } else {
             segmentEdges.push(
-                new SegmentEdge({
-                    start: bbSection.openingTagStart - 1,
-                    end: bbSection.openingTagStart,
-                    noElementCreation: true
-                })
+                new PlaceholderEdge(
+                    bbSection.openingTagStart - 1,
+                    bbSection.openingTagStart,
+                )
             );
         }
     }
-    for(let x = 0; x < emojis.length; x++) {
-        const emoji = emojis[x];
+    for(const emoji of emojis) {
         if(!emoji.substitute) {
             segmentEdges.push(
-                new SegmentEdge({
-                    start: emoji.index,
-                    end: emoji.index,
-                    index: x,
-                    noElementCreation: true
-                })
+                new PlaceholderEdge(
+                    emoji.messageOffset,
+                    emoji.messageOffset,
+                    emoji.node,
+                )
             );
         } else {
             segmentEdges.push(
-                new SegmentEdge({
-                    start: emoji.index,
-                    end: emoji.index,
-                    noElementCreation: true,
-                    substitution: ":" + (<any> emoji.node).__vue__.tsEmoji.shortcodes[0] + ":"
-                })
+                new PlaceholderEdge(
+                    emoji.messageOffset,
+                    emoji.messageOffset,
+                    createText(":" + (<any> emoji.node).__vue__.tsEmoji.shortcodes[0] + ":"),
+                )
             );
         }
     }
-    segmentEdges.sort((a, b) => {
+    return segmentEdges.sort((a, b) => {
         if(a.start == b.start) {
             if(a.end == b.end) {
-                const aHasIndex = a.index != null;
-                const bHasIndex = b.index != null;
-                if(aHasIndex && !bHasIndex) {
-                    return 1;
-                } else if(!aHasIndex && bHasIndex) {
-                    return -1;
-                } else if(aHasIndex && bHasIndex) {
-                    return a.index!! - b.index!!;
-                }
                 return 0;
             }
             return a.end - b.end;
         }
         return a.start - b.start;
     });
-    return segmentEdges;
 }
 
-function createHtmlElements(message: string, emojis: Emoji[], bbSectionsMap: Map<number, BBSection>, segmentEdges: SegmentEdge[]) {
+function createHtmlElements(message: string, segmentEdges: SegmentEdge[]): HTMLElement[] {
     const htmlElements: HTMLElement[][] = [[]];
     const nestedBbCodes: BBCode[] = [];
-    const sectionIds = new Set<number>();
+    const bbSections = new Set<BBSection>();
     let textElements: HTMLElement[] = [];
     let cursor = 0;
     for(const segmentEdge of segmentEdges) {
@@ -286,34 +273,29 @@ function createHtmlElements(message: string, emojis: Emoji[], bbSectionsMap: Map
         if(text.length > 0) {
             textElements.push(createText(text));
         }
-        if(segmentEdge.index != null) {
-            textElements.push(emojis[segmentEdge.index].node);
+        if(segmentEdge instanceof PlaceholderEdge && segmentEdge.placeholder != null) {
+            textElements.push(segmentEdge.placeholder);
         }
-        if(segmentEdge.substitution != null) {
-            textElements.push(createText(segmentEdge.substitution));
-        }
-        if(segmentEdge.noElementCreation) {
+        if(!(segmentEdge instanceof BBCodeEdge)) {
             continue;
         }
         if(textElements.length > 0) {
-            const bbSections = Array.from(sectionIds).map(sectionId => bbSectionsMap.get(sectionId)!!);
-            htmlElements[htmlElements.length - 1].push(createHtmlElement(textElements, bbSections));
+            htmlElements[htmlElements.length - 1].push(createHtmlElement(textElements, Array.from(bbSections)));
             textElements = [];
         }
         if(segmentEdge.isClosingTag) {
-            // TODO: refactor segment edges
-            if(hasNestedGeneration(segmentEdge.bbCode!!)) {
-                const htmlElement = applyStyle(nestedBbCodes.pop()!!, htmlElements.pop()!!, bbSectionsMap.get(segmentEdge.sectionId!!)!!.value);
+            if(hasNestedGeneration(segmentEdge.bbSection.bbCode)) {
+                const htmlElement = applyStyle(nestedBbCodes.pop()!!, htmlElements.pop()!!, segmentEdge.bbSection.value);
                 htmlElements[htmlElements.length - 1].push(htmlElement);
             } else {
-                sectionIds.delete(segmentEdge.sectionId!!);
+                bbSections.delete(segmentEdge.bbSection);
             }
         } else {
-            if(hasNestedGeneration(segmentEdge.bbCode!!)) {
+            if(hasNestedGeneration(segmentEdge.bbSection.bbCode)) {
                 htmlElements.push([]);
-                nestedBbCodes.push(segmentEdge.bbCode!!);
+                nestedBbCodes.push(segmentEdge.bbSection.bbCode);
             } else {
-                sectionIds.add(segmentEdge.sectionId!!);
+                bbSections.add(segmentEdge.bbSection);
             }
         }
     }
@@ -327,7 +309,7 @@ function createHtmlElements(message: string, emojis: Emoji[], bbSectionsMap: Map
 }
 
 function hasNestedGeneration(bbCode: BBCode): boolean {
-    return bbCode.code == bbCodes.url.code || bbCode.code == bbCodes.spoiler.code;
+    return bbCode == bbCodes.url || bbCode == bbCodes.spoiler;
 }
 
 function applyStyle(bbCode: BBCode, element: HTMLElement | HTMLElement[], value: string | null): HTMLElement {
@@ -386,7 +368,7 @@ function setClipboardString(text: string) {
     document.body.removeChild(element);
 }
 
-export function generateHtml(message: string, emojis: Emoji[], bbSectionsMap: Map<number, BBSection>) {
-    const segmentEdges = createSegmentEdges(emojis, bbSectionsMap);
-    return createHtmlElements(message, emojis, bbSectionsMap, segmentEdges);
+export function generateHtml(message: string, emojis: Emoji[], bbSections: BBSection[]): HTMLElement[] {
+    const segmentEdges = createSegmentEdges(emojis, bbSections);
+    return createHtmlElements(message, segmentEdges);
 }

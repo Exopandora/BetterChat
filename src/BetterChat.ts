@@ -53,8 +53,8 @@ function modifyMessageNode(node: HTMLElement) {
         }
     }
     if(settings.getValueForKey("chatStyling")) {
-        const { message, emojis, bbSectionsMap } = parseMessage(node);
-        const htmlElements = generateHtml(message, emojis, bbSectionsMap);
+        const { message, emojis, bbSections } = parseMessage(node);
+        const htmlElements = generateHtml(message, emojis, bbSections);
         while(node.firstChild) {
             node.removeChild(<Node> node.lastChild);
         }
