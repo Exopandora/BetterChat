@@ -7,11 +7,13 @@
     "strict": true,
     "skipLibCheck": true,
     "checkJs": false,
-    "outDir": "build",
+    "outDir": "build/compile",
 
     "sourceMap": true,
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
   },
   "include": ["src/BetterChat.ts"]
 }

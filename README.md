@@ -7,17 +7,17 @@ It works in both compact and detailed view.
 BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3.
 Currently, the following tags are supported:
 
-| Name | Syntax  | Example |
-| ---- | ------- | ------- |
-| bold  | [b]bold[/b] | ![bold](images/bbcodes/bold.png) |
-| code | [code]text[/code] | ![code](images/bbcodes/code.png) |
-| color | [color=#FFA500]hexcode[/color] or [color=orange]css color[/color] | ![color](images/bbcodes/color.png) |
-| italic | [i]italic[/i] | ![italic](images/bbcodes/italic.png) |
-| spoiler | [spoiler]spoiler[/spoiler] | ![spoiler](images/bbcodes/spoiler.png) |
-| strike | [s]strike[/s] | ![strike](images/bbcodes/strike.png) |
-| underline | [u]underline[/u] | ![underline](images/bbcodes/underline.png) |
-| url | [url]ht<span>tps://example.com[/url] or [url=ht<span>tps://example.com]text[/url] | ![url](images/bbcodes/url.png) |
-| pre | [pre]inline code[/pre] | ![pre](images/bbcodes/pre.png) |
+| Code      | Syntax                                                                            | Example                                    |
+|-----------|-----------------------------------------------------------------------------------|--------------------------------------------|
+| bold      | [b]bold[/b]                                                                       | ![bold](images/bbcodes/bold.png)           |
+| code      | [code]text[/code]                                                                 | ![code](images/bbcodes/code.png)           |
+| color     | [color=#FFA500]hexcode[/color] or [color=orange]css color[/color]                 | ![color](images/bbcodes/color.png)         |
+| italic    | [i]italic[/i]                                                                     | ![italic](images/bbcodes/italic.png)       |
+| spoiler   | [spoiler]spoiler[/spoiler]                                                        | ![spoiler](images/bbcodes/spoiler.png)     |
+| strike    | [s]strike[/s]                                                                     | ![strike](images/bbcodes/strike.png)       |
+| underline | [u]underline[/u]                                                                  | ![underline](images/bbcodes/underline.png) |
+| url       | [url]ht<span>tps://example.com[/url] or [url=ht<span>tps://example.com]text[/url] | ![url](images/bbcodes/url.png)             |
+| pre       | [pre]inline code[/pre]                                                            | ![pre](images/bbcodes/pre.png)             |
 
 ## Rich Embeds ##
 BetterChat supports automatic rich embeds for any website, including dedicated embeds for video, audio, image and twitter content.
@@ -36,14 +36,15 @@ Due to technical limitations, not all video and audio formats are supported at t
 ![Generic Embed](images/embeds/generic.png)
 
 ## Styling ##
-Custom styling for the image preview can be changed in the `style.css`.
-Rich embeds use the already existing css classes of the TeamSpeak client and should be compatible with already existing themes.
+Custom styling for the image preview can be changed in the `static/betterchat/style.css`.
+Rich embeds use the already existing CSS classes of the TeamSpeak client and should be compatible with already existing themes.
 
 ## Installation ##
 > [!NOTE]
 > * Depending on your installation directory you may need elevated permission privileges
 > * The installation process needs to be repeated after each TeamSpeak update
 > * Please check the [compatibility](https://github.com/Exopandora/BetterChat#compatibility) section before installing BetterChat
+> * Installation for TeamSpeak 5 requires the [TS5AddonInstaller](https://github.com/FelixVolo/TS5AddonInstaller/releases)
 
 ### Installer ###
 Installation steps:
@@ -55,42 +56,47 @@ Installation steps:
 
 ## Configuration ##
 BetterChat can be enabled and disabled while TeamSpeak is running.
-Just go to the settings menu inside TeamSpeak and navigate to Chats.
-There you can toggle specific features, like BBCode support or Rich Embeds, or enable and disable the addon entirely.
+Simply navigate to the Chats category of the TeamSpeak settings.
+There you can toggle individual features, like BBCode support or Rich Embeds, or enable and disable the addon entirely.
 
 ![BetterChat Settings](images/settings.png)
 
 ## Building from source ##
+
+### Requirements ###
+1. A recent Node.js installation
+
+### Compiling ###
 Clone the repository and run the following commands in the root directory of this repository:
 ```shell
 npm install
-npm run bundle
+npm run build
 ```
-The resulting files can be found in the `bundle` directory.
+The resulting archive can be found in the `build/zip` directory.
 
 ## Compatibility ##
 
-### TeamSpeak 6 ###
-| TeamSpeak | Windows | Linux | MacOS |
-| --------- | ------- | ----- | ----- |
-| Beta 3.4 | 3.4.0+ | 3.4.0+ | 3.4.0+ |
-| Beta 3.3 | ❌ | ❌ | ❌ |
-| Beta 3.2 | 3.3.0+ | 3.3.0+ | 3.3.0+ |
-| Beta 3.1 | 3.2.0+ | 3.2.0+ | 3.2.0+ |
-| Beta 3 | 3.1.0+ | 3.1.0+ | 3.1.0+ |
-| Beta 2 | 3.0.0+ | 3.0.0+ | 3.0.0+ |
+| TeamSpeak 6 | Windows | Linux  | MacOS  |
+|-------------|---------|--------|--------|
+| Beta 3.4    | 3.4.0+  | 3.4.0+ | 3.4.0+ |
+| Beta 3.3    | ❌       | ❌      | ❌      |
+| Beta 3.2    | 3.3.0+  | 3.3.0+ | 3.3.0+ |
+| Beta 3.1    | 3.2.0+  | 3.2.0+ | 3.2.0+ |
+| Beta 3      | 3.1.0+  | 3.1.0+ | 3.1.0+ |
+| Beta 2      | 3.0.0+  | 3.0.0+ | 3.0.0+ |
 
-### TeamSpeak 5 ###
-> [!NOTE]
-> Installation for TeamSpeak 5 requires the [TS5AddonInstaller](https://github.com/FelixVolo/TS5AddonInstaller/releases)
+<details>
+<summary>TeamSpeak 5</summary>
 
-| TeamSpeak | Windows | Linux | MacOS |
-| --------- | ------- | ----- | ----- |
-| Beta 77 | 2.5.0-2.6.1 | 2.5.0-2.6.1 | 2.5.0-2.6.1 |
-| Beta 76 | 2.4.0+ | 2.4.0+ | 2.4.0+ |
-| Beta 75 | 2.3.0+ | 2.3.0+ | 2.3.0+ |
-| Beta 74 | 2.1.0 - 2.2.1 | 2.1.0 - 2.2.1 | 2.1.0 - 2.2.1 |
-| Beta 73 | 1.2.0 - 2.2.1 | 1.2.0 - 2.2.1 | 1.2.0 - 2.2.1 |
-| Beta 72 | 1.1.0 - 2.2.1 | 1.1.0 - 2.2.1 | n/a |
-| Beta 71 | ❌ | ❌ | n/a |
-| Beta 70 | 1.0.0 - 1.0.4 | 1.0.0 - 1.0.4 | 1.0.0 - 1.0.4 |
+| TeamSpeak 5 | Windows       | Linux         | MacOS         |
+|-------------|---------------|---------------|---------------|
+| Beta 77     | 2.5.0-2.6.1   | 2.5.0-2.6.1   | 2.5.0-2.6.1   |
+| Beta 76     | 2.4.0+        | 2.4.0+        | 2.4.0+        |
+| Beta 75     | 2.3.0+        | 2.3.0+        | 2.3.0+        |
+| Beta 74     | 2.1.0 - 2.2.1 | 2.1.0 - 2.2.1 | 2.1.0 - 2.2.1 |
+| Beta 73     | 1.2.0 - 2.2.1 | 1.2.0 - 2.2.1 | 1.2.0 - 2.2.1 |
+| Beta 72     | 1.1.0 - 2.2.1 | 1.1.0 - 2.2.1 | n/a           |
+| Beta 71     | ❌             | ❌             | n/a           |
+| Beta 70     | 1.0.0 - 1.0.4 | 1.0.0 - 1.0.4 | 1.0.0 - 1.0.4 |
+
+</details>

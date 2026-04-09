@@ -1,5 +1,5 @@
 .idea/
 build/
-bundle/
+coverage/
 node_modules/
 test/

@@ -26,11 +26,7 @@
 	margin-top: 5px;
 }
 
-.ts-chat-room-event-detailed .betterchat-invalid-link {
-	color: #7F3300 !important;
-}
-
-.ts-chat-room-event-compact .betterchat-invalid-link {
+.betterchat-invalid-link {
 	color: gold !important;
 }
 
@@ -47,7 +43,7 @@
 }
 
 .betterchat-attachment-favicon-container {
-	margin: 6.2px 0px 10px 10px;
+	margin: 6.2px 0 10px 10px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;

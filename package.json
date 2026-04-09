@@ -1,14 +1,27 @@
 {
   "devDependencies": {
+    "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
+    "@jest/globals": "^30.3.0",
     "cross-env": "^10.1.0",
     "esbuild": "^0.27.4",
     "esbuild-copy-static-files": "^0.1.0",
-    "typescript": "^5.9.3"
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "jsdom": "^29.0.1",
+    "tippy.js": "^6.3.7",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3",
+    "xml-formatter": "^3.7.0",
+    "zip-a-folder": "^6.1.0"
   },
   "scripts": {
-    "clean": "npx rimraf ./build ./bundle",
-    "build": "npm run clean && npx tsc",
-    "debug": "npm run build && cross-env DEBUG=true node esbuild.mjs",
-    "bundle": "npm run build && cross-env node esbuild.mjs"
+    "clean": "npx rimraf ./build",
+    "compile": "npm run clean && npx tsc",
+    "bundle": "npm run compile && node esbuild.mjs",
+    "build": "npm run bundle && node zip.mjs",
+    "debug-bundle": "cross-env DEBUG=true npm run bundle",
+    "debug-build": "cross-env DEBUG=true npm run build",
+    "test": "jest",
+    "test-coverage": "jest --collectCoverage=true"
   }
 }

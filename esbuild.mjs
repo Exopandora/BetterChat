@@ -1,26 +1,35 @@
-import * as esbuild from 'esbuild'
+import * as esbuild from "esbuild"
 import copyStaticFiles from "esbuild-copy-static-files";
+import {globalExternals} from "@fal-works/esbuild-plugin-global-externals";
 
-const debug = process.env.DEBUG === "true";
+const generateSourcemaps = false;
+const isDebugBuild = process.env.DEBUG === "true";
 
-esbuild.build({
-	entryPoints: ['build/BetterChat.js'],
+await esbuild.build({
+	entryPoints: ["build/compile/BetterChat.js"],
 	bundle: true,
-	outfile: 'bundle/betterchat/index.js',
+	outfile: "build/bundle/betterchat/index.js",
 	platform: "browser",
-	target: "chrome100",
+	target: "chrome143",
 	format: "esm",
 	allowOverwrite: true,
-	minifySyntax: !debug,
-	minifyWhitespace: !debug,
-	minifyIdentifiers: !debug,
+	minifySyntax: !isDebugBuild,
+	minifyWhitespace: !isDebugBuild,
+	minifyIdentifiers: !isDebugBuild,
 	charset: "utf8",
 	assetNames: "[name]",
-	sourcemap: debug,
+	sourcemap: isDebugBuild && generateSourcemaps,
 	plugins: [
 		copyStaticFiles({
-			src: 'static',
-			dest: 'bundle',
+			src: "static",
+			dest: "build/bundle",
+		}),
+		copyStaticFiles({
+			src: "LICENSE",
+			dest: "build/bundle/LICENSE",
+		}),
+		globalExternals({
+			"tippy.js": "tippy",
 		}),
 	],
-}).catch(console.error);
+});
