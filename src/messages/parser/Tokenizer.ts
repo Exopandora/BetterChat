@@ -1,4 +1,5 @@
 import {StringReader} from "../../helpers/StringReader";
+import {getVueInstance} from "../../helpers/Util";
 import {Style, Styles} from "../Styles";
 
 export interface Token {
@@ -51,7 +52,7 @@ export class EmojiToken implements Token {
     }
 
     get string(): string {
-        return ":" + (<any>this.emoji).__vue__.tsEmoji.shortcodes[0] + ":"
+        return ":" + getVueInstance(this.emoji).tsEmoji.shortcodes[0] + ":"
     }
 }
 
