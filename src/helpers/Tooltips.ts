@@ -8,7 +8,7 @@ export namespace Tooltips {
         return disableNestedTooltips(element);
     }
 
-    export function destroy(element: Element, recursive: boolean = false) {
+    export function destroy(element: Element, nested: boolean = false) {
         const tippyInstance = getTippyInstance(element);
         if (tippyInstance != null) {
             tippyInstance.destroy();
@@ -17,19 +17,16 @@ export namespace Tooltips {
                 tooltips.splice(index, 1);
             }
         }
-        if (recursive) {
+        if (nested) {
             for (const child of element.childNodes) {
-                destroy(child as Element, recursive);
+                destroy(child as Element, nested);
             }
         }
     }
 
     export function destroyAll() {
         while (tooltips.length > 0) {
-            const tooltip = tooltips.pop();
-            if (tooltip != null) {
-                tooltip.destroy();
-            }
+            tooltips.pop()?.destroy();
         }
     }
 
@@ -37,7 +34,7 @@ export namespace Tooltips {
         const childTooltips: Element[] = [];
         for (const child of element.childNodes) {
             const childElement = child as Element;
-            let tippyInstance = getTippyInstance(childElement);
+            const tippyInstance = getTippyInstance(childElement);
             if (tippyInstance != null) {
                 tippyInstance.disable();
                 childTooltips.push(childElement);
@@ -47,15 +44,12 @@ export namespace Tooltips {
         return childTooltips;
     }
 
-    export function getTippyInstance(element: Element): Instance | null {
-        if ((element as any)._tippy) {
-            return (element as any)._tippy;
-        }
-        return null;
+    function getTippyInstance(element: Element): Instance | null {
+        return (element as any)?._tippy;
     }
 
     export function setTooltipContentUntilHidden(element: Element, content: Content) {
-        const tippy = Tooltips.getTippyInstance(element);
+        const tippy = getTippyInstance(element);
         if (tippy != null) {
             const prevContent = tippy.props.content;
             tippy.hide();
@@ -66,6 +60,12 @@ export namespace Tooltips {
                 }
             });
             tippy.show();
+        }
+    }
+
+    export function enableAll(elements: Element[]) {
+        for (const element of elements) {
+            getTippyInstance(element)?.enable();
         }
     }
 }

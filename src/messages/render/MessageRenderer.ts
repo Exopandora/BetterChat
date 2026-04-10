@@ -93,12 +93,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         p.onclick = (event: PointerEvent) => {
             p.setAttribute("visible", "true");
             Tooltips.destroy(p);
-            for (const childTooltip of childTooltips) {
-                const tippy = (childTooltip as any)._tippy;
-                if (tippy) {
-                    tippy.enable();
-                }
-            }
+            Tooltips.enableAll(childTooltips);
             event.stopPropagation();
             event.preventDefault();
         };
