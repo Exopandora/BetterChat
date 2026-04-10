@@ -1,4 +1,4 @@
-import {SettingsWidgetWrapper} from "./components/tsclient/SettingsWidgetWrapper";
+import {SettingsWidget} from "./components/tsclient/SettingsWidget";
 import {ToggleSetting} from "./components/tsclient/ToggleSetting";
 import {Settings} from "./helpers/Settings";
 import {Tooltips} from "./helpers/Tooltips";
@@ -125,7 +125,7 @@ namespace EventHandler {
         if (root == null) {
             return;
         }
-        const widgetWrapper = SettingsWidgetWrapper(
+        const widgetWrapper = SettingsWidget(
             "BetterChat",
             ToggleSetting("Enable BetterChat", "Enables advanced chat features", "enabled", settings),
             ToggleSetting("Rich Embeds", "Load rich embeds for links in chat messages", "embeds", settings),
