@@ -125,12 +125,11 @@ namespace EventHandler {
         if (root == null) {
             return;
         }
-        const widgetWrapper = SettingsWidget(
-            "BetterChat",
+        const widgetWrapper = SettingsWidget("BetterChat", [
             ToggleSetting("Enable BetterChat", "Enables advanced chat features", "enabled", settings),
             ToggleSetting("Rich Embeds", "Load rich embeds for links in chat messages", "embeds", settings),
             ToggleSetting("BBCode support", "Support BBCode styling for chat messages", "chatStyling", settings),
-        );
+        ]);
         root.appendChild(widgetWrapper);
     }
 
