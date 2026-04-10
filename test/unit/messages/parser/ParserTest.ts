@@ -20,7 +20,7 @@ describe("Given a message element", () => {
         type ParseTestParams = {
             innerHTML: string;
             expected: DocumentNode;
-        }
+        };
         it.each<ParseTestParams>([
             {
                 innerHTML: "<del><span>str[b]ike</span></del><span>through[/b]</span>",
