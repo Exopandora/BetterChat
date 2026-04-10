@@ -367,10 +367,7 @@ class DocumentPostProcessOutput implements RenderOutput {
 
 class DocumentPostProcessor extends AbstractRenderer<DocumentPostProcessOutput> {
     constructor() {
-        super();
-        this.renderFactory.push({
-            create: (context) => new DocumentPostProcessNodeRenderer(context),
-        });
+        super((context) => new DocumentPostProcessNodeRenderer(context));
     }
 
     createRenderOutput(): DocumentPostProcessOutput {

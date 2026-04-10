@@ -178,10 +178,7 @@ class MessageRenderOutput implements RenderOutput {
 
 class DefaultMessageRenderer extends AbstractRenderer<MessageRenderOutput> {
     constructor() {
-        super();
-        this.renderFactory.push({
-            create: (context) => new MessageNodeRenderer(context),
-        });
+        super((context) => new MessageNodeRenderer(context));
     }
 
     createRenderOutput(): MessageRenderOutput {

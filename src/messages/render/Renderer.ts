@@ -17,16 +17,21 @@ export interface NodeRenderer {
 }
 
 export interface NodeRendererFactory<T extends RenderOutput> {
-    create(context: RenderContext<T>): NodeRenderer
+    (context: RenderContext<T>): NodeRenderer
 }
 
 export abstract class AbstractRenderer<T extends RenderOutput> implements Renderer<T> {
-    readonly renderFactory: NodeRendererFactory<T>[] = [];
+    readonly renderFactories: NodeRendererFactory<T>[] = [];
 
     abstract createRenderOutput(): T;
 
+    protected constructor(renderFactory: NodeRendererFactory<T>, ...renderFactories: NodeRendererFactory<T>[]) {
+        this.renderFactories.push(renderFactory);
+        this.renderFactories.push(...renderFactories);
+    }
+
     render(node: Node): T {
-        const context = new RenderContext(this.createRenderOutput(), this.renderFactory);
+        const context = new RenderContext(this.createRenderOutput(), this.renderFactories);
         context.beforeRoot(node);
         context.render(node);
         context.afterRoot(node);
@@ -41,7 +46,7 @@ export class RenderContext<T extends RenderOutput> {
     constructor(output: T, renderFactories: NodeRendererFactory<T>[]) {
         this.output = output;
         for (const renderFactory of renderFactories) {
-            const nodeRenderer = renderFactory.create(this);
+            const nodeRenderer = renderFactory(this);
             for (const nodeType of nodeRenderer.getSupportedNodeTypes()) {
                 if (!this.nodeRenderers.has(nodeType)) {
                     this.nodeRenderers.set(nodeType, nodeRenderer);
