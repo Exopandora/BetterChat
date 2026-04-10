@@ -145,7 +145,7 @@ describe("Given a simple document node", () => {
                     </code>`,
             },
             {
-                document: [new EmojiNode(global.document.createElement("emoji"))],
+                document: [new EmojiNode(document.createElement("emoji"))],
                 expected: `<emoji></emoji>`,
             },
         ])("returns the correct result for input $document", (params) => {
