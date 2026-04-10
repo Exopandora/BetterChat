@@ -12,6 +12,7 @@ import {
 import {Parser} from "../../../../src/messages/parser/Parser";
 import {StringToken, StyleToken, Token} from "../../../../src/messages/parser/Tokenizer";
 import {Styles} from "../../../../src/messages/Styles";
+// @ts-ignore
 import {createEmojiToken, link} from "../../../fixtures/TestFixtures";
 
 describe("Given a message element", () => {
