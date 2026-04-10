@@ -120,8 +120,8 @@ namespace EventHandler {
         }
     }
 
-    export function onChatSettingsAdded() {
-        const root = document.querySelector("div.ts-appearance-settings div.ts-widget-container");
+    export function onChatSettingsAdded(element: HTMLElement) {
+        const root = element.querySelector("div.ts-widget-container");
         if (root == null) {
             return;
         }
@@ -221,7 +221,7 @@ namespace DocumentObserver {
             } else if (element.classList.contains("ts-appearance-settings")) {
                 const chatSettingsIcon = document.querySelector("div.tsv-settings div.tsv-settings-categories .tsv-selected svg.tsv-icon-settings-chat");
                 if (chatSettingsIcon != null) {
-                    EventHandler.onChatSettingsAdded();
+                    EventHandler.onChatSettingsAdded(element);
                 }
             } else if (element.classList.contains("ProseMirror")) {
                 EventHandler.onChatInputAdded(element);
