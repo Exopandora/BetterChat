@@ -1,10 +1,10 @@
 import {Node} from "../node/Node";
 
-export interface Renderer<T extends RenderOutput> {
+export interface Renderer<T extends RenderTarget> {
     render(node: Node): T;
 }
 
-export interface RenderOutput {}
+export interface RenderTarget {}
 
 export interface NodeRenderer {
     afterRoot(node: Node): void;
@@ -16,14 +16,14 @@ export interface NodeRenderer {
     getSupportedNodeTypes(): string[];
 }
 
-export interface NodeRendererFactory<T extends RenderOutput> {
+export interface NodeRendererFactory<T extends RenderTarget> {
     (context: RenderContext<T>): NodeRenderer
 }
 
-export abstract class AbstractRenderer<T extends RenderOutput> implements Renderer<T> {
+export abstract class AbstractRenderer<T extends RenderTarget> implements Renderer<T> {
     readonly renderFactories: NodeRendererFactory<T>[] = [];
 
-    abstract createRenderOutput(): T;
+    abstract createRenderTarget(): T;
 
     protected constructor(renderFactory: NodeRendererFactory<T>, ...renderFactories: NodeRendererFactory<T>[]) {
         this.renderFactories.push(renderFactory);
@@ -31,7 +31,7 @@ export abstract class AbstractRenderer<T extends RenderOutput> implements Render
     }
 
     render(node: Node): T {
-        const context = new RenderContext(this.createRenderOutput(), this.renderFactories);
+        const context = new RenderContext(this.createRenderTarget(), this.renderFactories);
         context.beforeRoot(node);
         context.render(node);
         context.afterRoot(node);
@@ -39,7 +39,7 @@ export abstract class AbstractRenderer<T extends RenderOutput> implements Render
     }
 }
 
-export class RenderContext<T extends RenderOutput> {
+export class RenderContext<T extends RenderTarget> {
     private readonly nodeRenderers: Map<string, NodeRenderer> = new Map<string, NodeRenderer>();
     readonly output: T;
 

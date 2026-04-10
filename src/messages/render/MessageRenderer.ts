@@ -16,12 +16,12 @@ import {
     UrlNode
 } from "../node/Node";
 import {AbstractVisitor} from "../node/Visitor";
-import {AbstractRenderer, NodeRenderer, RenderContext, RenderOutput} from "./Renderer";
+import {AbstractRenderer, NodeRenderer, RenderContext, RenderTarget} from "./Renderer";
 
 class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     private parent: HTMLElement;
 
-    constructor(context: RenderContext<MessageRenderOutput>) {
+    constructor(context: RenderContext<MessageRenderTarget>) {
         super();
         this.parent = context.output.message;
     }
@@ -172,17 +172,17 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 }
 
-class MessageRenderOutput implements RenderOutput {
+class MessageRenderTarget implements RenderTarget {
     readonly message: HTMLElement = document.createElement("betterchat-message");
 }
 
-class DefaultMessageRenderer extends AbstractRenderer<MessageRenderOutput> {
+class DefaultMessageRenderer extends AbstractRenderer<MessageRenderTarget> {
     constructor() {
         super((context) => new MessageNodeRenderer(context));
     }
 
-    createRenderOutput(): MessageRenderOutput {
-        return new MessageRenderOutput();
+    createRenderTarget(): MessageRenderTarget {
+        return new MessageRenderTarget();
     }
 }
 

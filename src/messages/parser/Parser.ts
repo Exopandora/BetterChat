@@ -14,7 +14,7 @@ import {
     UrlNode
 } from "../node/Node";
 import {AbstractVisitor} from "../node/Visitor";
-import {AbstractRenderer, NodeRenderer, RenderContext, RenderOutput} from "../render/Renderer";
+import {AbstractRenderer, NodeRenderer, RenderContext, RenderTarget} from "../render/Renderer";
 import {Styles} from "../Styles";
 import {EmojiToken, StringToken, StyleToken, Token, Tokenizer} from "./Tokenizer";
 
@@ -361,25 +361,25 @@ export namespace Parser {
     }
 }
 
-class DocumentPostProcessOutput implements RenderOutput {
+class DocumentPostProcessRenderTarget implements RenderTarget {
     result: Node | null = null;
 }
 
-class DocumentPostProcessor extends AbstractRenderer<DocumentPostProcessOutput> {
+class DocumentPostProcessor extends AbstractRenderer<DocumentPostProcessRenderTarget> {
     constructor() {
         super((context) => new DocumentPostProcessNodeRenderer(context));
     }
 
-    createRenderOutput(): DocumentPostProcessOutput {
-        return new DocumentPostProcessOutput();
+    createRenderTarget(): DocumentPostProcessRenderTarget {
+        return new DocumentPostProcessRenderTarget();
     }
 }
 
 class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRenderer {
-    private readonly output: DocumentPostProcessOutput;
+    private readonly output: DocumentPostProcessRenderTarget;
     private parent: Node | null = null;
 
-    constructor(context: RenderContext<DocumentPostProcessOutput>) {
+    constructor(context: RenderContext<DocumentPostProcessRenderTarget>) {
         super();
         this.output = context.output;
     }
