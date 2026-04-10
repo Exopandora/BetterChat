@@ -5,7 +5,7 @@ export function getAppController(): AppController {
 }
 
 export function getVueInstance(node: Node | null): any {
-    return (<any>node)?.__vue__
+    return (node as any)?.__vue__
 }
 
 export function findOwnMessages(connection: Connection, ownID: string): Message[] {

@@ -20,7 +20,7 @@ export namespace TwitterEmbed {
         const json = await tweet.json();
         const container = document.createElement("div");
         container.innerHTML = json.html;
-        (<HTMLElement>container.firstChild).style.display = "none";
+        (container.firstChild as HTMLElement).style.display = "none";
         container.classList.add("ts-chat-message-attachment-integration");
         container.style.marginTop = "-10px";
         container.style.marginBottom = "-10px";

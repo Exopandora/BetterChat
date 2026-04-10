@@ -46,7 +46,7 @@ export namespace Parser {
             const token = tokens[x];
             if (token instanceof StringToken) {
                 if (nodes.length > 0 && nodes[nodes.length - 1] instanceof StringNode) {
-                    nodes[nodes.length - 1] = new StringNode((<StringNode>nodes[nodes.length - 1]).string + token.string);
+                    nodes[nodes.length - 1] = new StringNode((nodes[nodes.length - 1] as StringNode).string + token.string);
                 } else {
                     nodes.push(new StringNode(token.string));
                 }

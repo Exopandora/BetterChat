@@ -60,7 +60,7 @@ export namespace Tokenizer {
     export function tokenizeHTML(node: HTMLElement): Token[] {
         const tokens: Token[] = []
         for (const child of node.childNodes) {
-            const childElement = <HTMLElement>child;
+            const childElement = child as HTMLElement;
             if (childElement.tagName == "A") {
                 tokens.push(new StringToken(childElement.textContent));
             } else if (childElement.tagName == "STRONG") {

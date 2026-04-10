@@ -13,7 +13,7 @@ export abstract class AttachmentFactory<T extends HTMLElement> {
     }
 
     cloneNode(): T {
-        return <T>this.node.cloneNode(true);
+        return this.node.cloneNode(true) as T;
     }
 
     abstract newInstance(): HTMLElement;

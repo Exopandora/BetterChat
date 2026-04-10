@@ -8,7 +8,7 @@ export function GenericEmbed(factory: GenericEmbedAttachmentFactory): HTMLElemen
     const node = factory.cloneNode();
     const title = node.querySelector("div.betterchat-attachment-title-container a")!!;
     Tooltips.create(title, "Links to: " + factory.url);
-    const img = <HTMLImageElement>node.querySelector("img.betterchat-attachment-image")!!;
+    const img = node.querySelector("img.betterchat-attachment-image") as HTMLImageElement;
     if (img != null) {
         img.onclick = event => {
             if (event.shiftKey) {

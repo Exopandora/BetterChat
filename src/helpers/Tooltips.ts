@@ -19,7 +19,7 @@ export namespace Tooltips {
         }
         if (recursive) {
             for (const child of element.childNodes) {
-                destroy(<Element>child, recursive);
+                destroy(child as Element, recursive);
             }
         }
     }
@@ -36,7 +36,7 @@ export namespace Tooltips {
     export function disableNestedTooltips(element: Element): Element[] {
         const childTooltips: Element[] = [];
         for (const child of element.childNodes) {
-            const childElement = <Element>child;
+            const childElement = child as Element;
             let tippyInstance = getTippyInstance(childElement);
             if (tippyInstance != null) {
                 tippyInstance.disable();
@@ -48,8 +48,8 @@ export namespace Tooltips {
     }
 
     export function getTippyInstance(element: Element): Instance | null {
-        if ((<any>element)._tippy) {
-            return (<any>element)._tippy;
+        if ((element as any)._tippy) {
+            return (element as any)._tippy;
         }
         return null;
     }

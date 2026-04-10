@@ -26,7 +26,7 @@ function modifyMessageNode(node: HTMLElement) {
         return;
     }
     for (const childNode of node.childNodes) {
-        if ((<HTMLElement>childNode).tagName == "SPAN" && (<HTMLElement>childNode).classList.contains("ts-parsed-text-content-emoji")) {
+        if ((childNode as HTMLElement).tagName == "SPAN" && (childNode as HTMLElement).classList.contains("ts-parsed-text-content-emoji")) {
             return;
         }
     }
@@ -34,7 +34,7 @@ function modifyMessageNode(node: HTMLElement) {
         const document = Parser.parse(node);
         const html = MessageRenderer.render(document);
         while (node.firstChild) {
-            node.removeChild(<Node>node.lastChild);
+            node.removeChild(node.lastChild as Node);
         }
         node.appendChild(html);
     }
@@ -87,18 +87,18 @@ function removeAttachments(node: Element) {
 }
 
 function onMessageHeightChanged(node: Element) {
-    (<VirtualListItem | null>getVueInstance(node.closest("div.tsv-virtual-list-item")))?.onItemChanged();
+    (getVueInstance(node.closest("div.tsv-virtual-list-item")) as (VirtualListItem | null))?.onItemChanged();
 }
 
 namespace EventHandler {
     export function onMessageAdded(node: Node) {
         try {
             if (node.nodeType == Node.ELEMENT_NODE && settings.getValueForKey("enabled")) {
-                const element = <Element>node;
+                const element = node as Element;
                 const messageNodes = element.querySelectorAll(".ts-chat-message-content.ts-parsed-text-content");
                 for (const messageNode of messageNodes) {
-                    if (!isModifiedMessageNode(<HTMLElement>messageNode)) {
-                        modifyMessageNode(<HTMLElement>messageNode);
+                    if (!isModifiedMessageNode(messageNode as HTMLElement)) {
+                        modifyMessageNode(messageNode as HTMLElement);
                     }
                 }
                 if (getVueInstance(element)?.isRedacted) {
@@ -199,18 +199,18 @@ namespace DocumentObserver {
 
     function onNodeRemoved(node: Node, mutation: MutationRecord) {
         if (node.nodeType == Node.ELEMENT_NODE) {
-            const element = <HTMLElement>node;
+            const element = node as HTMLElement;
             if (element.tagName == "DIV" && element.classList.contains("tsv-view") && element.classList.contains("tsv-item-view") && element.classList.contains("tsv-view-transparent")) {
                 EventHandler.onViewRemoved();
             } else if (element.tagName == "SPAN" && element.classList.contains("ts-chat-message-content") && element.classList.contains("ts-parsed-text-content")) {
-                EventHandler.onMessageRemoved(element, <HTMLElement>mutation.previousSibling);
+                EventHandler.onMessageRemoved(element, mutation.previousSibling as HTMLElement);
             }
         }
     }
 
     function onNodeAdded(node: Node) {
-        if (node.nodeType == Node.ELEMENT_NODE && (<HTMLElement>node).tagName == "DIV") {
-            const element = <HTMLElement>node;
+        if (node.nodeType == Node.ELEMENT_NODE && (node as HTMLElement).tagName == "DIV") {
+            const element = node as HTMLElement;
             if (element.classList.contains("ts-rendered-message")) {
                 EventHandler.onMessageAdded(element);
             } else if (element.classList.contains("tsv-virtual-list-item")) {
