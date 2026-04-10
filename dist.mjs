@@ -2,7 +2,7 @@ import {zip} from "zip-a-folder";
 import fs from "fs";
 
 const inputDir = "build/bundle";
-const outputDir = "build/zip";
+const outputDir = "build/dist";
 
 if (!fs.existsSync(outputDir)) {
 	fs.mkdirSync(outputDir);

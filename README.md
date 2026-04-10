@@ -72,7 +72,7 @@ Clone the repository and run the following commands in the root directory of thi
 npm install
 npm run build
 ```
-The resulting archive can be found in the `build/zip` directory.
+The resulting archive can be found in the `build/dist` directory.
 
 ## Compatibility ##
 
