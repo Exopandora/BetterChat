@@ -2,7 +2,6 @@ import * as esbuild from "esbuild"
 import copyStaticFiles from "esbuild-copy-static-files";
 import {globalExternals} from "@fal-works/esbuild-plugin-global-externals";
 
-const generateSourcemaps = false;
 const isDebugBuild = process.env.DEBUG === "true";
 
 await esbuild.build({
@@ -18,7 +17,7 @@ await esbuild.build({
 	minifyIdentifiers: !isDebugBuild,
 	charset: "utf8",
 	assetNames: "[name]",
-	sourcemap: isDebugBuild && generateSourcemaps,
+	sourcemap: isDebugBuild ? "inline" : false,
 	plugins: [
 		copyStaticFiles({
 			src: "static",
