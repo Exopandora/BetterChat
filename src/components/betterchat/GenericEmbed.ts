@@ -10,7 +10,7 @@ export function GenericEmbed(factory: GenericEmbedAttachmentFactory): HTMLElemen
     Tooltips.create(title, "Links to: " + factory.url);
     const img = node.querySelector("img.betterchat-attachment-image") as HTMLImageElement;
     if (img != null) {
-        img.onclick = event => {
+        img.onclick = (event: PointerEvent) => {
             if (event.shiftKey) {
                 document.body.appendChild(ImagePreview(img.src, img.naturalWidth, img.naturalHeight));
                 event.stopPropagation();
