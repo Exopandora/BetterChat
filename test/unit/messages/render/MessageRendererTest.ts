@@ -1,158 +1,188 @@
-import {Tooltips} from "../../../../src/helpers/Tooltips";
-import {
-    BoldNode, CodeNode, ColorNode,
-    DocumentNode, EmojiNode, InlineCodeNode,
-    ItalicNode, SpoilerNode, StrikethroughNode,
-    StringNode,
-    UnderlineNode,
-    UrlNode,
-    Node
-} from "../../../../src/messages/node/Node";
-import {MessageRenderer} from "../../../../src/messages/render/MessageRenderer";
 import {afterEach, describe, expect, it} from '@jest/globals';
 import formatXml from "xml-formatter";
+import {Tooltips} from "../../../../src/helpers/Tooltips";
+import {
+    BoldNode,
+    CodeNode,
+    ColorNode,
+    DocumentNode,
+    EmojiNode,
+    InlineCodeNode,
+    ItalicNode,
+    SpoilerNode,
+    StrikethroughNode,
+    StringNode,
+    UnderlineNode,
+    UrlNode
+} from "../../../../src/messages/node/Node";
+import {MessageRenderer} from "../../../../src/messages/render/MessageRenderer";
 
 describe("Given a simple document node", () => {
     describe("when rendering a message", () => {
+        const formatMessage = function (message: string): string {
+            return formatXml(`<betterchat-message>${message.trim()}</betterchat-message>`);
+        };
         afterEach(() => {
             Tooltips.destroyAll();
         });
-        type RenderTestParams = {
-            document: Node[],
-            expected: string,
-        };
-        it.each<RenderTestParams>([
-            {
-                document: [new StringNode("string")],
-                expected: `<span>string</span>`,
-            },
-            {
-                document: [
-                    new UrlNode("https://example.com", [
-                        new StringNode("example.com"),
-                    ])],
-                expected: `
-                    <a target="_blank" rel="noreferrer noopener" tabindex="-1" data-original-title="null" style="display: inline-block;" href="https://example.com">
-                        <span>
-                            example.com
-                        </span>
-                    </a>`,
-            },
-            {
-                document: [new UrlNode("https://invalid.com[]")],
-                expected: `<a target="_blank" rel="noreferrer noopener" tabindex="-1" data-original-title="null" style="display: inline-block;" class="betterchat-invalid-link" href="https://invalid.com[]"></a>`,
-            },
-            {
-                document: [
-                    new BoldNode([
-                        new StringNode("bold text"),
-                    ]),
-                ],
-                expected: `
-                    <strong>
-                        <span>
-                            bold text
-                        </span>
-                    </strong>`,
-            },
-            {
-                document: [
-                    new UnderlineNode([
-                        new StringNode("underlined text"),
-                    ]),
-                ],
-                expected: `
-                    <span style="text-decoration: underline;">
-                        <span>
-                            underlined text
-                        </span>
-                    </span>`,
-            },
-            {
-                document: [new ItalicNode([
-                    new StringNode("italic text"),
-                ])],
-                expected: `
-                    <em>
-                        <span>
-                            italic text
-                        </span>
-                    </em>`,
-            },
-            {
-                document: [
-                    new StrikethroughNode([
-                        new StringNode("strikethrough text"),
-                    ]),
-                ],
-                expected: `
-                    <del>
-                        <span>
-                            strikethrough text
-                        </span>
-                    </del>`,
-            },
-            {
-                document: [
-                    new ColorNode("blue", [
-                        new StringNode("blue text"),
-                    ]),
-                ],
-                expected: `
-                    <span style="color: blue;">
-                        <span>
-                            blue text
-                        </span>
-                    </span>`,
-            },
-            {
-                document: [
-                    new SpoilerNode([
-                        new StringNode("hidden text"),
-                    ]),
-                ],
-                expected: `
-                    <p class="spoiler has-tooltip" aria-hidden="true" data-original-title="null">
-                        <span>
-                            hidden text
-                        </span>
-                    </p>`,
-            },
-            {
-                document: [
-                    new InlineCodeNode([
-                        new StringNode("inline code"),
-                    ]),
-                ],
-                expected: `
-                    <code class="inline-code">
-                        <span>
-                            inline code
-                        </span>
-                    </code>`,
-            },
-            {
-                document: [
-                    new CodeNode(null, [
-                        new StringNode("multiline code"),
-                    ]),
-                ],
-                expected: `
-                    <code class="hljs">
-                        <span>
-                            multiline code
-                        </span>
-                    </code>`,
-            },
-            {
-                document: [new EmojiNode(document.createElement("emoji"))],
-                expected: `<emoji></emoji>`,
-            },
-        ])("returns the correct result for input $document", (params) => {
-            const document = new DocumentNode(params.document);
+        it("renders a string node correctly", () => {
+            const document = new DocumentNode([
+                new StringNode("string"),
+            ]);
             const result = MessageRenderer.render(document);
-            const expected = formatXml(`<betterchat-message>${params.expected.trim()}</betterchat-message>`);
-            expect(formatXml(result.outerHTML)).toEqual(expected);
+            const expected = "<span>string</span>";
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an url node with a valid link correctly", () => {
+            const document = new DocumentNode([
+                new UrlNode("https://example.com", [
+                    new StringNode(`example.com`),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <a target="_blank" rel="noreferrer noopener" tabindex="-1" data-original-title="null" style="display: inline-block;" href="https://example.com">
+                    <span>
+                        example.com
+                    </span>
+                </a>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an url node with an invalid link correctly", () => {
+            const document = new DocumentNode([
+                new UrlNode("https://invalid.com[]"),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `<a target="_blank" rel="noreferrer noopener" tabindex="-1" data-original-title="null" style="display: inline-block;" class="betterchat-invalid-link" href="https://invalid.com[]"></a>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a bold node correctly", () => {
+            const document = new DocumentNode([
+                new BoldNode([
+                    new StringNode("bold text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <strong>
+                    <span>
+                        bold text
+                    </span>
+                </strong>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an underline node correctly", () => {
+            const document = new DocumentNode([
+                new UnderlineNode([
+                    new StringNode("underlined text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <span style="text-decoration: underline;">
+                    <span>
+                        underlined text
+                    </span>
+                </span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an italic node correctly", () => {
+            const document = new DocumentNode([
+                new ItalicNode([
+                    new StringNode("italic text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <em>
+                    <span>
+                        italic text
+                    </span>
+                </em>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a strikethrough node correctly", () => {
+            const document = new DocumentNode([
+                new StrikethroughNode([
+                    new StringNode("strikethrough text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <del>
+                    <span>
+                        strikethrough text
+                    </span>
+                </del>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a color node correctly", () => {
+            const document = new DocumentNode([
+                new ColorNode("blue", [
+                    new StringNode("blue text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <span style="color: blue;">
+                    <span>
+                        blue text
+                    </span>
+                </span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a spoiler node correctly", () => {
+            const document = new DocumentNode([
+                new SpoilerNode([
+                    new StringNode("hidden text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <p class="spoiler has-tooltip" aria-hidden="true" data-original-title="null">
+                    <span>
+                        hidden text
+                    </span>
+                </p>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an inline code node correctly", () => {
+            const document = new DocumentNode([
+                new InlineCodeNode([
+                    new StringNode("inline code"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <code class="inline-code">
+                    <span>
+                        inline code
+                    </span>
+                </code>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a code node correctly", () => {
+            const document = new DocumentNode([
+                new CodeNode(null, [
+                    new StringNode("multiline code"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <code class="hljs">
+                    <span>
+                        multiline code
+                    </span>
+                </code>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an emoji node correctly", () => {
+            const document = new DocumentNode([
+                new EmojiNode(globalThis.document.createElement("emoji")),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `<emoji></emoji>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });
 });
