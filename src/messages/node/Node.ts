@@ -98,3 +98,9 @@ export class EmojiNode extends Node {
         this.node = node;
     }
 }
+
+export class SuperscriptNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}

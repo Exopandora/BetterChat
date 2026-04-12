@@ -9,7 +9,7 @@ import {
     Node,
     SpoilerNode,
     StrikethroughNode,
-    StringNode,
+    StringNode, SuperscriptNode,
     UnderlineNode,
     UrlNode
 } from "./Node";
@@ -27,6 +27,7 @@ export interface Visitor {
     visitInlineCodeNode(node: InlineCodeNode): void;
     visitCodeNode(node: CodeNode): void;
     visitEmojiNode(node: EmojiNode): void;
+    visitSuperscriptNode(node: SuperscriptNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
@@ -54,6 +55,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitCodeNode(node);
         } else if (node instanceof EmojiNode) {
             this.visitEmojiNode(node);
+        } else if (node instanceof SuperscriptNode) {
+            this.visitSuperscriptNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -100,6 +103,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitUrlNode(node: UrlNode): void {
+        this.visitChildren(node);
+    }
+
+    visitSuperscriptNode(node: SuperscriptNode): void {
         this.visitChildren(node);
     }
 

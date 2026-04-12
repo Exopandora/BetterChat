@@ -9,7 +9,7 @@ import {
     Node,
     SpoilerNode,
     StrikethroughNode,
-    StringNode,
+    StringNode, SuperscriptNode,
     UnderlineNode,
     UrlNode
 } from "../node/Node";
@@ -87,6 +87,9 @@ export namespace Parser {
                             break;
                         case Styles.PRE:
                             nodes.push(new InlineCodeNode(children));
+                            break;
+                        case Styles.SUPERSCRIPT:
+                            nodes.push(new SuperscriptNode(children));
                             break;
                         default:
                             throw new Error(`Unknown style ${token.style.name}`);
@@ -417,6 +420,7 @@ class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRen
             InlineCodeNode.name,
             CodeNode.name,
             EmojiNode.name,
+            SuperscriptNode.name,
         ];
     }
 }

@@ -11,7 +11,7 @@ import {
     Node,
     SpoilerNode,
     StrikethroughNode,
-    StringNode,
+    StringNode, SuperscriptNode,
     UnderlineNode,
     UrlNode
 } from "../node/Node";
@@ -146,6 +146,11 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         Tooltips.create(a, "Links to: " + href);
     }
 
+    visitSuperscriptNode(node: SuperscriptNode) {
+        const sup = document.createElement("sup");
+        this.append(node, sup);
+    }
+
     append(node: Node, element: HTMLElement): void {
         this.parent.appendChild(element);
         const prevParent = this.parent;
@@ -168,6 +173,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             InlineCodeNode.name,
             CodeNode.name,
             EmojiNode.name,
+            SuperscriptNode.name,
         ]
     }
 }

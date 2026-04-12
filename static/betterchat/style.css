@@ -101,3 +101,8 @@
     background: transparent !important;
     border: none !important;
 }
+
+betterchat-message sup {
+	/* Fix vanilla TS6 client CSS forcing "vertical-align: baseline;" on all tags */
+	vertical-align: super;
+}
