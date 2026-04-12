@@ -107,7 +107,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     visitStringNode(node: StringNode): void {
         const span = document.createElement("span");
         span.textContent = node.string;
-        this.append(node, span);
+        this.parent.appendChild(span);
     }
 
     visitUnderlineNode(node: UnderlineNode): void {
