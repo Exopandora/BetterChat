@@ -106,3 +106,8 @@ betterchat-message sup {
 	/* Fix vanilla TS6 client CSS forcing "vertical-align: baseline;" on all tags */
 	vertical-align: super;
 }
+
+betterchat-message sub {
+	/* Fix vanilla TS6 client CSS forcing "vertical-align: baseline;" on all tags */
+	vertical-align: sub;
+}

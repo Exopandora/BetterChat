@@ -56,6 +56,7 @@ export namespace Styles {
     export const CODE = new Style("code", isAny, {allowsNesting: false});
     export const PRE = new Style("pre", isNull, {allowsNesting: false});
     export const SUPERSCRIPT = new Style("superscript", isNull);
+    export const SUBSCRIPT = new Style("subscript", isNull);
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -84,6 +85,7 @@ export namespace Styles {
         ["code", CODE],
         ["pre", PRE],
         ["sup", SUPERSCRIPT],
+        ["sub", SUBSCRIPT],
     ]);
 
     export function fromBBCode(code: string): Style | null {

@@ -104,3 +104,9 @@ export class SuperscriptNode extends Node {
         super(children);
     }
 }
+
+export class SubscriptNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}

@@ -11,7 +11,9 @@ import {
     ItalicNode,
     SpoilerNode,
     StrikethroughNode,
-    StringNode, SuperscriptNode,
+    StringNode,
+    SubscriptNode,
+    SuperscriptNode,
     UnderlineNode,
     UrlNode
 } from "../../../../src/messages/node/Node";
@@ -197,6 +199,21 @@ describe("Given a simple document node", () => {
                         superscript text
                     </span>
                 </sup>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a subscript node correctly", () => {
+            const document = new DocumentNode([
+                new SubscriptNode([
+                    new StringNode("subscript text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <sub>
+                    <span>
+                        subscript text
+                    </span>
+                </sub>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });
