@@ -118,12 +118,9 @@ export namespace Tokenizer {
             if (!isEndTag && tagReader.canRead() && tagReader.peek() == "=") { // parse value
                 const valueReader = tagReader.copy();
                 valueReader.skip();
-                while (valueReader.canRead() && isAllowedBBCodeValueChar(valueReader.peek())) {
-                    valueReader.skip();
-                }
+                bbValue = readBBValue(valueReader);
                 if (valueReader.canRead() && valueReader.peek() == "]") {
                     bbCode = message.substring(reader.cursor, tagReader.cursor).toLowerCase();
-                    bbValue = message.substring(tagReader.cursor + 1, valueReader.cursor);
                     tagReader.cursor = valueReader.cursor;
                 }
             } else if (tagReader.canRead() && tagReader.peek() == "]") { // bbcode tag found
@@ -162,5 +159,43 @@ export namespace Tokenizer {
 
     function isAllowedBBCodeValueChar(char: string): boolean {
         return char != "[" && char != "]";
+    }
+
+    function readBBValue(reader: StringReader): string | null {
+        if (!reader.canRead()) {
+            return null;
+        }
+        if (reader.peek() == "\"") {
+            reader.skip();
+            return readStringUntil(reader, "\"");
+        }
+        const start = reader.cursor;
+        while (reader.canRead() && isAllowedBBCodeValueChar(reader.peek())) {
+            reader.skip();
+        }
+        return reader.string.substring(start, reader.cursor);
+    }
+
+    function readStringUntil(reader: StringReader, terminator: string): string | null {
+        let result = "";
+        let escaped = false;
+        while (reader.canRead()) {
+            const c = reader.read();
+            if (escaped) {
+                if (c == terminator || c == "\\") {
+                    result += c;
+                    escaped = false;
+                } else {
+                    return null;
+                }
+            } else if (c == "\\") {
+                escaped = true;
+            } else if (c == terminator) {
+                return result;
+            } else {
+                result += c;
+            }
+        }
+        return null;
     }
 }

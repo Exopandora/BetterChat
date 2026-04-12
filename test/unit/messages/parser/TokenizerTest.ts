@@ -15,6 +15,13 @@ describe("Given a simple string", () => {
             ]
             expect(result).toEqual(expected);
         });
+        it("parses quoted tag values correctly", () => {
+            const result = Tokenizer.tokenizeString("[code=\"lang\\\"uage\"]");
+            const expected = [
+                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code=\"lang\\\"uage\"]", false, "lang\"uage"),
+            ]
+            expect(result).toEqual(expected);
+        });
     });
 });
 
