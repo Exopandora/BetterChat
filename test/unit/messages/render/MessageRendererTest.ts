@@ -4,7 +4,7 @@ import {Tooltips} from "../../../../src/helpers/Tooltips";
 import {
     BoldNode,
     CodeNode,
-    ColorNode,
+    ColorNode, DetailsNode,
     DocumentNode,
     EmojiNode,
     InlineCodeNode,
@@ -214,6 +214,22 @@ describe("Given a simple document node", () => {
                         subscript text
                     </span>
                 </sub>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a details node correctly", () => {
+            const document = new DocumentNode([
+                new DetailsNode("summary text", [
+                    new StringNode("details text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <details>
+                    <summary>
+                        summary text
+                    </summary>
+                    <span>details text</span>
+                </details>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });

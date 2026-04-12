@@ -3,7 +3,7 @@ import {getVueInstance, setClipboardString} from "../../helpers/Util";
 import {
     BoldNode,
     CodeNode,
-    ColorNode,
+    ColorNode, DetailsNode,
     DocumentNode,
     EmojiNode,
     InlineCodeNode,
@@ -156,6 +156,14 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.append(node, sub);
     }
 
+    visitDetailsNode(node: DetailsNode) {
+        const details = document.createElement("details");
+        const summary = document.createElement("summary");
+        summary.textContent = node.summary ?? "Click to expand";
+        details.appendChild(summary);
+        this.append(node, details);
+    }
+
     append(node: Node, element: HTMLElement): void {
         this.parent.appendChild(element);
         const prevParent = this.parent;
@@ -180,6 +188,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             EmojiNode.name,
             SuperscriptNode.name,
             SubscriptNode.name,
+            DetailsNode.name,
         ]
     }
 }

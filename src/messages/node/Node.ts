@@ -110,3 +110,12 @@ export class SubscriptNode extends Node {
         super(children);
     }
 }
+
+export class DetailsNode extends Node {
+    readonly summary: string | null;
+
+    constructor(summary: string | null, children: Node[] = []) {
+        super(children);
+        this.summary = summary;
+    }
+}

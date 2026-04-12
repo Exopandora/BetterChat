@@ -1,7 +1,7 @@
 import {
     BoldNode,
     CodeNode,
-    ColorNode,
+    ColorNode, DetailsNode,
     DocumentNode,
     EmojiNode,
     InlineCodeNode,
@@ -93,6 +93,9 @@ export namespace Parser {
                             break;
                         case Styles.SUBSCRIPT:
                             nodes.push(new SubscriptNode(children));
+                            break;
+                        case Styles.DETAILS:
+                            nodes.push(new DetailsNode(token.value, children));
                             break;
                         default:
                             throw new Error(`Unknown style ${token.style.name}`);
@@ -425,6 +428,7 @@ class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRen
             EmojiNode.name,
             SuperscriptNode.name,
             SubscriptNode.name,
+            DetailsNode.name,
         ];
     }
 }
