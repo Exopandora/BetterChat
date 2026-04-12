@@ -12,7 +12,7 @@ export function ImagePreview(url: string, naturalWidth: number, naturalHeight: n
     resizeImagePreview(img, naturalWidth, naturalHeight);
     const link = document.createElement("a");
     link.classList.add("betterchat-image-preview-link");
-    link.innerText = "View original";
+    link.textContent = "View original";
     link.style.cursor = "pointer";
     link.onclick = (event: PointerEvent) => {
         window.open(url);

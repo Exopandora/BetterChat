@@ -2,10 +2,10 @@ import {Settings} from "../../helpers/Settings";
 
 export function ToggleSetting(title: string, description: string, configKey: string, settings: Settings): HTMLElement {
     const titleSpan = document.createElement("span");
-    titleSpan.innerText = title;
+    titleSpan.textContent = title;
     const descriptionP = document.createElement("p");
     descriptionP.classList.add("ts-card-subtitle");
-    descriptionP.innerText = description;
+    descriptionP.textContent = description;
     const label = document.createElement("label");
     label.classList.add("tsv-flex-column");
     label.setAttribute("for", "ts-toggle-4");
