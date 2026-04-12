@@ -123,9 +123,9 @@ const config: Config = {
   // rootDir: undefined,
 
   // A list of paths to directories that Jest should use to search for files in
-  roots: [
-    "test/unit"
-  ],
+  // roots: [
+  //   "<rootDir>"
+  // ],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
@@ -153,7 +153,7 @@ const config: Config = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: [
-    "**/*.ts",
+    "**/test/unit/**/*.ts",
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
