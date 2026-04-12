@@ -230,7 +230,7 @@ describe("Given an array of tokens", () => {
             const result = Parser.sliceOverlappingStyleRanges(tokens);
             expect(result).toEqual(expected);
         });
-        describe("", () => {
+        describe("that do not allow slicing", () => {
             it("when nested", () => {
                 const tokens: Token[] = [
                     new StyleToken(Styles.SPOILER, StyleToken.Type.START, "[spoiler]"),
