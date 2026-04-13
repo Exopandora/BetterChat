@@ -1,7 +1,8 @@
 import {
     BoldNode,
     CodeNode,
-    ColorNode, DetailsNode,
+    ColorNode,
+    DetailsNode,
     DocumentNode,
     EmojiNode,
     InlineCodeNode,
@@ -9,7 +10,10 @@ import {
     Node,
     SpoilerNode,
     StrikethroughNode,
-    StringNode, SubscriptNode, SuperscriptNode,
+    StringNode,
+    SubscriptNode,
+    SuperscriptNode,
+    ThematicBreakNode,
     UnderlineNode,
     UrlNode
 } from "../node/Node";
@@ -26,7 +30,7 @@ export namespace Parser {
         const mergedTokens = mergeTokenArrays(htmlTokens, messageTokens);
         const steps = [
             linkStyleTokens,
-            convertToStringToken((token) => token instanceof StyleToken && (token.link == null || token.escaped)),
+            convertToStringToken((token) => token instanceof StyleToken && (token.link == null && !token.style.isStandalone || token.escaped)),
             parseUrlTokens,
             applyNestingRule,
             sliceOverlappingStyleRanges,
@@ -53,55 +57,63 @@ export namespace Parser {
             } else if (token instanceof EmojiToken) {
                 nodes.push(new EmojiNode(token.emoji));
             } else if (token instanceof StyleToken) {
-                const endIndex = tokens.indexOf(token.link!!);
-                if (endIndex == -1) {
-                    throw new Error("Invalid arguments");
-                }
-                const slice = tokens.slice(x + 1, endIndex);
-                const children = parseNodes(slice);
-                if (children.length > 0) {
-                    switch (token.style) {
-                        case Styles.URL:
-                            nodes.push(new UrlNode(token.value!!, children));
-                            break;
-                        case Styles.BOLD:
-                            nodes.push(new BoldNode(children));
-                            break;
-                        case Styles.UNDERLINE:
-                            nodes.push(new UnderlineNode(children));
-                            break;
-                        case Styles.ITALIC:
-                            nodes.push(new ItalicNode(children));
-                            break;
-                        case Styles.STRIKETHROUGH:
-                            nodes.push(new StrikethroughNode(children));
-                            break;
-                        case Styles.COLOR:
-                            nodes.push(new ColorNode(token.value!!, children));
-                            break;
-                        case Styles.SPOILER:
-                            nodes.push(new SpoilerNode(children));
-                            break;
-                        case Styles.CODE:
-                            nodes.push(new CodeNode(token.value, children));
-                            break;
-                        case Styles.PRE:
-                            nodes.push(new InlineCodeNode(children));
-                            break;
-                        case Styles.SUPERSCRIPT:
-                            nodes.push(new SuperscriptNode(children));
-                            break;
-                        case Styles.SUBSCRIPT:
-                            nodes.push(new SubscriptNode(children));
-                            break;
-                        case Styles.DETAILS:
-                            nodes.push(new DetailsNode(token.value, children));
-                            break;
-                        default:
-                            throw new Error(`Unknown style ${token.style.name}`);
+                const children: Node[] = [];
+                if (!token.style.isStandalone) {
+                    const endIndex = tokens.indexOf(token.link!!);
+                    if (endIndex == -1) {
+                        throw new Error("Invalid arguments");
                     }
+                    const slice = tokens.slice(x + 1, endIndex);
+                    const childNodes = parseNodes(slice);
+                    x += slice.length + 1;
+                    if (childNodes.length == 0) {
+                        continue;
+                    }
+                    children.push(...childNodes);
                 }
-                x += slice.length + 1;
+                switch (token.style) {
+                    case Styles.URL:
+                        nodes.push(new UrlNode(token.value!!, children));
+                        break;
+                    case Styles.BOLD:
+                        nodes.push(new BoldNode(children));
+                        break;
+                    case Styles.UNDERLINE:
+                        nodes.push(new UnderlineNode(children));
+                        break;
+                    case Styles.ITALIC:
+                        nodes.push(new ItalicNode(children));
+                        break;
+                    case Styles.STRIKETHROUGH:
+                        nodes.push(new StrikethroughNode(children));
+                        break;
+                    case Styles.COLOR:
+                        nodes.push(new ColorNode(token.value!!, children));
+                        break;
+                    case Styles.SPOILER:
+                        nodes.push(new SpoilerNode(children));
+                        break;
+                    case Styles.CODE:
+                        nodes.push(new CodeNode(token.value, children));
+                        break;
+                    case Styles.PRE:
+                        nodes.push(new InlineCodeNode(children));
+                        break;
+                    case Styles.SUPERSCRIPT:
+                        nodes.push(new SuperscriptNode(children));
+                        break;
+                    case Styles.SUBSCRIPT:
+                        nodes.push(new SubscriptNode(children));
+                        break;
+                    case Styles.DETAILS:
+                        nodes.push(new DetailsNode(token.value, children));
+                        break;
+                    case Styles.THEMATIC_BREAK:
+                        nodes.push(new ThematicBreakNode());
+                        break;
+                    default:
+                        throw new Error(`Unknown style ${token.style.name}`);
+                }
             }
         }
         return nodes;
@@ -115,15 +127,15 @@ export namespace Parser {
         const tokensToConvert: Set<Token> = new Set<Token>();
         for (let x = 0; x < tokens.length; x++) {
             const token = tokens[x];
-            if (token instanceof StyleToken && token.type == StyleToken.Type.START && !token.style.allowsNesting && !tokensToConvert.has(token)) {
+            if (token instanceof StyleToken && token.type == StyleToken.Type.START && !token.style.allowsNesting && !token.style.isStandalone && !tokensToConvert.has(token)) {
                 for (let y = x + 1; y < tokens.length; y++) {
                     const other = tokens[y];
                     if (other == token.link) {
                         break;
                     } else if (!(other instanceof StringToken)) {
                         tokensToConvert.add(other);
-                        if (other instanceof StyleToken) {
-                            tokensToConvert.add(other.link!!);
+                        if (other instanceof StyleToken && other.link != null) {
+                            tokensToConvert.add(other.link);
                         }
                     }
                 }
@@ -157,7 +169,7 @@ export namespace Parser {
                 }
                 if (token.type == StyleToken.Type.START) {
                     styleTokens = [...startingTokens];
-                    if (token.style.allowsSlicing) {
+                    if (token.style.allowsSlicing && !token.style.isStandalone) {
                         result.push(...endingTokens, ...startingTokens, token);
                         styleTokens.push(token);
                     } else {
@@ -165,7 +177,7 @@ export namespace Parser {
                     }
                 } else {
                     result.push(...endingTokens);
-                    if (!token.style.allowsSlicing) {
+                    if (!token.style.allowsSlicing || token.style.isStandalone) {
                         result.push(token);
                     }
                     result.push(...startingTokens);
@@ -429,6 +441,7 @@ class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRen
             SuperscriptNode.name,
             SubscriptNode.name,
             DetailsNode.name,
+            ThematicBreakNode.name,
         ];
     }
 }

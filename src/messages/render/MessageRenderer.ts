@@ -3,7 +3,8 @@ import {getVueInstance, setClipboardString} from "../../helpers/Util";
 import {
     BoldNode,
     CodeNode,
-    ColorNode, DetailsNode,
+    ColorNode,
+    DetailsNode,
     DocumentNode,
     EmojiNode,
     InlineCodeNode,
@@ -11,7 +12,10 @@ import {
     Node,
     SpoilerNode,
     StrikethroughNode,
-    StringNode, SubscriptNode, SuperscriptNode,
+    StringNode,
+    SubscriptNode,
+    SuperscriptNode,
+    ThematicBreakNode,
     UnderlineNode,
     UrlNode
 } from "../node/Node";
@@ -164,6 +168,11 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.append(node, details);
     }
 
+    visitThematicBreakNode(_: ThematicBreakNode) {
+        const hr = document.createElement("hr");
+        this.parent.appendChild(hr);
+    }
+
     append(node: Node, element: HTMLElement): void {
         this.parent.appendChild(element);
         const prevParent = this.parent;
@@ -189,6 +198,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             SuperscriptNode.name,
             SubscriptNode.name,
             DetailsNode.name,
+            ThematicBreakNode.name,
         ]
     }
 }

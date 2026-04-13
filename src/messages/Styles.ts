@@ -32,16 +32,22 @@ export class Style {
     readonly isValidValue: (value: string | null) => boolean;
     readonly allowsNesting: boolean;
     readonly allowsSlicing: boolean;
+    readonly isStandalone: boolean;
 
     constructor(
         name: String,
         valueValidator: (value: string | null) => boolean,
-        options: { allowsNesting?: boolean, allowsSlicing?: boolean } = {},
+        options: {
+            allowsNesting?: boolean,
+            allowsSlicing?: boolean ,
+            isStandalone?: boolean,
+        } = {},
     ) {
         this.name = name;
         this.isValidValue = valueValidator;
         this.allowsNesting = options.allowsNesting ?? true;
         this.allowsSlicing = options.allowsSlicing ?? true;
+        this.isStandalone = options.isStandalone ?? false;
     }
 }
 
@@ -58,6 +64,7 @@ export namespace Styles {
     export const SUPERSCRIPT = new Style("superscript", isNull);
     export const SUBSCRIPT = new Style("subscript", isNull);
     export const DETAILS = new Style("details", isAny, {allowsSlicing: false});
+    export const THEMATIC_BREAK = new Style("thematic break", isNull, {isStandalone : true});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -88,6 +95,7 @@ export namespace Styles {
         ["sup", SUPERSCRIPT],
         ["sub", SUBSCRIPT],
         ["details", DETAILS],
+        ["hr", THEMATIC_BREAK],
     ]);
 
     export function fromBBCode(code: string): Style | null {

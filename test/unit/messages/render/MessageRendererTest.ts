@@ -4,7 +4,8 @@ import {Tooltips} from "../../../../src/helpers/Tooltips";
 import {
     BoldNode,
     CodeNode,
-    ColorNode, DetailsNode,
+    ColorNode,
+    DetailsNode,
     DocumentNode,
     EmojiNode,
     InlineCodeNode,
@@ -14,6 +15,7 @@ import {
     StringNode,
     SubscriptNode,
     SuperscriptNode,
+    ThematicBreakNode,
     UnderlineNode,
     UrlNode
 } from "../../../../src/messages/node/Node";
@@ -230,6 +232,15 @@ describe("Given a simple document node", () => {
                     </summary>
                     <span>details text</span>
                 </details>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a thematic break node correctly", () => {
+            const document = new DocumentNode([
+                new ThematicBreakNode(),
+            ]);
+            const result = MessageRenderer.render(document);
+            // noinspection HtmlExtraClosingTag
+            const expected = `<hr></hr>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });

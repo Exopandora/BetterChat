@@ -1,7 +1,8 @@
 import {
     BoldNode,
     CodeNode,
-    ColorNode, DetailsNode,
+    ColorNode,
+    DetailsNode,
     DocumentNode,
     EmojiNode,
     InlineCodeNode,
@@ -9,7 +10,10 @@ import {
     Node,
     SpoilerNode,
     StrikethroughNode,
-    StringNode, SubscriptNode, SuperscriptNode,
+    StringNode,
+    SubscriptNode,
+    SuperscriptNode,
+    ThematicBreakNode,
     UnderlineNode,
     UrlNode
 } from "./Node";
@@ -30,6 +34,7 @@ export interface Visitor {
     visitSuperscriptNode(node: SuperscriptNode): void;
     visitSubscriptNode(node: SubscriptNode): void;
     visitDetailsNode(node: DetailsNode): void;
+    visitThematicBreakNode(node: ThematicBreakNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
@@ -63,6 +68,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitSubscriptNode(node);
         } else if (node instanceof DetailsNode) {
             this.visitDetailsNode(node);
+        } else if (node instanceof ThematicBreakNode) {
+            this.visitThematicBreakNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -121,6 +128,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitDetailsNode(node: DetailsNode): void {
+        this.visitChildren(node);
+    }
+
+    visitThematicBreakNode(node: ThematicBreakNode): void {
         this.visitChildren(node);
     }
 

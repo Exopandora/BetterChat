@@ -119,3 +119,9 @@ export class DetailsNode extends Node {
         this.summary = summary;
     }
 }
+
+export class ThematicBreakNode extends Node {
+    constructor() {
+        super([]);
+    }
+}

@@ -6,7 +6,7 @@ import {
     ItalicNode,
     SpoilerNode,
     StrikethroughNode,
-    StringNode,
+    StringNode, ThematicBreakNode,
     UrlNode
 } from "../../../../src/messages/node/Node";
 import {Parser} from "../../../../src/messages/parser/Parser";
@@ -230,6 +230,31 @@ describe("Given an array of tokens", () => {
             const result = Parser.sliceOverlappingStyleRanges(tokens);
             expect(result).toEqual(expected);
         });
+        describe("with standalone style tokens", () => {
+            it("returns the correct result", () => {
+                const tokens: Token[] = [
+                    new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                    new StringToken("abc"),
+                    new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, "[hr]"),
+                    new StringToken("def"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
+                ];
+                link(tokens, 0, 4);
+                const expected = [
+                    new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                    new StringToken("abc"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.END),
+                    new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, "[hr]"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.START),
+                    new StringToken("def"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
+                ];
+                link(expected, 0, 2);
+                link(expected, 4, 6);
+                const result = Parser.sliceOverlappingStyleRanges(tokens);
+                expect(result).toEqual(expected);
+            });
+        });
         describe("that do not allow slicing", () => {
             it("when nested", () => {
                 const tokens: Token[] = [
@@ -397,6 +422,34 @@ describe("Given an array of tokens", () => {
             const result = Parser.applyNestingRule(tokens);
             expect(result).toEqual(expected);
         });
+        it("ignores standalone style tokens", () => {
+            const tokens: Token[] = [
+                new StringToken("abc"),
+                new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, "[hr]"),
+                new StringToken("def"),
+            ];
+            const expected = tokens.slice();
+            const result = Parser.applyNestingRule(tokens);
+            expect(result).toEqual(expected);
+        });
+        it("converts standalone style tokens into string tokens within forbidden nesting ranges", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, "[hr]"),
+                new StringToken("def"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+            ];
+            link(tokens, 0, 4);
+            const expected = [
+                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StringToken("abc[hr]def"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+            ];
+            link(expected, 0, 2);
+            const result = Parser.applyNestingRule(tokens);
+            expect(result).toEqual(expected);
+        });
     });
     describe("when parsing nodes from tokens", () => {
         it("returns the correct result", () => {
@@ -406,18 +459,20 @@ describe("Given an array of tokens", () => {
                 new StringToken("def"),
                 new StyleToken(Styles.ITALIC, StyleToken.Type.END),
                 new StringToken("jkl"),
+                new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START),
                 new StyleToken(Styles.CODE, StyleToken.Type.START),
                 new StringToken("mno"),
                 new StyleToken(Styles.CODE, StyleToken.Type.END),
             ];
             link(tokens, 1, 3);
-            link(tokens, 5, 7);
+            link(tokens, 6, 8);
             const expected = [
                 new StringNode("abc"),
                 new ItalicNode([
                     new StringNode("def"),
                 ]),
                 new StringNode("jkl"),
+                new ThematicBreakNode(),
                 new CodeNode(null, [
                     new StringNode("mno"),
                 ]),
