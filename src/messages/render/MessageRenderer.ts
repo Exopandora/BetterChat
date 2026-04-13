@@ -6,7 +6,6 @@ import {
     CodeNode,
     ColorNode,
     DetailsNode,
-    DocumentNode,
     EmojiNode,
     FootnoteNode,
     HeadingNode,
@@ -15,6 +14,7 @@ import {
     ItalicNode,
     LeftAlignNode,
     Node,
+    Nodes,
     RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
@@ -259,30 +259,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     getSupportedNodeTypes(): string[] {
-        return [
-            DocumentNode.name,
-            StringNode.name,
-            UrlNode.name,
-            BoldNode.name,
-            UnderlineNode.name,
-            ItalicNode.name,
-            StrikethroughNode.name,
-            ColorNode.name,
-            SpoilerNode.name,
-            InlineCodeNode.name,
-            CodeNode.name,
-            EmojiNode.name,
-            SuperscriptNode.name,
-            SubscriptNode.name,
-            DetailsNode.name,
-            ThematicBreakNode.name,
-            HeadingNode.name,
-            CenterAlignNode.name,
-            RightAlignNode.name,
-            LeftAlignNode.name,
-            HighlightNode.name,
-            FootnoteNode.name,
-        ];
+        return Nodes.ALL_NODE_TYPES;
     }
 }
 
