@@ -38,7 +38,7 @@ describe("Given a simple document node", () => {
                 new StringNode("string"),
             ]);
             const result = MessageRenderer.render(document);
-            const expected = "<span>string</span>";
+            const expected = `<span>string</span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders an url node with a valid link correctly", () => {
