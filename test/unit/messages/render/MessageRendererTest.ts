@@ -8,7 +8,7 @@ import {
     ColorNode,
     DetailsNode,
     DocumentNode,
-    EmojiNode,
+    EmojiNode, FootnoteNode,
     HeadingNode,
     HighlightNode,
     InlineCodeNode,
@@ -299,6 +299,28 @@ describe("Given a simple document node", () => {
                 <span class="highlighted-text-snippet">
                     <span>
                         highlighted text
+                    </span>
+                </span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a footnote node correctly", () => {
+            const document = new DocumentNode([
+                new FootnoteNode([
+                    new StringNode("footnote"),
+                ]),
+                new StringNode("additional content"),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <sup>1</sup>
+                <span>
+                    additional content
+                </span>
+                <hr>
+                <sup>1</sup>
+                <span>
+                    <span>
+                        footnote
                     </span>
                 </span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));

@@ -75,6 +75,7 @@ export namespace Styles {
     export const RIGHT = new Style("right align", isNull, {allowsSlicing: false});
     export const LEFT = new Style("left align", isNull, {allowsSlicing: false});
     export const HIGHLIGHT = new Style("highlight", isNull);
+    export const FOOTNOTE = new Style("footnote", isNull, {allowsSlicing: false});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -116,6 +117,8 @@ export namespace Styles {
         ["left", LEFT],
         ["right", RIGHT],
         ["highlight", HIGHLIGHT],
+        ["footnote", FOOTNOTE],
+        ["fn", FOOTNOTE],
     ]);
 
     export function fromBBCode(code: string): Style | null {

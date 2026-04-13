@@ -158,3 +158,9 @@ export class HighlightNode extends Node {
         super(children);
     }
 }
+
+export class FootnoteNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}

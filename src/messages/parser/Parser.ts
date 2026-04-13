@@ -5,7 +5,7 @@ import {
     ColorNode,
     DetailsNode,
     DocumentNode,
-    EmojiNode,
+    EmojiNode, FootnoteNode,
     HeadingNode,
     HighlightNode,
     InlineCodeNode,
@@ -145,6 +145,9 @@ export namespace Parser {
                         break;
                     case Styles.HIGHLIGHT:
                         nodes.push(new HighlightNode(children));
+                        break;
+                    case Styles.FOOTNOTE:
+                        nodes.push(new FootnoteNode(children));
                         break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);
@@ -482,6 +485,7 @@ class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRen
             RightAlignNode.name,
             LeftAlignNode.name,
             HighlightNode.name,
+            FootnoteNode.name,
         ];
     }
 }

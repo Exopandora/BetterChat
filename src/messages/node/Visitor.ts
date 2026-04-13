@@ -6,6 +6,7 @@ import {
     DetailsNode,
     DocumentNode,
     EmojiNode,
+    FootnoteNode,
     HeadingNode,
     HighlightNode,
     InlineCodeNode,
@@ -45,6 +46,7 @@ export interface Visitor {
     visitRightAlignNode(node: RightAlignNode): void;
     visitLeftAlignNode(node: LeftAlignNode): void;
     visitHighlightNode(node: HighlightNode): void;
+    visitFootnoteNode(node: FootnoteNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
@@ -90,6 +92,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitLeftAlignNode(node);
         } else if (node instanceof HighlightNode) {
             this.visitHighlightNode(node);
+        } else if (node instanceof FootnoteNode) {
+            this.visitFootnoteNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -172,6 +176,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitHighlightNode(node: HighlightNode): void {
+        this.visitChildren(node);
+    }
+
+    visitFootnoteNode(node: FootnoteNode): void {
         this.visitChildren(node);
     }
 

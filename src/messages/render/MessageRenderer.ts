@@ -8,6 +8,7 @@ import {
     DetailsNode,
     DocumentNode,
     EmojiNode,
+    FootnoteNode,
     HeadingNode,
     HighlightNode,
     InlineCodeNode,
@@ -39,6 +40,7 @@ const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
 class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     private readonly root: HTMLElement;
     private parent: HTMLElement;
+    private footnotes: HTMLElement[] = [];
 
     constructor(context: RenderContext<MessageRenderTarget>) {
         super();
@@ -55,7 +57,20 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     afterRoot(_: Node): void {
-
+        if (this.footnotes.length > 0) {
+            this.root.appendChild(document.createElement("hr"));
+            for (let x = 0; x < this.footnotes.length; x++) {
+                const sup = document.createElement("sup");
+                sup.textContent = (x + 1).toString();
+                this.root.appendChild(sup);
+                this.root.appendChild(this.footnotes[x]);
+                if (x + 1 < this.footnotes.length) {
+                    const newline = document.createElement("span");
+                    newline.textContent = "\n";
+                    this.root.appendChild(newline);
+                }
+            }
+        }
     }
 
     visitBoldNode(node: BoldNode): void {
@@ -232,6 +247,17 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.append(node, span);
     }
 
+    visitFootnoteNode(node: FootnoteNode): void {
+        const sup = document.createElement("sup");
+        sup.textContent = (this.footnotes.length + 1).toString();
+        this.parent.appendChild(sup);
+        const prevParent = this.parent;
+        this.parent = document.createElement("span");
+        this.visitChildren(node);
+        this.footnotes.push(this.parent);
+        this.parent = prevParent;
+    }
+
     getSupportedNodeTypes(): string[] {
         return [
             DocumentNode.name,
@@ -255,6 +281,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             RightAlignNode.name,
             LeftAlignNode.name,
             HighlightNode.name,
+            FootnoteNode.name,
         ];
     }
 }
