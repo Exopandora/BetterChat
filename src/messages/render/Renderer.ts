@@ -41,12 +41,14 @@ export abstract class AbstractRenderer<T extends RenderTarget> implements Render
 
 export class RenderContext<T extends RenderTarget> {
     private readonly nodeRenderers: Map<string, NodeRenderer> = new Map<string, NodeRenderer>();
+    private readonly nodeRendererList: NodeRenderer[] = [];
     readonly output: T;
 
     constructor(output: T, renderFactories: NodeRendererFactory<T>[]) {
         this.output = output;
         for (const renderFactory of renderFactories) {
             const nodeRenderer = renderFactory(this);
+            this.nodeRendererList.push(nodeRenderer);
             for (const nodeType of nodeRenderer.getSupportedNodeTypes()) {
                 if (!this.nodeRenderers.has(nodeType)) {
                     this.nodeRenderers.set(nodeType, nodeRenderer);
@@ -60,10 +62,10 @@ export class RenderContext<T extends RenderTarget> {
     }
 
     beforeRoot(node: Node): void {
-        this.nodeRenderers.values().forEach((renderer) => renderer.beforeRoot(node));
+        this.nodeRendererList.forEach((renderer) => renderer.beforeRoot(node));
     }
 
     afterRoot(node: Node): void {
-        this.nodeRenderers.values().forEach((renderer) => renderer.afterRoot(node));
+        this.nodeRendererList.forEach((renderer) => renderer.afterRoot(node));
     }
 }
