@@ -36,6 +36,15 @@ function modifyMessageNode(node: HTMLElement) {
         while (node.firstChild) {
             node.removeChild(node.lastChild as Node);
         }
+        if (html.dataset.renderFullWidth === "true") {
+            const bubble = node.closest(".ts-chat-room-event-detailed .ts-chat-room-event-bubble") as (HTMLElement | null);
+            if (bubble != null) {
+                bubble.style.flexGrow = "1";
+            }
+            node.style.flexGrow = "1";
+            html.style.flexBasis = "100%";
+            delete html.dataset.renderFullWidth;
+        }
         node.appendChild(html);
     }
     if (settings.getValueForKey("embeds") && !node.classList.contains("ts-reply-original") && !node.classList.contains("ts-reply-shortened")) {

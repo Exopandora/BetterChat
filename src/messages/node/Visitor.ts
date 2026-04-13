@@ -1,5 +1,6 @@
 import {
     BoldNode,
+    CenterAlignNode,
     CodeNode,
     ColorNode,
     DetailsNode,
@@ -8,7 +9,9 @@ import {
     HeadingNode,
     InlineCodeNode,
     ItalicNode,
+    LeftAlignNode,
     Node,
+    RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
     StringNode,
@@ -37,6 +40,9 @@ export interface Visitor {
     visitDetailsNode(node: DetailsNode): void;
     visitThematicBreakNode(node: ThematicBreakNode): void;
     visitHeadingNode(node: HeadingNode): void;
+    visitCenterAlignNode(node: CenterAlignNode): void;
+    visitRightAlignNode(node: RightAlignNode): void;
+    visitLeftAlignNode(node: LeftAlignNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
@@ -74,6 +80,12 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitThematicBreakNode(node);
         } else if (node instanceof HeadingNode) {
             this.visitHeadingNode(node);
+        } else if (node instanceof CenterAlignNode) {
+            this.visitCenterAlignNode(node);
+        } else if (node instanceof RightAlignNode) {
+            this.visitRightAlignNode(node);
+        } else if (node instanceof LeftAlignNode) {
+            this.visitLeftAlignNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -140,6 +152,18 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitHeadingNode(node: HeadingNode): void {
+        this.visitChildren(node);
+    }
+
+    visitCenterAlignNode(node: CenterAlignNode): void {
+        this.visitChildren(node);
+    }
+
+    visitRightAlignNode(node: RightAlignNode): void {
+        this.visitChildren(node);
+    }
+
+    visitLeftAlignNode(node: LeftAlignNode): void {
         this.visitChildren(node);
     }
 

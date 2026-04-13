@@ -1,5 +1,6 @@
 import {
     BoldNode,
+    CenterAlignNode,
     CodeNode,
     ColorNode,
     DetailsNode,
@@ -8,7 +9,9 @@ import {
     HeadingNode,
     InlineCodeNode,
     ItalicNode,
+    LeftAlignNode,
     Node,
+    RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
     StringNode,
@@ -129,6 +132,15 @@ export namespace Parser {
                         break;
                     case Styles.HEADING_6:
                         nodes.push(new HeadingNode(6, children));
+                        break;
+                    case Styles.CENTER:
+                        nodes.push(new CenterAlignNode(children));
+                        break;
+                    case Styles.RIGHT:
+                        nodes.push(new RightAlignNode(children));
+                        break;
+                    case Styles.LEFT:
+                        nodes.push(new LeftAlignNode(children));
                         break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);
@@ -462,6 +474,9 @@ class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRen
             DetailsNode.name,
             ThematicBreakNode.name,
             HeadingNode.name,
+            CenterAlignNode.name,
+            RightAlignNode.name,
+            LeftAlignNode.name,
         ];
     }
 }

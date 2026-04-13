@@ -134,3 +134,21 @@ export class HeadingNode extends Node {
         this.size = size < 0 ? 1 : (size > 6 ? 6 : size);
     }
 }
+
+export class CenterAlignNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
+export class RightAlignNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
+export class LeftAlignNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}

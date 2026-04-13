@@ -71,6 +71,9 @@ export namespace Styles {
     export const HEADING_4 = new Style("heading 4", isNull, {allowsSlicing: false});
     export const HEADING_5 = new Style("heading 5", isNull, {allowsSlicing: false});
     export const HEADING_6 = new Style("heading 6", isNull, {allowsSlicing: false});
+    export const CENTER = new Style("center align", isNull, {allowsSlicing: false});
+    export const RIGHT = new Style("right align", isNull, {allowsSlicing: false});
+    export const LEFT = new Style("left align", isNull, {allowsSlicing: false});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -108,6 +111,9 @@ export namespace Styles {
         ["h4", HEADING_4],
         ["h5", HEADING_5],
         ["h6", HEADING_6],
+        ["center", CENTER],
+        ["left", LEFT],
+        ["right", RIGHT],
     ]);
 
     export function fromBBCode(code: string): Style | null {

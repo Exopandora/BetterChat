@@ -1,7 +1,7 @@
 import {Tooltips} from "../../helpers/Tooltips";
 import {getVueInstance, setClipboardString} from "../../helpers/Util";
 import {
-    BoldNode,
+    BoldNode, CenterAlignNode,
     CodeNode,
     ColorNode,
     DetailsNode,
@@ -9,8 +9,8 @@ import {
     EmojiNode,
     HeadingNode,
     InlineCodeNode,
-    ItalicNode,
-    Node,
+    ItalicNode, LeftAlignNode,
+    Node, RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
     StringNode,
@@ -33,11 +33,13 @@ const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
 ]);
 
 class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
+    private readonly root: HTMLElement;
     private parent: HTMLElement;
 
     constructor(context: RenderContext<MessageRenderTarget>) {
         super();
-        this.parent = context.output.message;
+        this.root = context.output.message;
+        this.parent = this.root;
     }
 
     beforeRoot(_: Node): void {
@@ -188,6 +190,30 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.append(node, heading);
     }
 
+    visitCenterAlignNode(node: CenterAlignNode): void {
+        const span = document.createElement("span");
+        span.style.display = "flex";
+        span.style.justifyContent = "center";
+        this.root.dataset.renderFullWidth = "true";
+        this.append(node, span);
+    }
+
+    visitRightAlignNode(node: RightAlignNode): void {
+        const span = document.createElement("span");
+        span.style.display = "flex";
+        span.style.justifyContent = "right";
+        this.root.dataset.renderFullWidth = "true";
+        this.append(node, span);
+    }
+
+    visitLeftAlignNode(node: LeftAlignNode): void {
+        const span = document.createElement("span");
+        span.style.display = "flex";
+        span.style.justifyContent = "left";
+        this.root.dataset.renderFullWidth = "true";
+        this.append(node, span);
+    }
+
     append(node: Node, element: HTMLElement): void {
         this.parent.appendChild(element);
         const prevParent = this.parent;
@@ -215,7 +241,10 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             DetailsNode.name,
             ThematicBreakNode.name,
             HeadingNode.name,
-        ]
+            CenterAlignNode.name,
+            RightAlignNode.name,
+            LeftAlignNode.name,
+        ];
     }
 }
 

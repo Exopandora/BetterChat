@@ -3,13 +3,17 @@ import formatXml from "xml-formatter";
 import {Tooltips} from "../../../../src/helpers/Tooltips";
 import {
     BoldNode,
+    CenterAlignNode,
     CodeNode,
     ColorNode,
     DetailsNode,
     DocumentNode,
-    EmojiNode, HeadingNode,
+    EmojiNode,
+    HeadingNode,
     InlineCodeNode,
     ItalicNode,
+    LeftAlignNode,
+    RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
     StringNode,
@@ -23,8 +27,8 @@ import {MessageRenderer} from "../../../../src/messages/render/MessageRenderer";
 
 describe("Given a simple document node", () => {
     describe("when rendering a message", () => {
-        const formatMessage = function (message: string): string {
-            return formatXml(`<betterchat-message>${message.trim()}</betterchat-message>`);
+        const formatMessage = function (message: string, attributes: string | null = null): string {
+            return formatXml(`<betterchat-message ${attributes ?? ""}>${message.trim()}</betterchat-message>`);
         };
         afterEach(() => {
             Tooltips.destroyAll();
@@ -252,6 +256,36 @@ describe("Given a simple document node", () => {
             const result = MessageRenderer.render(document);
             const expected = `<h${size}><span>heading</span></h${size}>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a center align node correctly", () => {
+            const document = new DocumentNode([
+                new CenterAlignNode([
+                    new StringNode("centered text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `<span style="display: flex; justify-content: center;"><span>centered text</span></span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected, "data-render-full-width=\"true\""));
+        });
+        it("renders a right align node correctly", () => {
+            const document = new DocumentNode([
+                new RightAlignNode([
+                    new StringNode("right aligned text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `<span style="display: flex; justify-content: right;"><span>right aligned text</span></span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected, "data-render-full-width=\"true\""));
+        });
+        it("renders a left align node correctly", () => {
+            const document = new DocumentNode([
+                new LeftAlignNode([
+                    new StringNode("left aligned text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `<span style="display: flex; justify-content: left;"><span>left aligned text</span></span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected, "data-render-full-width=\"true\""));
         });
     });
 });
