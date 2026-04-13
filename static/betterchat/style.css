@@ -111,3 +111,18 @@ betterchat-message sub {
 	/* Fix vanilla TS6 client CSS forcing "vertical-align: baseline;" on all tags */
 	vertical-align: sub;
 }
+
+betterchat-message h2 {
+	/* Fix vanilla TS6 client CSS setting font-size to 100%  */
+	font-size: revert;
+}
+
+betterchat-message h5 {
+	/* Fix vanilla TS6 client CSS setting font-size to var(--tsv-font-size-large) */
+	font-size: revert;
+}
+
+betterchat-message h6 {
+	/* Fix vanilla TS6 client CSS setting font-size to var(--tsv-font-size) */
+	font-size: revert;
+}

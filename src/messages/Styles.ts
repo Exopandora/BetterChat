@@ -65,6 +65,12 @@ export namespace Styles {
     export const SUBSCRIPT = new Style("subscript", isNull);
     export const DETAILS = new Style("details", isAny, {allowsSlicing: false});
     export const THEMATIC_BREAK = new Style("thematic break", isNull, {isStandalone : true});
+    export const HEADING_1 = new Style("heading 1", isNull, {allowsSlicing: false});
+    export const HEADING_2 = new Style("heading 2", isNull, {allowsSlicing: false});
+    export const HEADING_3 = new Style("heading 3", isNull, {allowsSlicing: false});
+    export const HEADING_4 = new Style("heading 4", isNull, {allowsSlicing: false});
+    export const HEADING_5 = new Style("heading 5", isNull, {allowsSlicing: false});
+    export const HEADING_6 = new Style("heading 6", isNull, {allowsSlicing: false});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -96,6 +102,12 @@ export namespace Styles {
         ["sub", SUBSCRIPT],
         ["details", DETAILS],
         ["hr", THEMATIC_BREAK],
+        ["h1", HEADING_1],
+        ["h2", HEADING_2],
+        ["h3", HEADING_3],
+        ["h4", HEADING_4],
+        ["h5", HEADING_5],
+        ["h6", HEADING_6],
     ]);
 
     export function fromBBCode(code: string): Style | null {

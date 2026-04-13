@@ -5,6 +5,7 @@ import {
     DetailsNode,
     DocumentNode,
     EmojiNode,
+    HeadingNode,
     InlineCodeNode,
     ItalicNode,
     Node,
@@ -35,6 +36,7 @@ export interface Visitor {
     visitSubscriptNode(node: SubscriptNode): void;
     visitDetailsNode(node: DetailsNode): void;
     visitThematicBreakNode(node: ThematicBreakNode): void;
+    visitHeadingNode(node: HeadingNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
@@ -70,6 +72,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitDetailsNode(node);
         } else if (node instanceof ThematicBreakNode) {
             this.visitThematicBreakNode(node);
+        } else if (node instanceof HeadingNode) {
+            this.visitHeadingNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -132,6 +136,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitThematicBreakNode(node: ThematicBreakNode): void {
+        this.visitChildren(node);
+    }
+
+    visitHeadingNode(node: HeadingNode): void {
         this.visitChildren(node);
     }
 

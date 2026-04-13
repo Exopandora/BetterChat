@@ -7,7 +7,7 @@ import {
     ColorNode,
     DetailsNode,
     DocumentNode,
-    EmojiNode,
+    EmojiNode, HeadingNode,
     InlineCodeNode,
     ItalicNode,
     SpoilerNode,
@@ -241,6 +241,16 @@ describe("Given a simple document node", () => {
             const result = MessageRenderer.render(document);
             // noinspection HtmlExtraClosingTag
             const expected = `<hr></hr>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it.each<number>([1, 2, 3, 4, 5, 6])("renders a heading node of size %f correctly", (size) => {
+            const document = new DocumentNode([
+                new HeadingNode(size, [
+                    new StringNode("heading"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `<h${size}><span>heading</span></h${size}>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });

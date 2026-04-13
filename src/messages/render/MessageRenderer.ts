@@ -7,6 +7,7 @@ import {
     DetailsNode,
     DocumentNode,
     EmojiNode,
+    HeadingNode,
     InlineCodeNode,
     ItalicNode,
     Node,
@@ -21,6 +22,15 @@ import {
 } from "../node/Node";
 import {AbstractVisitor} from "../node/Visitor";
 import {AbstractRenderer, NodeRenderer, RenderContext, RenderTarget} from "./Renderer";
+
+const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
+    [1, "h1"],
+    [2, "h2"],
+    [3, "h3"],
+    [4, "h4"],
+    [5, "h5"],
+    [6, "h6"],
+]);
 
 class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     private parent: HTMLElement;
@@ -173,6 +183,11 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.parent.appendChild(hr);
     }
 
+    visitHeadingNode(node: HeadingNode): void {
+        const heading = document.createElement(HEADING_SIZE_TO_ELEMENT_TAG.get(node.size) ?? "h1");
+        this.append(node, heading);
+    }
+
     append(node: Node, element: HTMLElement): void {
         this.parent.appendChild(element);
         const prevParent = this.parent;
@@ -199,6 +214,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             SubscriptNode.name,
             DetailsNode.name,
             ThematicBreakNode.name,
+            HeadingNode.name,
         ]
     }
 }

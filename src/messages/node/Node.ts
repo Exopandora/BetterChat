@@ -125,3 +125,12 @@ export class ThematicBreakNode extends Node {
         super([]);
     }
 }
+
+export class HeadingNode extends Node {
+    readonly size: number;
+
+    constructor(size: number, children: Node[] = []) {
+        super(children);
+        this.size = size < 0 ? 1 : (size > 6 ? 6 : size);
+    }
+}

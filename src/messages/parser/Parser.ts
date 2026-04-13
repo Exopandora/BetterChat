@@ -5,6 +5,7 @@ import {
     DetailsNode,
     DocumentNode,
     EmojiNode,
+    HeadingNode,
     InlineCodeNode,
     ItalicNode,
     Node,
@@ -110,6 +111,24 @@ export namespace Parser {
                         break;
                     case Styles.THEMATIC_BREAK:
                         nodes.push(new ThematicBreakNode());
+                        break;
+                    case Styles.HEADING_1:
+                        nodes.push(new HeadingNode(1, children));
+                        break;
+                    case Styles.HEADING_2:
+                        nodes.push(new HeadingNode(2, children));
+                        break;
+                    case Styles.HEADING_3:
+                        nodes.push(new HeadingNode(3, children));
+                        break;
+                    case Styles.HEADING_4:
+                        nodes.push(new HeadingNode(4, children));
+                        break;
+                    case Styles.HEADING_5:
+                        nodes.push(new HeadingNode(5, children));
+                        break;
+                    case Styles.HEADING_6:
+                        nodes.push(new HeadingNode(6, children));
                         break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);
@@ -442,6 +461,7 @@ class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRen
             SubscriptNode.name,
             DetailsNode.name,
             ThematicBreakNode.name,
+            HeadingNode.name,
         ];
     }
 }
