@@ -74,6 +74,7 @@ export namespace Styles {
     export const CENTER = new Style("center align", isNull, {allowsSlicing: false});
     export const RIGHT = new Style("right align", isNull, {allowsSlicing: false});
     export const LEFT = new Style("left align", isNull, {allowsSlicing: false});
+    export const HIGHLIGHT = new Style("highlight", isNull);
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -114,6 +115,7 @@ export namespace Styles {
         ["center", CENTER],
         ["left", LEFT],
         ["right", RIGHT],
+        ["highlight", HIGHLIGHT],
     ]);
 
     export function fromBBCode(code: string): Style | null {

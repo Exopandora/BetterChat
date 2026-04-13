@@ -10,6 +10,7 @@ import {
     DocumentNode,
     EmojiNode,
     HeadingNode,
+    HighlightNode,
     InlineCodeNode,
     ItalicNode,
     LeftAlignNode,
@@ -286,6 +287,21 @@ describe("Given a simple document node", () => {
             const result = MessageRenderer.render(document);
             const expected = `<span style="display: flex; justify-content: left;"><span>left aligned text</span></span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected, "data-render-full-width=\"true\""));
+        });
+        it("renders a highlight node correctly", () => {
+            const document = new DocumentNode([
+                new HighlightNode([
+                    new StringNode("highlighted text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <span class="highlighted-text-snippet">
+                    <span>
+                        highlighted text
+                    </span>
+                </span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });
 });

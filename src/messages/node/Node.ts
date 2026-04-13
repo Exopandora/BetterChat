@@ -152,3 +152,9 @@ export class LeftAlignNode extends Node {
         super(children);
     }
 }
+
+export class HighlightNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}

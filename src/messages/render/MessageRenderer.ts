@@ -1,16 +1,20 @@
 import {Tooltips} from "../../helpers/Tooltips";
 import {getVueInstance, setClipboardString} from "../../helpers/Util";
 import {
-    BoldNode, CenterAlignNode,
+    BoldNode,
+    CenterAlignNode,
     CodeNode,
     ColorNode,
     DetailsNode,
     DocumentNode,
     EmojiNode,
     HeadingNode,
+    HighlightNode,
     InlineCodeNode,
-    ItalicNode, LeftAlignNode,
-    Node, RightAlignNode,
+    ItalicNode,
+    LeftAlignNode,
+    Node,
+    RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
     StringNode,
@@ -222,6 +226,12 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.parent = prevParent;
     }
 
+    visitHighlightNode(node: HighlightNode): void {
+        const span = document.createElement("span");
+        span.classList.add("highlighted-text-snippet");
+        this.append(node, span);
+    }
+
     getSupportedNodeTypes(): string[] {
         return [
             DocumentNode.name,
@@ -244,6 +254,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             CenterAlignNode.name,
             RightAlignNode.name,
             LeftAlignNode.name,
+            HighlightNode.name,
         ];
     }
 }

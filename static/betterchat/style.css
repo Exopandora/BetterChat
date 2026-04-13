@@ -126,3 +126,8 @@ betterchat-message h6 {
 	/* Fix vanilla TS6 client CSS setting font-size to var(--tsv-font-size) */
 	font-size: revert;
 }
+
+betterchat-message .highlighted-text-snippet {
+	color: black;
+	background: yellow;
+}

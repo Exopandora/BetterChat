@@ -7,6 +7,7 @@ import {
     DocumentNode,
     EmojiNode,
     HeadingNode,
+    HighlightNode,
     InlineCodeNode,
     ItalicNode,
     LeftAlignNode,
@@ -43,6 +44,7 @@ export interface Visitor {
     visitCenterAlignNode(node: CenterAlignNode): void;
     visitRightAlignNode(node: RightAlignNode): void;
     visitLeftAlignNode(node: LeftAlignNode): void;
+    visitHighlightNode(node: HighlightNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
@@ -86,6 +88,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitRightAlignNode(node);
         } else if (node instanceof LeftAlignNode) {
             this.visitLeftAlignNode(node);
+        } else if (node instanceof HighlightNode) {
+            this.visitHighlightNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -164,6 +168,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitLeftAlignNode(node: LeftAlignNode): void {
+        this.visitChildren(node);
+    }
+
+    visitHighlightNode(node: HighlightNode): void {
         this.visitChildren(node);
     }
 

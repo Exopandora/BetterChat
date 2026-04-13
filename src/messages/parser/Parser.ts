@@ -7,6 +7,7 @@ import {
     DocumentNode,
     EmojiNode,
     HeadingNode,
+    HighlightNode,
     InlineCodeNode,
     ItalicNode,
     LeftAlignNode,
@@ -141,6 +142,9 @@ export namespace Parser {
                         break;
                     case Styles.LEFT:
                         nodes.push(new LeftAlignNode(children));
+                        break;
+                    case Styles.HIGHLIGHT:
+                        nodes.push(new HighlightNode(children));
                         break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);
@@ -477,6 +481,7 @@ class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRen
             CenterAlignNode.name,
             RightAlignNode.name,
             LeftAlignNode.name,
+            HighlightNode.name,
         ];
     }
 }
