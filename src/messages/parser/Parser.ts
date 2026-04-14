@@ -12,6 +12,8 @@ import {
     InlineCodeNode,
     ItalicNode,
     LeftAlignNode,
+    ListItemNode,
+    ListNode,
     Node,
     RightAlignNode,
     SpoilerNode,
@@ -23,10 +25,12 @@ import {
     UnderlineNode,
     UrlNode
 } from "../node/Node";
-import {Styles} from "../Styles";
+import {Style, Styles} from "../Styles";
 import {EmojiToken, StringToken, StyleToken, Token, Tokenizer} from "./Tokenizer";
 
 export namespace Parser {
+    import ListType = ListNode.ListType;
+
     export function parse(node: HTMLElement): DocumentNode {
         const htmlTokens = Tokenizer.tokenizeHTML(node);
         const originalMessage = htmlTokens.map(token => token.string).join("");
@@ -37,6 +41,7 @@ export namespace Parser {
             convertToStringToken((token) => token instanceof StyleToken && (token.link == null && !token.style.isStandalone || token.escaped)),
             parseUrlTokens,
             applyNestingRule,
+            applyListRules,
             sliceOverlappingStyleRanges,
             applyNestingRule, // apply nesting rule again, because [i][code][/code][/i] would be sliced into [i][/i][code][i][/i][/code][i][/i]
         ];
@@ -145,6 +150,15 @@ export namespace Parser {
                     case Styles.FOOTNOTE:
                         nodes.push(new FootnoteNode(children));
                         break;
+                    case Styles.ORDERED_LIST:
+                        nodes.push(new ListNode(ListType.ORDERED, children));
+                        break;
+                    case Styles.UNORDERED_LIST:
+                        nodes.push(new ListNode(ListType.UNORDERED, children));
+                        break;
+                    case Styles.LIST_ITEM:
+                        nodes.push(new ListItemNode(children));
+                        break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);
                 }
@@ -175,6 +189,58 @@ export namespace Parser {
             return tokens;
         }
         return mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
+    }
+
+    export function applyListRules(tokens: Token[]): Token[] {
+        const tokensToConvert: Set<Token> = new Set<Token>();
+        const validListItemTokens = new Set<Token>();
+        for (let x = 0; x < tokens.length; x++) {
+            const token = tokens[x];
+            if (token instanceof StyleToken && token.type == StyleToken.Type.START) {
+                if (isListStyle(token.style)) {
+                    const listItemTokens: Token[] = [];
+                    let isValidListStructure = true;
+                    for (let y = x + 1; y < tokens.length; y++) {
+                        const other = tokens[y];
+                        if (other == token.link) {
+                            break;
+                        } else if (other instanceof StyleToken && other.type == StyleToken.Type.START && other.style == Styles.LIST_ITEM) {
+                            listItemTokens.push(other, other.link!!);
+                            for (let z = y + 1; z < tokens.length; z++) {
+                                if (tokens[z] == other.link) {
+                                    y = z;
+                                    break;
+                                }
+                            }
+                        } else if (!(other instanceof StringToken && other.string.trim().length == 0)) {
+                            isValidListStructure = false;
+                        }
+                    }
+                    if (!isValidListStructure) {
+                        tokensToConvert.add(token);
+                        tokensToConvert.add(token.link!!);
+                        for (const item of listItemTokens) {
+                            tokensToConvert.add(item);
+                        }
+                    } else {
+                        for (const item of listItemTokens) {
+                            validListItemTokens.add(item);
+                        }
+                    }
+                } else if (token.style == Styles.LIST_ITEM && !validListItemTokens.has(token)) {
+                    tokensToConvert.add(token);
+                    tokensToConvert.add(token.link!!);
+                }
+            }
+        }
+        if (tokensToConvert.size == 0) {
+            return tokens;
+        }
+        return mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
+    }
+
+    function isListStyle(style: Style): boolean {
+        return style == Styles.UNORDERED_LIST || style == Styles.ORDERED_LIST;
     }
 
     // tokens: <pre>a-b-c-a-c-b</pre></br>

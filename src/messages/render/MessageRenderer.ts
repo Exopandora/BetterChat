@@ -13,6 +13,8 @@ import {
     InlineCodeNode,
     ItalicNode,
     LeftAlignNode,
+    ListItemNode,
+    ListNode,
     Node,
     Nodes,
     RightAlignNode,
@@ -26,6 +28,7 @@ import {
     UrlNode
 } from "../node/Node";
 import {AbstractVisitor} from "../node/Visitor";
+import {StringToken} from "../parser/Tokenizer";
 import {AbstractRenderer, NodeRenderer, RenderContext, RenderTarget} from "./Renderer";
 
 const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
@@ -256,6 +259,32 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.visitChildren(node);
         this.footnotes.push(this.parent);
         this.parent = prevParent;
+    }
+
+    visitListNode(node: ListNode): void {
+        let list;
+        switch (node.type) {
+            case ListNode.ListType.ORDERED:
+                list = document.createElement("ol");
+                break;
+            case ListNode.ListType.UNORDERED:
+                list = document.createElement("ul");
+                break;
+        }
+        this.parent.appendChild(list);
+        const prevParent = this.parent;
+        this.parent = list;
+        for (const child of node.children) {
+            if (child instanceof ListItemNode) {
+                this.visit(child);
+            }
+        }
+        this.parent = prevParent;
+    }
+
+    visitListItemNode(node: ListItemNode): void {
+        const li = document.createElement("li");
+        this.append(node, li);
     }
 
     getSupportedNodeTypes(): string[] {

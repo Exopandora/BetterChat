@@ -549,6 +549,62 @@ describe("Given an array of tokens", () => {
             expect(result).toEqual(expected);
         });
     });
+    describe("when applying list rules", () => {
+        it("persists valid lists", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.START, "[ol]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+                new StringToken("   \n   "),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StringToken("def"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.END, "[/ol]"),
+            ];
+            link(tokens, 0, 8);
+            link(tokens, 1, 3);
+            link(tokens, 5, 7);
+            const expected = tokens.slice();
+            const result = Parser.applyListRules(tokens);
+            expect(result).toEqual(expected);
+        });
+        it("converts invalid list structures to string tokens", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.START, "[ol]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+                new StringToken("   \n   "),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StringToken("def"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.END, "[/ol]"),
+            ];
+            link(tokens, 0, 9);
+            link(tokens, 1, 3);
+            link(tokens, 5, 7);
+            const expected = [
+                new StringToken("[ol][li]abc[/li]   \n   [li]def[/li]abc[/ol]"),
+            ];
+            const result = Parser.applyListRules(tokens);
+            expect(result).toEqual(expected);
+        });
+        it("converts orphan list item tokens to string tokens", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+            ];
+            link(tokens, 0, 2);
+            const expected = [
+                new StringToken("[li]abc[/li]"),
+            ];
+            const result = Parser.applyListRules(tokens);
+            expect(result).toEqual(expected);
+        });
+    });
 });
 
 describe("Given two token arrays", () => {

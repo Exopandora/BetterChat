@@ -131,3 +131,12 @@ betterchat-message .highlighted-text-snippet {
 	color: black;
 	background: yellow;
 }
+
+betterchat-message ul {
+	/* Fix vanilla TS6 client CSS setting list to none */
+	list-style-type: disc;
+}
+
+betterchat-message li {
+	list-style-position: inside;
+}

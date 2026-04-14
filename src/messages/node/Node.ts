@@ -165,6 +165,28 @@ export class FootnoteNode extends Node {
     }
 }
 
+export class ListNode extends Node {
+    readonly type: ListNode.ListType;
+
+    constructor(type: ListNode.ListType, children: Node[] = []) {
+        super(children);
+        this.type = type;
+    }
+}
+
+export namespace ListNode {
+    export enum ListType {
+        ORDERED,
+        UNORDERED,
+    }
+}
+
+export class ListItemNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
 export namespace Nodes {
     export const ALL_NODE_TYPES = [
         DocumentNode.name,
@@ -189,5 +211,7 @@ export namespace Nodes {
         LeftAlignNode.name,
         HighlightNode.name,
         FootnoteNode.name,
+        ListNode.name,
+        ListItemNode.name,
     ];
 }

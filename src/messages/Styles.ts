@@ -76,6 +76,9 @@ export namespace Styles {
     export const LEFT = new Style("left align", isNull, {allowsSlicing: false});
     export const HIGHLIGHT = new Style("highlight", isNull);
     export const FOOTNOTE = new Style("footnote", isNull, {allowsSlicing: false});
+    export const ORDERED_LIST = new Style("ordered list", isNull, {allowsSlicing: false});
+    export const UNORDERED_LIST = new Style("unordered list", isNull, {allowsSlicing: false});
+    export const LIST_ITEM = new Style("ordered list", isNull, {allowsSlicing: false});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -119,6 +122,9 @@ export namespace Styles {
         ["highlight", HIGHLIGHT],
         ["footnote", FOOTNOTE],
         ["fn", FOOTNOTE],
+        ["ol", ORDERED_LIST],
+        ["ul", UNORDERED_LIST],
+        ["li", LIST_ITEM],
     ]);
 
     export function fromBBCode(code: string): Style | null {

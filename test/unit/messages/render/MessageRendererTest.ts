@@ -15,6 +15,8 @@ import {
     InlineCodeNode,
     ItalicNode,
     LeftAlignNode,
+    ListItemNode,
+    ListNode,
     RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
@@ -26,6 +28,7 @@ import {
     UrlNode
 } from "../../../../src/messages/node/Node";
 import {MessageRenderer} from "../../../../src/messages/render/MessageRenderer";
+import ListType = ListNode.ListType;
 
 describe("Given a simple document node", () => {
     describe("when rendering a message", () => {
@@ -324,6 +327,52 @@ describe("Given a simple document node", () => {
                         footnote
                     </span>
                 </span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a list node (ordered) correctly", () => {
+            const document = new DocumentNode([
+                new ListNode(ListType.ORDERED, [
+                    new ListItemNode([
+                        new StringNode("item 1"),
+                    ]),
+                    new ListItemNode([
+                        new StringNode("item 2"),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <ol>
+                    <li>
+                        <span>item 1</span>
+                    </li>
+                    <li>
+                        <span>item 2</span>
+                    </li>
+                </ol>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a list node (unordered) correctly", () => {
+            const document = new DocumentNode([
+                new ListNode(ListType.UNORDERED, [
+                    new ListItemNode([
+                        new StringNode("item 1"),
+                    ]),
+                    new ListItemNode([
+                        new StringNode("item 2"),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <ul>
+                    <li>
+                        <span>item 1</span>
+                    </li>
+                    <li>
+                        <span>item 2</span>
+                    </li>
+                </ul>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });

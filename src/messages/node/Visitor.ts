@@ -12,6 +12,8 @@ import {
     InlineCodeNode,
     ItalicNode,
     LeftAlignNode,
+    ListItemNode,
+    ListNode,
     Node,
     RightAlignNode,
     SpoilerNode,
@@ -47,6 +49,8 @@ export interface Visitor {
     visitLeftAlignNode(node: LeftAlignNode): void;
     visitHighlightNode(node: HighlightNode): void;
     visitFootnoteNode(node: FootnoteNode): void;
+    visitListNode(node: ListNode): void;
+    visitListItemNode(node: ListItemNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
@@ -94,6 +98,10 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitHighlightNode(node);
         } else if (node instanceof FootnoteNode) {
             this.visitFootnoteNode(node);
+        } else if (node instanceof ListNode) {
+            this.visitListNode(node);
+        } else if (node instanceof ListItemNode) {
+            this.visitListItemNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -180,6 +188,14 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitFootnoteNode(node: FootnoteNode): void {
+        this.visitChildren(node);
+    }
+
+    visitListNode(node: ListNode): void {
+        this.visitChildren(node);
+    }
+
+    visitListItemNode(node: ListItemNode): void {
         this.visitChildren(node);
     }
 
