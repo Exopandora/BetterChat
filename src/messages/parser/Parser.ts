@@ -171,6 +171,9 @@ export namespace Parser {
                 }
             }
         }
+        if (tokensToConvert.size == 0) {
+            return tokens;
+        }
         return mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
     }
 
