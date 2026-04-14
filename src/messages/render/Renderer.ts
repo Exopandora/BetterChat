@@ -40,7 +40,7 @@ export abstract class AbstractRenderer<T extends RenderTarget> implements Render
 }
 
 export class RenderContext<T extends RenderTarget> {
-    private readonly nodeRenderers: Map<string, NodeRenderer> = new Map<string, NodeRenderer>();
+    private readonly nodeRendererMap: Map<string, NodeRenderer> = new Map<string, NodeRenderer>();
     private readonly nodeRendererList: NodeRenderer[] = [];
     readonly output: T;
 
@@ -50,15 +50,15 @@ export class RenderContext<T extends RenderTarget> {
             const nodeRenderer = renderFactory(this);
             this.nodeRendererList.push(nodeRenderer);
             for (const nodeType of nodeRenderer.getSupportedNodeTypes()) {
-                if (!this.nodeRenderers.has(nodeType)) {
-                    this.nodeRenderers.set(nodeType, nodeRenderer);
+                if (!this.nodeRendererMap.has(nodeType)) {
+                    this.nodeRendererMap.set(nodeType, nodeRenderer);
                 }
             }
         }
     }
 
     render(node: Node): void {
-        this.nodeRenderers.get(node.constructor.name)?.render(node);
+        this.nodeRendererMap.get(node.constructor.name)?.render(node);
     }
 
     beforeRoot(node: Node): void {
