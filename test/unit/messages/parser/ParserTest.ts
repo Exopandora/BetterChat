@@ -6,7 +6,8 @@ import {
     ItalicNode,
     SpoilerNode,
     StrikethroughNode,
-    StringNode, ThematicBreakNode,
+    StringNode,
+    ThematicBreakNode,
     UrlNode
 } from "../../../../src/messages/node/Node";
 import {Parser} from "../../../../src/messages/parser/Parser";
@@ -498,20 +499,6 @@ describe("Given an array of tokens", () => {
                 new StringNode("abcnested"),
             ];
             const result = Parser.parseNodes(tokens);
-            expect(result).toEqual(expected);
-        });
-    });
-    describe("when post processing a document node", () => {
-        it("returns the correct result", () => {
-            const document = new DocumentNode([
-                new StringNode("abc"),
-                new ItalicNode([
-                    new StringNode("def"),
-                ]),
-                new StringNode("ghi"),
-            ]);
-            const expected = document;
-            const result = Parser.postProcessDocumentNode(document);
             expect(result).toEqual(expected);
         });
     });

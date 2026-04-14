@@ -13,7 +13,6 @@ import {
     ItalicNode,
     LeftAlignNode,
     Node,
-    Nodes,
     RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
@@ -24,8 +23,6 @@ import {
     UnderlineNode,
     UrlNode
 } from "../node/Node";
-import {AbstractVisitor} from "../node/Visitor";
-import {AbstractRenderer, NodeRenderer, RenderContext, RenderTarget} from "../render/Renderer";
 import {Styles} from "../Styles";
 import {EmojiToken, StringToken, StyleToken, Token, Tokenizer} from "./Tokenizer";
 
@@ -44,11 +41,8 @@ export namespace Parser {
             applyNestingRule, // apply nesting rule again, because [i][code][/code][/i] would be sliced into [i][/i][code][i][/i][/code][i][/i]
         ];
         const tokens = steps.reduce((result, step) => step(result), mergedTokens);
-        return createDocument(tokens);
-    }
-
-    export function createDocument(tokens: Token[]): DocumentNode {
-        return postProcessDocumentNode(new DocumentNode(parseNodes(tokens)));
+        const nodes = parseNodes(tokens);
+        return new DocumentNode(nodes);
     }
 
     export function parseNodes(tokens: Token[]): Node[] {
@@ -157,10 +151,6 @@ export namespace Parser {
             }
         }
         return nodes;
-    }
-
-    export function postProcessDocumentNode(document: DocumentNode): DocumentNode {
-        return documentPostProcessor.render(document).result!!;
     }
 
     export function applyNestingRule(tokens: Token[]): Token[] {
@@ -422,51 +412,3 @@ export namespace Parser {
     }
 }
 
-class DocumentPostProcessRenderTarget implements RenderTarget {
-    result: Node | null = null;
-}
-
-class DocumentPostProcessor extends AbstractRenderer<DocumentPostProcessRenderTarget> {
-    constructor() {
-        super((context) => new DocumentPostProcessNodeRenderer(context));
-    }
-
-    createRenderTarget(): DocumentPostProcessRenderTarget {
-        return new DocumentPostProcessRenderTarget();
-    }
-}
-
-class DocumentPostProcessNodeRenderer extends AbstractVisitor implements NodeRenderer {
-    private readonly output: DocumentPostProcessRenderTarget;
-    private parent: Node | null = null;
-
-    constructor(context: RenderContext<DocumentPostProcessRenderTarget>) {
-        super();
-        this.output = context.output;
-    }
-
-    beforeRoot(node: Node): void {
-        this.parent = node;
-    }
-
-    render(node: Node): void {
-        node.accept(this);
-    }
-
-    afterRoot(node: Node): void {
-        this.output.result = node;
-    }
-
-    visitChildren(node: Node): void {
-        const prevParent = this.parent;
-        this.parent = node;
-        super.visitChildren(node);
-        this.parent = prevParent;
-    }
-
-    getSupportedNodeTypes(): string[] {
-        return Nodes.ALL_NODE_TYPES;
-    }
-}
-
-const documentPostProcessor = new DocumentPostProcessor();
