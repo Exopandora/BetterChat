@@ -22,13 +22,16 @@ import {
     StrikethroughNode,
     StringNode,
     SubscriptNode,
-    SuperscriptNode, TableDataNode, TableHeaderNode, TableNode, TableRowNode,
+    SuperscriptNode,
+    TableDataNode,
+    TableHeaderNode,
+    TableNode,
+    TableRowNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
 } from "../node/Node";
 import {AbstractVisitor} from "../node/Visitor";
-import {StringToken} from "../parser/Tokenizer";
 import {AbstractRenderer, NodeRenderer, RenderContext, RenderTarget} from "./Renderer";
 
 const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
@@ -243,14 +246,6 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.append(node, span);
     }
 
-    append(node: Node, element: HTMLElement): void {
-        this.parent.appendChild(element);
-        const prevParent = this.parent;
-        this.parent = element;
-        this.visitChildren(node);
-        this.parent = prevParent;
-    }
-
     visitHighlightNode(node: HighlightNode): void {
         const span = document.createElement("span");
         span.classList.add("highlighted-text-snippet");
@@ -330,6 +325,14 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     visitTableDataNode(node: TableDataNode): void {
         const td = document.createElement("td");
         this.append(node, td);
+    }
+
+    append(node: Node, element: HTMLElement): void {
+        this.parent.appendChild(element);
+        const prevParent = this.parent;
+        this.parent = element;
+        this.visitChildren(node);
+        this.parent = prevParent;
     }
 
     getSupportedNodeTypes(): string[] {
