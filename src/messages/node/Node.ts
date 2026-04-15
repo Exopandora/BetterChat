@@ -211,6 +211,18 @@ export class TableDataNode extends Node {
     }
 }
 
+export class MathNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
+export class InlineMathNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
 export namespace Nodes {
     export const ALL_NODE_TYPES = [
         DocumentNode.name,
@@ -241,5 +253,7 @@ export namespace Nodes {
         TableRowNode.name,
         TableHeaderNode.name,
         TableDataNode.name,
+        MathNode.name,
+        InlineMathNode.name,
     ];
 }

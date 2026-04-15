@@ -83,6 +83,8 @@ export namespace Styles {
     export const TABLE_ROW = new Style("table row", isNull, {allowsSlicing: false});
     export const TABLE_HEADER = new Style("table header", isNull, {allowsSlicing: false});
     export const TABLE_DATA = new Style("table data", isNull, {allowsSlicing: false});
+    export const MATH = new Style("math", isNull, {allowsNesting: false});
+    export const INLINE_MATH = new Style("inline math", isNull, {allowsNesting: false});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -133,6 +135,9 @@ export namespace Styles {
         ["tr", TABLE_ROW],
         ["th", TABLE_HEADER],
         ["td", TABLE_DATA],
+        ["math", INLINE_MATH],
+        ["tex", INLINE_MATH],
+        ["latex", MATH],
     ]);
 
     export function fromBBCode(code: string): Style | null {

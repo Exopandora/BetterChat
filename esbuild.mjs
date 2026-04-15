@@ -29,6 +29,7 @@ await esbuild.build({
 		}),
 		globalExternals({
 			"tippy.js": "tippy",
+			"katex": "katex",
 		}),
 	],
 });

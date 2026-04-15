@@ -10,10 +10,12 @@ import {
     HeadingNode,
     HighlightNode,
     InlineCodeNode,
+    InlineMathNode,
     ItalicNode,
     LeftAlignNode,
     ListItemNode,
     ListNode,
+    MathNode,
     Node,
     RightAlignNode,
     SpoilerNode,
@@ -175,6 +177,12 @@ export namespace Parser {
                         break;
                     case Styles.TABLE_DATA:
                         nodes.push(new TableDataNode(children));
+                        break;
+                    case Styles.MATH:
+                        nodes.push(new MathNode(children));
+                        break;
+                    case Styles.INLINE_MATH:
+                        nodes.push(new InlineMathNode(children));
                         break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);

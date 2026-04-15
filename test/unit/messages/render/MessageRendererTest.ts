@@ -13,16 +13,22 @@ import {
     HeadingNode,
     HighlightNode,
     InlineCodeNode,
+    InlineMathNode,
     ItalicNode,
     LeftAlignNode,
     ListItemNode,
     ListNode,
+    MathNode,
     RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
     StringNode,
     SubscriptNode,
-    SuperscriptNode, TableDataNode, TableHeaderNode, TableNode, TableRowNode,
+    SuperscriptNode,
+    TableDataNode,
+    TableHeaderNode,
+    TableNode,
+    TableRowNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
@@ -416,6 +422,86 @@ describe("Given a simple document node", () => {
                         </td>
                     </tr>
                 </table>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a math node correctly", () => {
+            const document = new DocumentNode([
+                new MathNode([
+                    new StringNode("9+10=21"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <span>
+                    <span class="katex-display">
+                        <span class="katex">
+                            <span class="katex-html" aria-hidden="true">
+                                <span class="base">
+                                    <span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span>
+                                    <span class="mord">
+                                        9
+                                    </span>
+                                    <span class="mspace" style="margin-right: 0.2222em;"></span>
+                                    <span class="mbin">
+                                        +
+                                    </span>
+                                    <span class="mspace" style="margin-right: 0.2222em;"></span>
+                                </span>
+                                <span class="base">
+                                    <span class="strut" style="height: 0.6444em;"></span>
+                                    <span class="mord">
+                                        10
+                                    </span>
+                                    <span class="mspace" style="margin-right: 0.2778em;"></span>
+                                    <span class="mrel">
+                                        =
+                                    </span>
+                                    <span class="mspace" style="margin-right: 0.2778em;"></span>
+                                </span>
+                                <span class="base">
+                                    <span class="strut" style="height: 0.6444em;"></span>
+                                    <span class="mord">
+                                        21
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                    </span>
+                </span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an inline math node correctly", () => {
+            const document = new DocumentNode([
+                new InlineMathNode([
+                    new StringNode("9+10=21"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <span>
+                    <span class="katex">
+                        <span class="katex-html" aria-hidden="true">
+                            <span class="base">
+                                <span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span>
+                                <span class="mord">9</span>
+                                <span class="mspace" style="margin-right: 0.2222em;"></span>
+                                <span class="mbin">+</span>
+                                <span class="mspace" style="margin-right: 0.2222em;"></span>
+                            </span>
+                            <span class="base">
+                                <span class="strut" style="height: 0.6444em;"></span>
+                                <span class="mord">10</span>
+                                <span class="mspace" style="margin-right: 0.2778em;"></span>
+                                <span class="mrel">=</span>
+                                <span class="mspace" style="margin-right: 0.2778em;"></span>
+                            </span>
+                            <span class="base">
+                                <span class="strut" style="height: 0.6444em;"></span>
+                                <span class="mord">21</span>
+                            </span>
+                        </span>
+                    </span>
+                </span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });

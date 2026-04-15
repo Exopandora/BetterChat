@@ -10,10 +10,12 @@ import {
     HeadingNode,
     HighlightNode,
     InlineCodeNode,
+    InlineMathNode,
     ItalicNode,
     LeftAlignNode,
     ListItemNode,
     ListNode,
+    MathNode,
     Node,
     RightAlignNode,
     SpoilerNode,
@@ -114,6 +116,10 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitTableHeaderNode(node);
         } else if (node instanceof TableDataNode) {
             this.visitTableDataNode(node);
+        } else if (node instanceof MathNode) {
+            this.visitMathNode(node);
+        } else if (node instanceof InlineMathNode) {
+            this.visitInlineMathNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -224,6 +230,14 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitTableDataNode(node: TableDataNode): void {
+        this.visitChildren(node);
+    }
+
+    visitMathNode(node: MathNode): void {
+        this.visitChildren(node);
+    }
+
+    visitInlineMathNode(node: InlineMathNode): void {
         this.visitChildren(node);
     }
 

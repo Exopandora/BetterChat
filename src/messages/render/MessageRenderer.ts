@@ -1,3 +1,4 @@
+import katex from "katex";
 import {Tooltips} from "../../helpers/Tooltips";
 import {getVueInstance, setClipboardString} from "../../helpers/Util";
 import {
@@ -10,11 +11,11 @@ import {
     FootnoteNode,
     HeadingNode,
     HighlightNode,
-    InlineCodeNode,
+    InlineCodeNode, InlineMathNode,
     ItalicNode,
     LeftAlignNode,
     ListItemNode,
-    ListNode,
+    ListNode, MathNode,
     Node,
     Nodes,
     RightAlignNode,
@@ -325,6 +326,29 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     visitTableDataNode(node: TableDataNode): void {
         const td = document.createElement("td");
         this.append(node, td);
+    }
+
+    visitMathNode(node: MathNode): void {
+        const span = document.createElement("span");
+        this.append(node, span);
+        katex.render(span.textContent, span, {
+            displayMode: true,
+            output: "html",
+            trust: false,
+            throwOnError: false,
+        });
+        this.parent.appendChild(span);
+    }
+
+    visitInlineMathNode(node: InlineMathNode): void {
+        const span = document.createElement("span");
+        this.append(node, span);
+        katex.render(span.textContent, span, {
+            output: "html",
+            trust: false,
+            throwOnError: false,
+        });
+        this.parent.appendChild(span);
     }
 
     append(node: Node, element: HTMLElement): void {
