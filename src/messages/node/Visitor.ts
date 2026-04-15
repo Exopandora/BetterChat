@@ -21,6 +21,10 @@ import {
     StringNode,
     SubscriptNode,
     SuperscriptNode,
+    TableDataNode,
+    TableHeaderNode,
+    TableNode,
+    TableRowNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
@@ -102,6 +106,14 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitListNode(node);
         } else if (node instanceof ListItemNode) {
             this.visitListItemNode(node);
+        } else if (node instanceof TableNode) {
+            this.visitTableNode(node);
+        } else if (node instanceof TableRowNode) {
+            this.visitTableRowNode(node);
+        } else if (node instanceof TableHeaderNode) {
+            this.visitTableHeaderNode(node);
+        } else if (node instanceof TableDataNode) {
+            this.visitTableDataNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -196,6 +208,22 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitListItemNode(node: ListItemNode): void {
+        this.visitChildren(node);
+    }
+
+    visitTableNode(node: TableNode): void {
+        this.visitChildren(node);
+    }
+
+    visitTableRowNode(node: TableRowNode): void {
+        this.visitChildren(node);
+    }
+
+    visitTableHeaderNode(node: TableHeaderNode): void {
+        this.visitChildren(node);
+    }
+
+    visitTableDataNode(node: TableDataNode): void {
         this.visitChildren(node);
     }
 

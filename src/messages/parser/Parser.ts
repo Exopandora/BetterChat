@@ -21,6 +21,10 @@ import {
     StringNode,
     SubscriptNode,
     SuperscriptNode,
+    TableDataNode,
+    TableHeaderNode,
+    TableNode,
+    TableRowNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
@@ -42,6 +46,7 @@ export namespace Parser {
             parseUrlTokens,
             applyNestingRule,
             applyListRules,
+            applyTableRules,
             sliceOverlappingStyleRanges,
             applyNestingRule, // apply nesting rule again, because [i][code][/code][/i] would be sliced into [i][/i][code][i][/i][/code][i][/i]
         ];
@@ -159,6 +164,18 @@ export namespace Parser {
                     case Styles.LIST_ITEM:
                         nodes.push(new ListItemNode(children));
                         break;
+                    case Styles.TABLE:
+                        nodes.push(new TableNode(children));
+                        break;
+                    case Styles.TABLE_ROW:
+                        nodes.push(new TableRowNode(children));
+                        break;
+                    case Styles.TABLE_HEADER:
+                        nodes.push(new TableHeaderNode(children));
+                        break;
+                    case Styles.TABLE_DATA:
+                        nodes.push(new TableDataNode(children));
+                        break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);
                 }
@@ -241,6 +258,69 @@ export namespace Parser {
 
     function isListStyle(style: Style): boolean {
         return style == Styles.UNORDERED_LIST || style == Styles.ORDERED_LIST;
+    }
+
+    export function applyTableRules(tokens: Token[]): Token[] {
+        const tokensToConvert: Set<Token> = new Set<Token>();
+        const validTableTokens = new Set<Token>();
+        for (let x = 0; x < tokens.length; x++) {
+            const token = tokens[x];
+            if (token instanceof StyleToken && token.type == StyleToken.Type.START) {
+                if (token.style == Styles.TABLE) {
+                    const tableTokens: Token[] = [];
+                    let isValidTableStructure = true;
+                    for (let y = x + 1; y < tokens.length; y++) {
+                        const other = tokens[y];
+                        if (other == token.link) {
+                            break;
+                        } else if (other instanceof StyleToken && other.type == StyleToken.Type.START && other.style == Styles.TABLE_ROW) {
+                            tableTokens.push(other, other.link!!);
+                            for (let z = y + 1; z < tokens.length; z++) {
+                                const nested = tokens[z];
+                                if (nested == other.link) {
+                                    y = z;
+                                    break;
+                                } else if (nested instanceof StyleToken && nested.type == StyleToken.Type.START && isTableCell(nested.style)) {
+                                    tableTokens.push(nested, nested.link!!);
+                                    for (let u = z + 1; u < tokens.length; u++) {
+                                        if (tokens[u] == nested.link) {
+                                            z = u;
+                                            break;
+                                        }
+                                    }
+                                } else if (!(nested instanceof StringToken && nested.string.trim().length == 0)) {
+                                    isValidTableStructure = false;
+                                }
+                            }
+                        } else if (!(other instanceof StringToken && other.string.trim().length == 0)) {
+                            isValidTableStructure = false;
+                        }
+                    }
+                    if (!isValidTableStructure) {
+                        tokensToConvert.add(token);
+                        tokensToConvert.add(token.link!!);
+                        for (const item of tableTokens) {
+                            tokensToConvert.add(item);
+                        }
+                    } else {
+                        for (const item of tableTokens) {
+                            validTableTokens.add(item);
+                        }
+                    }
+                } else if ((token.style == Styles.TABLE_ROW || isTableCell(token.style)) && !validTableTokens.has(token)) {
+                    tokensToConvert.add(token);
+                    tokensToConvert.add(token.link!!);
+                }
+            }
+        }
+        if (tokensToConvert.size == 0) {
+            return tokens;
+        }
+        return mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
+    }
+
+    function isTableCell(style: Style): boolean {
+        return style == Styles.TABLE_DATA || style == Styles.TABLE_HEADER;
     }
 
     // tokens: <pre>a-b-c-a-c-b</pre></br>

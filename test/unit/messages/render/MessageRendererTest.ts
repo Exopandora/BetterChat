@@ -22,7 +22,7 @@ import {
     StrikethroughNode,
     StringNode,
     SubscriptNode,
-    SuperscriptNode,
+    SuperscriptNode, TableDataNode, TableHeaderNode, TableNode, TableRowNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
@@ -373,6 +373,49 @@ describe("Given a simple document node", () => {
                         <span>item 2</span>
                     </li>
                 </ul>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a table node correctly", () => {
+            const document = new DocumentNode([
+                new TableNode([
+                    new TableRowNode([
+                        new TableHeaderNode([
+                            new StringNode("header 1"),
+                        ]),
+                        new TableHeaderNode([
+                            new StringNode("header 2"),
+                        ]),
+                    ]),
+                    new TableRowNode([
+                        new TableDataNode([
+                            new StringNode("value 1"),
+                        ]),
+                        new TableDataNode([
+                            new StringNode("value 2"),
+                        ]),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <table>
+                    <tr>
+                        <th>
+                            <span>header 1</span>
+                        </th>
+                        <th>
+                            <span>header 2</span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>value 1</span>
+                        </td>
+                        <td>
+                            <span>value 2</span>
+                        </td>
+                    </tr>
+                </table>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });

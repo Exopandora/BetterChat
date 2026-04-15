@@ -187,6 +187,30 @@ export class ListItemNode extends Node {
     }
 }
 
+export class TableNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
+export class TableRowNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
+export class TableHeaderNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
+export class TableDataNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
 export namespace Nodes {
     export const ALL_NODE_TYPES = [
         DocumentNode.name,
@@ -213,5 +237,9 @@ export namespace Nodes {
         FootnoteNode.name,
         ListNode.name,
         ListItemNode.name,
+        TableNode.name,
+        TableRowNode.name,
+        TableHeaderNode.name,
+        TableDataNode.name,
     ];
 }

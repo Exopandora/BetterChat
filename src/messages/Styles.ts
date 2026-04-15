@@ -79,6 +79,10 @@ export namespace Styles {
     export const ORDERED_LIST = new Style("ordered list", isNull, {allowsSlicing: false});
     export const UNORDERED_LIST = new Style("unordered list", isNull, {allowsSlicing: false});
     export const LIST_ITEM = new Style("ordered list", isNull, {allowsSlicing: false});
+    export const TABLE = new Style("table", isNull, {allowsSlicing: false});
+    export const TABLE_ROW = new Style("table row", isNull, {allowsSlicing: false});
+    export const TABLE_HEADER = new Style("table header", isNull, {allowsSlicing: false});
+    export const TABLE_DATA = new Style("table data", isNull, {allowsSlicing: false});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -125,6 +129,10 @@ export namespace Styles {
         ["ol", ORDERED_LIST],
         ["ul", UNORDERED_LIST],
         ["li", LIST_ITEM],
+        ["table", TABLE],
+        ["tr", TABLE_ROW],
+        ["th", TABLE_HEADER],
+        ["td", TABLE_DATA],
     ]);
 
     export function fromBBCode(code: string): Style | null {

@@ -140,3 +140,20 @@ betterchat-message ul {
 betterchat-message li {
 	list-style-position: inside;
 }
+
+betterchat-message table, betterchat-message th, betterchat-message tr, betterchat-message td {
+	border-collapse: collapse;
+	padding: .5rem;
+}
+
+betterchat-message tr:nth-child(1) {
+	border-bottom: var(--presence-separator-presence) 3px solid;
+}
+
+betterchat-message tr {
+	border-bottom: var(--presence-separator-presence) 1px solid;
+}
+
+betterchat-message th {
+	font-weight: bold;
+}

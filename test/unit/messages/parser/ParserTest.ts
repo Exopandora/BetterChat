@@ -605,6 +605,133 @@ describe("Given an array of tokens", () => {
             expect(result).toEqual(expected);
         });
     });
+    describe("when applying table rules", () => {
+        it("persists valid tables", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.TABLE, StyleToken.Type.START, "[table]"),
+                new StringToken("   \n   "),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StringToken("   \n   "),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StringToken("header 1"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StringToken("header 2"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StringToken("value 1"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
+                new StringToken("   \n   "),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StringToken("value 2"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
+                new StyleToken(Styles.TABLE, StyleToken.Type.END, "[/table]"),
+            ];
+            link(tokens, 0, 20);
+            link(tokens, 2, 10);
+            link(tokens, 4, 6);
+            link(tokens, 7, 9);
+            link(tokens, 11, 19);
+            link(tokens, 12, 14);
+            link(tokens, 16, 18);
+            const expected = tokens.slice();
+            const result = Parser.applyTableRules(tokens);
+            expect(result).toEqual(expected);
+        });
+        it("converts invalid table structures to string tokens", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.TABLE, StyleToken.Type.START, "[table]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StringToken("header 1"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StringToken("header 2"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StringToken("value 1"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StringToken("value 2"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
+                new StyleToken(Styles.TABLE, StyleToken.Type.END, "[/table]"),
+            ];
+            link(tokens, 0, 18);
+            link(tokens, 1, 9);
+            link(tokens, 3, 5);
+            link(tokens, 6, 8);
+            link(tokens, 10, 17);
+            link(tokens, 11, 13);
+            link(tokens, 14, 16);
+            const expected = [
+                new StringToken("[table][tr]abc[th]header 1[/th][th]header 2[/th][/tr][tr][td]value 1[/td][td]value 2[/td][/tr][/table]"),
+            ];
+            const result = Parser.applyTableRules(tokens);
+            expect(result).toEqual(expected);
+        });
+        it("converts orphan table row tokens (without data) to string tokens", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
+            ];
+            link(tokens, 0, 2);
+            const expected = [
+                new StringToken("[tr]abc[/tr]"),
+            ];
+            const result = Parser.applyTableRules(tokens);
+            expect(result).toEqual(expected);
+        });
+        it("converts orphan table row tokens (with data) to string tokens", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
+            ];
+            link(tokens, 0, 4);
+            link(tokens, 1, 3);
+            const expected = [
+                new StringToken("[tr][td]abc[/td][/tr]"),
+            ];
+            const result = Parser.applyTableRules(tokens);
+            expect(result).toEqual(expected);
+        });
+        it("converts orphan table header tokens to string tokens", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
+            ];
+            link(tokens, 0, 2);
+            const expected = [
+                new StringToken("[th]abc[/th]"),
+            ];
+            const result = Parser.applyTableRules(tokens);
+            expect(result).toEqual(expected);
+        });
+        it("converts orphan table data tokens to string tokens", () => {
+            const tokens: Token[] = [
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StringToken("abc"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
+            ];
+            link(tokens, 0, 2);
+            const expected = [
+                new StringToken("[td]abc[/td]"),
+            ];
+            const result = Parser.applyTableRules(tokens);
+            expect(result).toEqual(expected);
+        });
+    });
 });
 
 describe("Given two token arrays", () => {

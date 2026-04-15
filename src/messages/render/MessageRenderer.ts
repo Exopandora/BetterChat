@@ -22,7 +22,7 @@ import {
     StrikethroughNode,
     StringNode,
     SubscriptNode,
-    SuperscriptNode,
+    SuperscriptNode, TableDataNode, TableHeaderNode, TableNode, TableRowNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
@@ -44,6 +44,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     private readonly root: HTMLElement;
     private parent: HTMLElement;
     private footnotes: HTMLElement[] = [];
+    private insideTable: boolean = false;
 
     constructor(context: RenderContext<MessageRenderTarget>) {
         super();
@@ -216,7 +217,9 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         const span = document.createElement("span");
         span.style.display = "flex";
         span.style.justifyContent = "center";
-        this.root.dataset.renderFullWidth = "true";
+        if (!this.insideTable) {
+            this.root.dataset.renderFullWidth = "true";
+        }
         this.append(node, span);
     }
 
@@ -224,7 +227,9 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         const span = document.createElement("span");
         span.style.display = "flex";
         span.style.justifyContent = "right";
-        this.root.dataset.renderFullWidth = "true";
+        if (!this.insideTable) {
+            this.root.dataset.renderFullWidth = "true";
+        }
         this.append(node, span);
     }
 
@@ -232,7 +237,9 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         const span = document.createElement("span");
         span.style.display = "flex";
         span.style.justifyContent = "left";
-        this.root.dataset.renderFullWidth = "true";
+        if (!this.insideTable) {
+            this.root.dataset.renderFullWidth = "true";
+        }
         this.append(node, span);
     }
 
@@ -285,6 +292,44 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     visitListItemNode(node: ListItemNode): void {
         const li = document.createElement("li");
         this.append(node, li);
+    }
+
+    visitTableNode(node: TableNode): void {
+        const table = document.createElement("table");
+        this.parent.appendChild(table);
+        const prevParent = this.parent;
+        this.parent = table;
+        this.insideTable = true;
+        for (const child of node.children) {
+            if (child instanceof TableRowNode) {
+                this.visit(child);
+            }
+        }
+        this.insideTable = false;
+        this.parent = prevParent;
+    }
+
+    visitTableRowNode(node: TableRowNode): void {
+        const tr = document.createElement("tr");
+        this.parent.appendChild(tr);
+        const prevParent = this.parent;
+        this.parent = tr;
+        for (const child of node.children) {
+            if (child instanceof TableHeaderNode || child instanceof TableDataNode) {
+                this.visit(child);
+            }
+        }
+        this.parent = prevParent;
+    }
+
+    visitTableHeaderNode(node: TableHeaderNode): void {
+        const th = document.createElement("th");
+        this.append(node, th);
+    }
+
+    visitTableDataNode(node: TableDataNode): void {
+        const td = document.createElement("td");
+        this.append(node, td);
     }
 
     getSupportedNodeTypes(): string[] {
