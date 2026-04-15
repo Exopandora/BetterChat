@@ -157,3 +157,42 @@ betterchat-message tr {
 betterchat-message th {
 	font-weight: bold;
 }
+
+betterchat-message blockquote {
+	background-color: var(--tsv-contrast-bg);
+	border-radius: var(--tsv-border-radius);
+	border-left: 3px solid #434343;
+}
+
+betterchat-message blockquote.callout-note {
+	border-left: 3px solid #3B82F4;
+}
+
+betterchat-message blockquote.callout-tip {
+	border-left: 3px solid #0DBA82;
+}
+
+betterchat-message blockquote.callout-important {
+	border-left: 3px solid #8E5BF6;
+}
+
+betterchat-message blockquote.callout-warning {
+	border-left: 3px solid #F39F0B;
+}
+
+betterchat-message blockquote.callout-caution {
+	border-left: 3px solid #EF4140;
+}
+
+betterchat-message .blockquote-content-wrapper {
+	padding: .4em .4em .4em .6em;
+}
+
+betterchat-message blockquote p {
+	margin: 0;
+}
+
+betterchat-message p.blockquote-title {
+	color: var(--ts-chat-system-message-text-color);
+	margin-bottom: .2em;
+}

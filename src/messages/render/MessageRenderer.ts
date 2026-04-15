@@ -2,6 +2,7 @@ import katex from "katex";
 import {Tooltips} from "../../helpers/Tooltips";
 import {getVueInstance, setClipboardString} from "../../helpers/Util";
 import {
+    BlockquoteNode,
     BoldNode,
     CenterAlignNode,
     CodeNode,
@@ -11,11 +12,13 @@ import {
     FootnoteNode,
     HeadingNode,
     HighlightNode,
-    InlineCodeNode, InlineMathNode,
+    InlineCodeNode,
+    InlineMathNode,
     ItalicNode,
     LeftAlignNode,
     ListItemNode,
-    ListNode, MathNode,
+    ListNode,
+    MathNode,
     Node,
     Nodes,
     RightAlignNode,
@@ -349,6 +352,43 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             throwOnError: false,
         });
         this.parent.appendChild(span);
+    }
+
+    visitBlockquoteNode(node: BlockquoteNode): void {
+        const blockquote = document.createElement("blockquote");
+        switch (node.type) {
+            case BlockquoteNode.BlockquoteType.NOTE:
+                blockquote.classList.add("callout-note");
+                break;
+            case BlockquoteNode.BlockquoteType.TIP:
+                blockquote.classList.add("callout-tip");
+                break;
+            case BlockquoteNode.BlockquoteType.IMPORTANT:
+                blockquote.classList.add("callout-important");
+                break;
+            case BlockquoteNode.BlockquoteType.WARNING:
+                blockquote.classList.add("callout-warning");
+                break;
+            case BlockquoteNode.BlockquoteType.CAUTION:
+                blockquote.classList.add("callout-caution");
+                break;
+            default:
+                break;
+        }
+        const content = document.createElement("div");
+        content.classList.add("blockquote-content-wrapper");
+        blockquote.appendChild(content);
+        if (node.title != null) {
+            const title = document.createElement("p");
+            title.classList.add("blockquote-title");
+            title.textContent = node.title;
+            content.appendChild(title);
+        }
+        this.parent.appendChild(blockquote);
+        const prevParent = this.parent;
+        this.parent = content;
+        this.visitChildren(node);
+        this.parent = prevParent;
     }
 
     append(node: Node, element: HTMLElement): void {

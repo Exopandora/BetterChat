@@ -223,6 +223,28 @@ export class InlineMathNode extends Node {
     }
 }
 
+export class BlockquoteNode extends Node {
+    readonly title: string | null;
+    readonly type: BlockquoteNode.BlockquoteType
+
+    constructor(title: string | null, type: BlockquoteNode.BlockquoteType, children: Node[] = []) {
+        super(children);
+        this.title = title;
+        this.type = type;
+    }
+}
+
+export namespace BlockquoteNode {
+    export enum BlockquoteType {
+        DEFAULT,
+        NOTE,
+        TIP,
+        IMPORTANT,
+        WARNING,
+        CAUTION,
+    }
+}
+
 export namespace Nodes {
     export const ALL_NODE_TYPES = [
         DocumentNode.name,
@@ -255,5 +277,6 @@ export namespace Nodes {
         TableDataNode.name,
         MathNode.name,
         InlineMathNode.name,
+        BlockquoteNode.name,
     ];
 }

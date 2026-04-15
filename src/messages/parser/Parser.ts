@@ -1,4 +1,5 @@
 import {
+    BlockquoteNode,
     BoldNode,
     CenterAlignNode,
     CodeNode,
@@ -33,6 +34,7 @@ import {
 } from "../node/Node";
 import {Style, Styles} from "../Styles";
 import {EmojiToken, StringToken, StyleToken, Token, Tokenizer} from "./Tokenizer";
+import BlockquoteType = BlockquoteNode.BlockquoteType;
 
 export namespace Parser {
     import ListType = ListNode.ListType;
@@ -183,6 +185,24 @@ export namespace Parser {
                         break;
                     case Styles.INLINE_MATH:
                         nodes.push(new InlineMathNode(children));
+                        break;
+                    case Styles.QUOTE:
+                        nodes.push(new BlockquoteNode(token.value, BlockquoteType.DEFAULT, children));
+                        break;
+                    case Styles.NOTE:
+                        nodes.push(new BlockquoteNode("Note", BlockquoteType.NOTE, children));
+                        break;
+                    case Styles.TIP:
+                        nodes.push(new BlockquoteNode("Tip", BlockquoteType.TIP, children));
+                        break;
+                    case Styles.IMPORTANT:
+                        nodes.push(new BlockquoteNode("Important", BlockquoteType.IMPORTANT, children));
+                        break;
+                    case Styles.WARNING:
+                        nodes.push(new BlockquoteNode("Warning", BlockquoteType.WARNING, children));
+                        break;
+                    case Styles.CAUTION:
+                        nodes.push(new BlockquoteNode("Caution", BlockquoteType.CAUTION, children));
                         break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);

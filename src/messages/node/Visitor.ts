@@ -1,4 +1,5 @@
 import {
+    BlockquoteNode,
     BoldNode,
     CenterAlignNode,
     CodeNode,
@@ -120,6 +121,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitMathNode(node);
         } else if (node instanceof InlineMathNode) {
             this.visitInlineMathNode(node);
+        } else if (node instanceof BlockquoteNode) {
+            this.visitBlockquoteNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -238,6 +241,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitInlineMathNode(node: InlineMathNode): void {
+        this.visitChildren(node);
+    }
+
+    visitBlockquoteNode(node: BlockquoteNode): void {
         this.visitChildren(node);
     }
 

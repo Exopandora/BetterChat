@@ -2,6 +2,7 @@ import {afterEach, describe, expect, it} from '@jest/globals';
 import formatXml from "xml-formatter";
 import {Tooltips} from "../../../../src/helpers/Tooltips";
 import {
+    BlockquoteNode,
     BoldNode,
     CenterAlignNode,
     CodeNode,
@@ -35,6 +36,7 @@ import {
 } from "../../../../src/messages/node/Node";
 import {MessageRenderer} from "../../../../src/messages/render/MessageRenderer";
 import ListType = ListNode.ListType;
+import BlockquoteType = BlockquoteNode.BlockquoteType;
 
 describe("Given a simple document node", () => {
     describe("when rendering a message", () => {
@@ -502,6 +504,24 @@ describe("Given a simple document node", () => {
                         </span>
                     </span>
                 </span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an blockquote node correctly", () => {
+            const document = new DocumentNode([
+                new BlockquoteNode("title", BlockquoteType.TIP, [
+                    new StringNode("blockquote content"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <blockquote class="callout-tip">
+                    <div class="blockquote-content-wrapper">
+                        <p class="blockquote-title">
+                            title
+                        </p>
+                        <span>blockquote content</span>
+                    </div>
+                </blockquote>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });

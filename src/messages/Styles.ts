@@ -85,6 +85,12 @@ export namespace Styles {
     export const TABLE_DATA = new Style("table data", isNull, {allowsSlicing: false});
     export const MATH = new Style("math", isNull, {allowsNesting: false});
     export const INLINE_MATH = new Style("inline math", isNull, {allowsNesting: false});
+    export const QUOTE = new Style("quote", isAny, {allowsSlicing: false});
+    export const NOTE = new Style("note", isNull, {allowsSlicing: false});
+    export const TIP = new Style("tip", isNull, {allowsSlicing: false});
+    export const IMPORTANT = new Style("important", isNull, {allowsSlicing: false});
+    export const WARNING = new Style("warning", isNull, {allowsSlicing: false});
+    export const CAUTION = new Style("caution", isNull, {allowsSlicing: false});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
@@ -138,6 +144,12 @@ export namespace Styles {
         ["math", INLINE_MATH],
         ["tex", INLINE_MATH],
         ["latex", MATH],
+        ["quote", QUOTE],
+        ["note", NOTE],
+        ["tip", TIP],
+        ["important", IMPORTANT],
+        ["warning", WARNING],
+        ["caution", CAUTION],
     ]);
 
     export function fromBBCode(code: string): Style | null {
