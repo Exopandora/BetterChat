@@ -92,7 +92,7 @@ export namespace Styles {
     export const IMPORTANT = new Style("important", isNull, {allowsSlicing: false});
     export const WARNING = new Style("warning", isNull, {allowsSlicing: false});
     export const CAUTION = new Style("caution", isNull, {allowsSlicing: false});
-    export const MERMAID = new Style("inline math", isNull, {allowsNesting: false});
+    export const MERMAID = new Style("mermaid", isNull, {allowsNesting: false});
 
     function isValidColor(color: string | null): boolean {
         return color != null && (cssColors.includes(color.toLowerCase()) || color.match(/^#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/) != null);
