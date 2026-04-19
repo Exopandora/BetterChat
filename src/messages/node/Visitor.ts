@@ -61,6 +61,14 @@ export interface Visitor {
     visitListNode(node: ListNode): void;
     visitListItemNode(node: ListItemNode): void;
     visitTaskListItemNode(node: TaskListItemNode): void;
+    visitTableNode(node: TableNode): void;
+    visitTableRowNode(node: TableRowNode): void;
+    visitTableHeaderNode(node: TableHeaderNode): void;
+    visitTableDataNode(node: TableDataNode): void;
+    visitMathNode(node: MathNode): void;
+    visitInlineMathNode(node: InlineMathNode): void;
+    visitBlockquoteNode(node: BlockquoteNode): void;
+    visitMermaidNode(node: MermaidNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
