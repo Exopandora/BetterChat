@@ -167,6 +167,22 @@ betterchat-message li {
 	list-style-position: inside;
 }
 
+betterchat-message li.task-list-item {
+	list-style-type: none;
+}
+
+.ts-chat-room-event-compact betterchat-message svg.task-list-item-checkbox {
+	vertical-align: middle;
+	margin-left: -.3em;
+	margin-right: .75em;
+}
+
+.ts-chat-room-event-bubble betterchat-message svg.task-list-item-checkbox {
+	vertical-align: middle;
+	margin-left: -.25em;
+	margin-right: .85em;
+}
+
 betterchat-message table, betterchat-message th, betterchat-message tr, betterchat-message td {
 	border-collapse: collapse;
 	padding: .5rem;

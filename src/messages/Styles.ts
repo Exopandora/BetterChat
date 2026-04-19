@@ -79,7 +79,7 @@ export namespace Styles {
     export const ORDERED_LIST = new Style("ordered list", isNull, {allowsSlicing: false});
     export const UNORDERED_LIST = new Style("unordered list", isNull, {allowsSlicing: false});
     export const LIST = new Style("list", isValidListItemMarker, {allowsSlicing: false});
-    export const LIST_ITEM = new Style("list item", isNull, {allowsSlicing: false});
+    export const LIST_ITEM = new Style("list item", isValidListItemValue, {allowsSlicing: false});
     export const TABLE = new Style("table", isNull, {allowsSlicing: false});
     export const TABLE_ROW = new Style("table row", isNull, {allowsSlicing: false});
     export const TABLE_HEADER = new Style("table header", isNull, {allowsSlicing: false});
@@ -116,6 +116,10 @@ export namespace Styles {
             marker == "i" || marker == "I" || marker == "a" || marker == "A" || marker == "1" ||
             // unordered list
             marker.toLowerCase() == "disc" || marker.toLowerCase() == "circle" || marker.toLowerCase() == "square";
+    }
+
+    function isValidListItemValue(value: string | null): boolean {
+        return value == null || value.toLowerCase() == "x" || value.toLowerCase() == "o";
     }
 
     const BBCODE_TO_STYLE = new Map<string, Style>([

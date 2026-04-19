@@ -195,6 +195,15 @@ export class ListItemNode extends Node {
     }
 }
 
+export class TaskListItemNode extends Node {
+    readonly checked: boolean;
+
+    constructor(checked: boolean, children: Node[] = []) {
+        super(children);
+        this.checked = checked;
+    }
+}
+
 export class TableNode extends Node {
     constructor(children: Node[] = []) {
         super(children);
@@ -293,5 +302,6 @@ export namespace Nodes {
         InlineMathNode.name,
         BlockquoteNode.name,
         MermaidNode.name,
+        TaskListItemNode.name,
     ];
 }

@@ -29,6 +29,7 @@ import {
     TableHeaderNode,
     TableNode,
     TableRowNode,
+    TaskListItemNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
@@ -59,6 +60,7 @@ export interface Visitor {
     visitFootnoteNode(node: FootnoteNode): void;
     visitListNode(node: ListNode): void;
     visitListItemNode(node: ListItemNode): void;
+    visitTaskListItemNode(node: TaskListItemNode): void;
     visitDocumentNode(node: DocumentNode): void;
 }
 
@@ -110,6 +112,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitListNode(node);
         } else if (node instanceof ListItemNode) {
             this.visitListItemNode(node);
+        } else if (node instanceof TaskListItemNode) {
+            this.visitTaskListItemNode(node);
         } else if (node instanceof TableNode) {
             this.visitTableNode(node);
         } else if (node instanceof TableRowNode) {
@@ -220,6 +224,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitListItemNode(node: ListItemNode): void {
+        this.visitChildren(node);
+    }
+
+    visitTaskListItemNode(node: TaskListItemNode): void {
         this.visitChildren(node);
     }
 

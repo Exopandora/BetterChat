@@ -29,6 +29,7 @@ import {
     TableHeaderNode,
     TableNode,
     TableRowNode,
+    TaskListItemNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
@@ -36,10 +37,9 @@ import {
 import {Style, Styles} from "../Styles";
 import {EmojiToken, StringToken, StyleToken, Token, Tokenizer} from "./Tokenizer";
 import BlockquoteType = BlockquoteNode.BlockquoteType;
+import ListType = ListNode.ListType;
 
 export namespace Parser {
-    import ListType = ListNode.ListType;
-
     export function parse(node: HTMLElement): DocumentNode {
         const htmlTokens = Tokenizer.tokenizeHTML(node);
         const originalMessage = htmlTokens.map(token => token.string).join("");
@@ -170,7 +170,11 @@ export namespace Parser {
                         nodes.push(new ListNode(parseListType(token.value), children));
                         break;
                     case Styles.LIST_ITEM:
-                        nodes.push(new ListItemNode(children));
+                        if (token.value == null) {
+                            nodes.push(new ListItemNode(children));
+                        } else {
+                            nodes.push(new TaskListItemNode(token.value.toLowerCase() == "x", children));
+                        }
                         break;
                     case Styles.TABLE:
                         nodes.push(new TableNode(children));

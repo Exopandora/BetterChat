@@ -2,6 +2,7 @@ import katex from "katex";
 import mermaid from "mermaid";
 import {MaximizeDiagramControls} from "../../components/betterchat/MaximizeDiagramControls";
 import {MermaidModalOverlay} from "../../components/tsclient/MermaidModalOverlay";
+import {ImageLoader} from "../../helpers/ImageLoader";
 import {ModalHelper} from "../../helpers/ModalHelper";
 import {Tooltips} from "../../helpers/Tooltips";
 import {getVueInstance, setClipboardString} from "../../helpers/Util";
@@ -36,6 +37,7 @@ import {
     TableHeaderNode,
     TableNode,
     TableRowNode,
+    TaskListItemNode,
     ThematicBreakNode,
     UnderlineNode,
     UrlNode
@@ -319,7 +321,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         const prevParent = this.parent;
         this.parent = list;
         for (const child of node.children) {
-            if (child instanceof ListItemNode) {
+            if (child instanceof ListItemNode || child instanceof TaskListItemNode) {
                 this.visit(child);
             }
         }
@@ -328,6 +330,32 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
 
     visitListItemNode(node: ListItemNode): void {
         const li = document.createElement("li");
+        this.append(node, li);
+    }
+
+    visitTaskListItemNode(node: TaskListItemNode): void {
+        const li = document.createElement("li");
+        li.classList.add("task-list-item");
+        if (node.checked) {
+            ImageLoader.loadIcon("checkbox_checked").then((svg) => {
+                const [background, checkmark] = svg.querySelectorAll("path");
+                background!!.style.fill = "MediumSpringGreen";
+                checkmark!!.style.stroke = "white";
+                svg.classList.add("task-list-item-checkbox");
+                svg.setAttribute("width", "13");
+                svg.setAttribute("height", "13");
+                li.prepend(svg);
+            });
+        } else {
+            ImageLoader.loadIcon("checkbox_unchecked").then((svg) => {
+                const background = svg.querySelector("path")!!
+                background.style.fill = "#9C9DA1";
+                svg.classList.add("task-list-item-checkbox");
+                svg.setAttribute("width", "13");
+                svg.setAttribute("height", "13");
+                li.prepend(svg);
+            });
+        }
         this.append(node, li);
     }
 
