@@ -78,7 +78,7 @@ export namespace Styles {
     export const FOOTNOTE = new Style("footnote", isNull, {allowsSlicing: false});
     export const ORDERED_LIST = new Style("ordered list", isNull, {allowsSlicing: false});
     export const UNORDERED_LIST = new Style("unordered list", isNull, {allowsSlicing: false});
-    export const LIST_ITEM = new Style("ordered list", isNull, {allowsSlicing: false});
+    export const LIST_ITEM = new Style("list item", isNull, {allowsSlicing: false});
     export const TABLE = new Style("table", isNull, {allowsSlicing: false});
     export const TABLE_ROW = new Style("table row", isNull, {allowsSlicing: false});
     export const TABLE_HEADER = new Style("table header", isNull, {allowsSlicing: false});
