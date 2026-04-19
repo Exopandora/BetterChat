@@ -341,9 +341,9 @@ describe("Given a simple document node", () => {
                 </span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
-        it("renders a list node (ordered) correctly", () => {
+        it("renders a list node (disc type) correctly", () => {
             const document = new DocumentNode([
-                new ListNode(ListType.ORDERED, [
+                new ListNode(ListType.DISC, [
                     new ListItemNode([
                         new StringNode("item 1"),
                     ]),
@@ -354,7 +354,76 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <ol>
+                <ul class="betterchat-list-style-type-disc">
+                    <li>
+                        <span>item 1</span>
+                    </li>
+                    <li>
+                        <span>item 2</span>
+                    </li>
+                </ul>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a list node (circle type) correctly", () => {
+            const document = new DocumentNode([
+                new ListNode(ListType.CIRCLE, [
+                    new ListItemNode([
+                        new StringNode("item 1"),
+                    ]),
+                    new ListItemNode([
+                        new StringNode("item 2"),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <ul class="betterchat-list-style-type-circle">
+                    <li>
+                        <span>item 1</span>
+                    </li>
+                    <li>
+                        <span>item 2</span>
+                    </li>
+                </ul>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a list node (square type) correctly", () => {
+            const document = new DocumentNode([
+                new ListNode(ListType.SQUARE, [
+                    new ListItemNode([
+                        new StringNode("item 1"),
+                    ]),
+                    new ListItemNode([
+                        new StringNode("item 2"),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <ul class="betterchat-list-style-type-square">
+                    <li>
+                        <span>item 1</span>
+                    </li>
+                    <li>
+                        <span>item 2</span>
+                    </li>
+                </ul>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a list node (decimal type) correctly", () => {
+            const document = new DocumentNode([
+                new ListNode(ListType.DECIMAL, [
+                    new ListItemNode([
+                        new StringNode("item 1"),
+                    ]),
+                    new ListItemNode([
+                        new StringNode("item 2"),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <ol class="betterchat-list-style-type-decimal">
                     <li>
                         <span>item 1</span>
                     </li>
@@ -364,9 +433,9 @@ describe("Given a simple document node", () => {
                 </ol>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
-        it("renders a list node (unordered) correctly", () => {
+        it("renders a list node (lower roman type) correctly", () => {
             const document = new DocumentNode([
-                new ListNode(ListType.UNORDERED, [
+                new ListNode(ListType.LOWER_ROMAN, [
                     new ListItemNode([
                         new StringNode("item 1"),
                     ]),
@@ -377,14 +446,83 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <ul>
+                <ol class="betterchat-list-style-type-lower-roman">
                     <li>
                         <span>item 1</span>
                     </li>
                     <li>
                         <span>item 2</span>
                     </li>
-                </ul>`;
+                </ol>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a list node (upper roman type) correctly", () => {
+            const document = new DocumentNode([
+                new ListNode(ListType.UPPER_ROMAN, [
+                    new ListItemNode([
+                        new StringNode("item 1"),
+                    ]),
+                    new ListItemNode([
+                        new StringNode("item 2"),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <ol class="betterchat-list-style-type-upper-roman">
+                    <li>
+                        <span>item 1</span>
+                    </li>
+                    <li>
+                        <span>item 2</span>
+                    </li>
+                </ol>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a list node (lower alpha type) correctly", () => {
+            const document = new DocumentNode([
+                new ListNode(ListType.LOWER_ALPHA, [
+                    new ListItemNode([
+                        new StringNode("item 1"),
+                    ]),
+                    new ListItemNode([
+                        new StringNode("item 2"),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <ol class="betterchat-list-style-type-lower-alpha">
+                    <li>
+                        <span>item 1</span>
+                    </li>
+                    <li>
+                        <span>item 2</span>
+                    </li>
+                </ol>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a list node (upper alpha type) correctly", () => {
+            const document = new DocumentNode([
+                new ListNode(ListType.UPPER_ALPHA, [
+                    new ListItemNode([
+                        new StringNode("item 1"),
+                    ]),
+                    new ListItemNode([
+                        new StringNode("item 2"),
+                    ]),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <ol class="betterchat-list-style-type-upper-alpha">
+                    <li>
+                        <span>item 1</span>
+                    </li>
+                    <li>
+                        <span>item 2</span>
+                    </li>
+                </ol>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders a table node correctly", () => {

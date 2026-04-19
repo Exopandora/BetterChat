@@ -176,8 +176,16 @@ export class ListNode extends Node {
 
 export namespace ListNode {
     export enum ListType {
-        ORDERED,
-        UNORDERED,
+        // unordered
+        DISC,
+        CIRCLE,
+        SQUARE,
+        // ordered
+        DECIMAL,
+        LOWER_ROMAN,
+        UPPER_ROMAN,
+        LOWER_ALPHA,
+        UPPER_ALPHA,
     }
 }
 

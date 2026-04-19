@@ -161,10 +161,13 @@ export namespace Parser {
                         nodes.push(new FootnoteNode(children));
                         break;
                     case Styles.ORDERED_LIST:
-                        nodes.push(new ListNode(ListType.ORDERED, children));
+                        nodes.push(new ListNode(ListType.DECIMAL, children));
                         break;
                     case Styles.UNORDERED_LIST:
-                        nodes.push(new ListNode(ListType.UNORDERED, children));
+                        nodes.push(new ListNode(ListType.DISC, children));
+                        break;
+                    case Styles.LIST:
+                        nodes.push(new ListNode(parseListType(token.value), children));
                         break;
                     case Styles.LIST_ITEM:
                         nodes.push(new ListItemNode(children));
@@ -289,7 +292,7 @@ export namespace Parser {
     }
 
     function isListStyle(style: Style): boolean {
-        return style == Styles.UNORDERED_LIST || style == Styles.ORDERED_LIST;
+        return style == Styles.LIST || style == Styles.UNORDERED_LIST || style == Styles.ORDERED_LIST;
     }
 
     export function applyTableRules(tokens: Token[]): Token[] {
@@ -591,5 +594,30 @@ export namespace Parser {
         }
         return result;
     }
-}
 
+    function parseListType(input: string | null): ListType {
+        if (input == null) {
+            return ListType.DISC;
+        } else if (input.toLowerCase() == "disc") {
+            return ListType.DISC;
+        } else if (input.toLowerCase() == "circle") {
+            return ListType.CIRCLE;
+        } else if (input.toLowerCase() == "square") {
+            return ListType.SQUARE;
+        }
+        switch (input) {
+            case "1":
+                return ListType.DECIMAL;
+            case "i":
+                return ListType.LOWER_ROMAN;
+            case "I":
+                return ListType.UPPER_ROMAN;
+            case "a":
+                return ListType.LOWER_ALPHA;
+            case "A":
+                return ListType.UPPER_ALPHA;
+            default:
+                return ListType.DISC;
+        }
+    }
+}

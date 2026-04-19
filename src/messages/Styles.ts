@@ -78,6 +78,7 @@ export namespace Styles {
     export const FOOTNOTE = new Style("footnote", isNull, {allowsSlicing: false});
     export const ORDERED_LIST = new Style("ordered list", isNull, {allowsSlicing: false});
     export const UNORDERED_LIST = new Style("unordered list", isNull, {allowsSlicing: false});
+    export const LIST = new Style("list", isValidListItemMarker, {allowsSlicing: false});
     export const LIST_ITEM = new Style("list item", isNull, {allowsSlicing: false});
     export const TABLE = new Style("table", isNull, {allowsSlicing: false});
     export const TABLE_ROW = new Style("table row", isNull, {allowsSlicing: false});
@@ -109,6 +110,14 @@ export namespace Styles {
         return true;
     }
 
+    function isValidListItemMarker(marker: string | null): boolean {
+        return marker == null ||
+            // ordered list
+            marker == "i" || marker == "I" || marker == "a" || marker == "A" || marker == "1" ||
+            // unordered list
+            marker.toLowerCase() == "disc" || marker.toLowerCase() == "circle" || marker.toLowerCase() == "square";
+    }
+
     const BBCODE_TO_STYLE = new Map<string, Style>([
         ["url", URL],
         ["b", BOLD],
@@ -137,6 +146,7 @@ export namespace Styles {
         ["fn", FOOTNOTE],
         ["ol", ORDERED_LIST],
         ["ul", UNORDERED_LIST],
+        ["list", LIST],
         ["li", LIST_ITEM],
         ["table", TABLE],
         ["tr", TABLE_ROW],

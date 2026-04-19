@@ -281,11 +281,38 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     visitListNode(node: ListNode): void {
         let list;
         switch (node.type) {
-            case ListNode.ListType.ORDERED:
+            case ListNode.ListType.DECIMAL:
                 list = document.createElement("ol");
+                list.classList.add("betterchat-list-style-type-decimal");
                 break;
-            case ListNode.ListType.UNORDERED:
+            case ListNode.ListType.LOWER_ROMAN:
+                list = document.createElement("ol");
+                list.classList.add("betterchat-list-style-type-lower-roman");
+                break;
+            case ListNode.ListType.UPPER_ROMAN:
+                list = document.createElement("ol");
+                list.classList.add("betterchat-list-style-type-upper-roman");
+                break;
+            case ListNode.ListType.LOWER_ALPHA:
+                list = document.createElement("ol");
+                list.classList.add("betterchat-list-style-type-lower-alpha");
+                break;
+            case ListNode.ListType.UPPER_ALPHA:
+                list = document.createElement("ol");
+                list.classList.add("betterchat-list-style-type-upper-alpha");
+                break;
+            case ListNode.ListType.CIRCLE:
                 list = document.createElement("ul");
+                list.classList.add("betterchat-list-style-type-circle");
+                break;
+            case ListNode.ListType.SQUARE:
+                list = document.createElement("ul");
+                list.classList.add("betterchat-list-style-type-square");
+                break;
+            case ListNode.ListType.DISC:
+            default:
+                list = document.createElement("ul");
+                list.classList.add("betterchat-list-style-type-disc");
                 break;
         }
         this.parent.appendChild(list);
