@@ -128,8 +128,7 @@ betterchat-message h6 {
 }
 
 betterchat-message .highlighted-text-snippet {
-	color: black;
-	background: yellow;
+	background: olive;
 }
 
 betterchat-message ul {
