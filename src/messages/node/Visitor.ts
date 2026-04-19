@@ -17,6 +17,7 @@ import {
     ListItemNode,
     ListNode,
     MathNode,
+    MermaidNode,
     Node,
     RightAlignNode,
     SpoilerNode,
@@ -123,6 +124,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitInlineMathNode(node);
         } else if (node instanceof BlockquoteNode) {
             this.visitBlockquoteNode(node);
+        } else if (node instanceof MermaidNode) {
+            this.visitMermaidNode(node);
         } else if (node instanceof DocumentNode) {
             this.visitDocumentNode(node);
         }
@@ -245,6 +248,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitBlockquoteNode(node: BlockquoteNode): void {
+        this.visitChildren(node);
+    }
+
+    visitMermaidNode(node: MermaidNode): void {
         this.visitChildren(node);
     }
 

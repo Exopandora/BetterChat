@@ -196,3 +196,114 @@ betterchat-message p.blockquote-title {
 	color: var(--ts-chat-system-message-text-color);
 	margin-bottom: .2em;
 }
+
+betterchat-message .mermaid-diagram-preview,
+.ts-lightbox-content-platter-inner .mermaid-diagram-preview {
+	position: relative;
+	border-radius: 5px;
+}
+
+.ts-lightbox-content-platter-inner .mermaid-diagram-preview {
+	height: 100%;
+}
+
+betterchat-message .mermaid-diagram-preview pre,
+.ts-lightbox-content-platter-inner .mermaid-diagram-preview pre {
+	background: #262626;
+	color: red;
+}
+
+.ts-lightbox-content-platter-inner .mermaid-diagram-preview pre {
+	height: 100%;
+	width: 100%;
+}
+
+.ts-lightbox-content-platter-inner .mermaid-diagram-preview svg {
+	width: 100%;
+	height: 100%;
+	max-width: none !important;
+}
+
+betterchat-message .mermaid-diagram-controls,
+.ts-lightbox-content-platter-inner .mermaid-diagram-controls {
+	top: unset;
+	bottom: 0.5rem;
+	display: flex;
+	position: absolute;
+	right: 0.5rem;
+}
+
+betterchat-message .mermaid-diagram-controls,
+.ts-lightbox-content-platter-inner .mermaid-diagram-controls {
+	top: unset;
+	bottom: 0.5rem;
+	display: flex;
+	position: absolute;
+	right: 0.5rem;
+}
+
+.mermaid-diagram-control-element {
+	--mermaid-diagram-control-font-color: #D3D3D3;
+}
+
+betterchat-message .mermaid-diagram-control-element,
+.ts-lightbox-content-platter-inner .mermaid-diagram-control-element {
+	background-color: #262626;
+	box-shadow: 0 0 2px black;
+	cursor: pointer;
+	min-width: 25px;
+	min-height: 25px;
+	display: flex;
+}
+
+betterchat-message .mermaid-diagram-control-element:first-child,
+.ts-lightbox-content-platter-inner .mermaid-diagram-control-element:first-child {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+
+betterchat-message .mermaid-diagram-control-element:last-child,
+.ts-lightbox-content-platter-inner .mermaid-diagram-control-element:last-child {
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+betterchat-message .mermaid-diagram-control-element:hover,
+.ts-lightbox-content-platter-inner .mermaid-diagram-control-element:hover {
+	box-shadow: 0 0 3px black;
+}
+
+betterchat-message .mermaid-diagram-control-element svg,
+.ts-lightbox-content-platter-inner .mermaid-diagram-control-element svg {
+	stroke: var(--mermaid-diagram-control-font-color);
+	width: 20px;
+	height: 20px;
+	display: block;
+	margin: auto;
+}
+
+.mermaid-diagram-control-element-zoom-in {
+	justify-content: center;
+	align-items: center;
+	color: var(--mermaid-diagram-control-font-color);
+}
+
+.mermaid-diagram-control-element-zoom-out {
+	justify-content: center;
+	align-items: center;
+	color: var(--mermaid-diagram-control-font-color);
+}
+
+.mermaid-diagram-control-element-zoom-scale {
+	justify-content: center;
+	align-items: center;
+	padding-left: 5px;
+	padding-right: 5px;
+	font-size: var(--tsv-font-size-small);
+	color: var(--mermaid-diagram-control-font-color);
+}
+
+.mermaid-diagram-control-element-reset-zoom svg {
+	fill: var(--mermaid-diagram-control-font-color);
+	scale: .65;
+}

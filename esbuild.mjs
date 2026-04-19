@@ -30,6 +30,8 @@ await esbuild.build({
 		globalExternals({
 			"tippy.js": "tippy",
 			"katex": "katex",
+			"mermaid": "mermaid",
+			"svg-pan-zoom": "svgPanZoom",
 		}),
 	],
 });

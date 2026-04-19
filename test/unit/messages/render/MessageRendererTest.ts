@@ -1,4 +1,5 @@
-import {afterEach, describe, expect, it} from '@jest/globals';
+import {afterEach, describe, expect, it, jest} from '@jest/globals';
+import mermaid from "mermaid";
 import formatXml from "xml-formatter";
 import {Tooltips} from "../../../../src/helpers/Tooltips";
 import {
@@ -20,6 +21,7 @@ import {
     ListItemNode,
     ListNode,
     MathNode,
+    MermaidNode,
     RightAlignNode,
     SpoilerNode,
     StrikethroughNode,
@@ -35,8 +37,10 @@ import {
     UrlNode
 } from "../../../../src/messages/node/Node";
 import {MessageRenderer} from "../../../../src/messages/render/MessageRenderer";
-import ListType = ListNode.ListType;
 import BlockquoteType = BlockquoteNode.BlockquoteType;
+import ListType = ListNode.ListType;
+
+jest.mock("mermaid");
 
 describe("Given a simple document node", () => {
     describe("when rendering a message", () => {
@@ -522,6 +526,33 @@ describe("Given a simple document node", () => {
                         <span>blockquote content</span>
                     </div>
                 </blockquote>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders an mermaid node correctly", () => {
+            ((mermaid.initialize as jest.Mock<typeof mermaid.initialize>)).mockReturnValue(void 0);
+            ((mermaid.run as jest.Mock<typeof mermaid.run>)).mockRejectedValueOnce({ str: "mock"});
+            const document = new DocumentNode([
+                new MermaidNode([
+                    new StringNode(`
+                        sequenceDiagram
+                            Alice->>+John: Hello John, how are you?
+                            Alice->>+John: John, can you hear me?
+                            John-->>-Alice: Hi Alice, I can hear you!
+                            John-->>-Alice: I feel great!
+                    `),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <div class="mermaid-diagram-preview">
+                    <pre>
+                        sequenceDiagram
+                            Alice-&gt;&gt;+John: Hello John, how are you?
+                            Alice-&gt;&gt;+John: John, can you hear me?
+                            John--&gt;&gt;-Alice: Hi Alice, I can hear you!
+                            John--&gt;&gt;-Alice: I feel great!
+                    </pre>
+                </div>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
     });

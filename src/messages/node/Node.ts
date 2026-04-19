@@ -245,6 +245,12 @@ export namespace BlockquoteNode {
     }
 }
 
+export class MermaidNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
 export namespace Nodes {
     export const ALL_NODE_TYPES = [
         DocumentNode.name,
@@ -278,5 +284,6 @@ export namespace Nodes {
         MathNode.name,
         InlineMathNode.name,
         BlockquoteNode.name,
+        MermaidNode.name,
     ];
 }

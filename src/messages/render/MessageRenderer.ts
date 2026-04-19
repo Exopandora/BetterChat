@@ -1,4 +1,8 @@
 import katex from "katex";
+import mermaid from "mermaid";
+import {MaximizeDiagramControls} from "../../components/betterchat/MaximizeDiagramControls";
+import {MermaidModalOverlay} from "../../components/tsclient/MermaidModalOverlay";
+import {ModalHelper} from "../../helpers/ModalHelper";
 import {Tooltips} from "../../helpers/Tooltips";
 import {getVueInstance, setClipboardString} from "../../helpers/Util";
 import {
@@ -19,6 +23,7 @@ import {
     ListItemNode,
     ListNode,
     MathNode,
+    MermaidNode,
     Node,
     Nodes,
     RightAlignNode,
@@ -38,6 +43,12 @@ import {
 import {AbstractVisitor} from "../node/Visitor";
 import {AbstractRenderer, NodeRenderer, RenderContext, RenderTarget} from "./Renderer";
 
+mermaid.initialize({
+    securityLevel: "antiscript",
+    startOnLoad: false,
+    theme: "dark",
+});
+
 const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
     [1, "h1"],
     [2, "h2"],
@@ -48,14 +59,14 @@ const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
 ]);
 
 class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
-    private readonly root: HTMLElement;
+    private readonly context: RenderContext<MessageRenderTarget>;
     private parent: HTMLElement;
     private footnotes: HTMLElement[] = [];
     private insideTable: boolean = false;
 
     constructor(context: RenderContext<MessageRenderTarget>) {
         super();
-        this.root = context.output.message;
+        this.context = context;
         this.parent = this.root;
     }
 
@@ -391,6 +402,29 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.parent = prevParent;
     }
 
+    visitMermaidNode(node: MermaidNode): void {
+        const pre = document.createElement("pre");
+        const prevParent = this.parent;
+        this.parent = document.createElement("span");
+        this.visitChildren(node);
+        const source = this.parent.textContent;
+        pre.textContent = source;
+        this.parent = prevParent;
+        const div = document.createElement("div");
+        div.classList.add("mermaid-diagram-preview");
+        div.appendChild(pre);
+        this.parent.appendChild(div);
+        mermaid.run({
+            nodes: [pre],
+        }).then(() => {
+            div.appendChild(MaximizeDiagramControls(() => {
+                ModalHelper.show(MermaidModalOverlay(source));
+            }));
+        }).catch((error) => {
+            pre.textContent = error.str;
+        });
+    }
+
     append(node: Node, element: HTMLElement): void {
         this.parent.appendChild(element);
         const prevParent = this.parent;
@@ -401,6 +435,10 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
 
     getSupportedNodeTypes(): string[] {
         return Nodes.ALL_NODE_TYPES;
+    }
+
+    get root(): HTMLElement {
+        return this.context.output.message;
     }
 }
 

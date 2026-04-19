@@ -17,6 +17,7 @@ import {
     ListItemNode,
     ListNode,
     MathNode,
+    MermaidNode,
     Node,
     RightAlignNode,
     SpoilerNode,
@@ -203,6 +204,9 @@ export namespace Parser {
                         break;
                     case Styles.CAUTION:
                         nodes.push(new BlockquoteNode("Caution", BlockquoteType.CAUTION, children));
+                        break;
+                    case Styles.MERMAID:
+                        nodes.push(new MermaidNode(children));
                         break;
                     default:
                         throw new Error(`Unknown style ${token.style.name}`);
