@@ -1,10 +1,11 @@
+import {ModalHelper} from "../../helpers/ModalHelper";
 import {ImageEmbedAttachmentFactory} from "../../messages/Attachments";
-import {ImagePreview} from "./ImagePreview";
+import {ImageModalOverlay} from "../tsclient/ImageModalOverlay";
 
 export function ImageEmbed(factory: ImageEmbedAttachmentFactory): HTMLElement {
     const node = factory.cloneNode();
     node.onclick = (event: PointerEvent) => {
-        document.body.appendChild(ImagePreview(factory.url, factory.naturalWidth, factory.naturalHeight));
+        ModalHelper.show(ImageModalOverlay(factory.url));
         event.stopPropagation();
         event.preventDefault();
     };
@@ -28,7 +29,7 @@ export namespace ImageEmbed {
                 const integration = document.createElement("div");
                 integration.classList.add("ts-chat-message-attachment-integration");
                 integration.appendChild(container);
-                resolve(new ImageEmbedAttachmentFactory(integration, url, img.naturalWidth, img.naturalHeight));
+                resolve(new ImageEmbedAttachmentFactory(integration, url));
             };
             img.onerror = () => reject();
             img.src = url;

@@ -47,14 +47,10 @@ export class GenericEmbedAttachmentFactory extends AttachmentFactory<HTMLElement
 
 export class ImageEmbedAttachmentFactory extends AttachmentFactory<HTMLElement> {
     readonly url: string;
-    readonly naturalWidth: number;
-    readonly naturalHeight: number;
 
-    constructor(node: HTMLElement, url: string, naturalWidth: number, naturalHeight: number) {
+    constructor(node: HTMLElement, url: string) {
         super(node);
         this.url = url;
-        this.naturalWidth = naturalWidth;
-        this.naturalHeight = naturalHeight;
     }
 
     newInstance() {

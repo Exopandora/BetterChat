@@ -1,8 +1,9 @@
+import {ModalHelper} from "../../helpers/ModalHelper";
 import {Tooltips} from "../../helpers/Tooltips";
 import {truncateString} from "../../helpers/Util";
 import getMetaData from "../../lib/metadata-scraper";
 import {GenericEmbedAttachmentFactory} from "../../messages/Attachments";
-import {ImagePreview} from "./ImagePreview";
+import {ImageModalOverlay} from "../tsclient/ImageModalOverlay";
 
 export function GenericEmbed(factory: GenericEmbedAttachmentFactory): HTMLElement {
     const node = factory.cloneNode();
@@ -12,7 +13,7 @@ export function GenericEmbed(factory: GenericEmbedAttachmentFactory): HTMLElemen
     if (img != null) {
         img.onclick = (event: PointerEvent) => {
             if (event.shiftKey) {
-                document.body.appendChild(ImagePreview(img.src, img.naturalWidth, img.naturalHeight));
+                ModalHelper.show(ImageModalOverlay(img.src));
                 event.stopPropagation();
                 event.preventDefault();
             }
