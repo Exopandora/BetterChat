@@ -166,6 +166,7 @@ export namespace Styles {
         ["warning", WARNING],
         ["caution", CAUTION],
         ["mermaid", MERMAID],
+        ["mmd", MERMAID],
     ]);
 
     export function fromBBCode(code: string): Style | null {
