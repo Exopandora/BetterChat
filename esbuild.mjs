@@ -9,7 +9,7 @@ await esbuild.build({
 	bundle: true,
 	outfile: "build/bundle/betterchat/index.js",
 	platform: "browser",
-	target: "chrome143",
+	target: "chrome146",
 	format: "esm",
 	allowOverwrite: true,
 	minifySyntax: !isDebugBuild,

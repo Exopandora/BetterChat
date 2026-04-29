@@ -6,6 +6,6 @@
 	"injection_point": "HEAD",
 	"inject_at": "TAIL",
 	"sources": "betterchat/",
-	"installer": "^3.1.0",
-	"teamspeak": "6.0.0-beta3.4"
+	"installer": "^3.6.0",
+	"teamspeak": "6.0.0-beta4"
 }
