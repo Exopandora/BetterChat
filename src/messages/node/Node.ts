@@ -112,9 +112,9 @@ export class SubscriptNode extends Node {
 }
 
 export class DetailsNode extends Node {
-    readonly summary: string | null;
+    readonly summary: Node[];
 
-    constructor(summary: string | null, children: Node[] = []) {
+    constructor(summary: Node[], children: Node[] = []) {
         super(children);
         this.summary = summary;
     }

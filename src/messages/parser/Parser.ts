@@ -122,7 +122,8 @@ export namespace Parser {
                         nodes.push(new SubscriptNode(children));
                         break;
                     case Styles.DETAILS:
-                        nodes.push(new DetailsNode(token.value, children));
+                        const summary = token.value != null ? [new StringNode(token.value)] : [];
+                        nodes.push(new DetailsNode(summary, children));
                         break;
                     case Styles.THEMATIC_BREAK:
                         nodes.push(new ThematicBreakNode());

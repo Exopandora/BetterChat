@@ -218,7 +218,16 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     visitDetailsNode(node: DetailsNode) {
         const details = document.createElement("details");
         const summary = document.createElement("summary");
-        summary.textContent = node.summary ?? "Click to expand";
+        if (node.summary.length > 0) {
+            const prevParent = this.parent;
+            this.parent = summary;
+            for (const child of node.summary) {
+                this.visit(child);
+            }
+            this.parent = prevParent;
+        } else {
+            summary.textContent = "Summary";
+        }
         details.appendChild(summary);
         this.append(node, details);
     }

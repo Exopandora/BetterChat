@@ -241,15 +241,18 @@ describe("Given a simple document node", () => {
         });
         it("renders a details node correctly", () => {
             const document = new DocumentNode([
-                new DetailsNode("summary text", [
-                    new StringNode("details text"),
-                ]),
+                new DetailsNode(
+                    [new StringNode("summary text")],
+                    [new StringNode("details text")],
+                ),
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
                 <details>
                     <summary>
-                        summary text
+                        <span>
+                            summary text
+                        </span>
                     </summary>
                     <span>details text</span>
                 </details>`;
