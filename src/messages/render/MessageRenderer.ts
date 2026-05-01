@@ -12,7 +12,9 @@ import {
     CenterAlignNode,
     CodeNode,
     ColorNode,
+    DetailsContentNode,
     DetailsNode,
+    DetailsSummaryNode,
     EmojiNode,
     FootnoteNode,
     HeadingNode,
@@ -218,19 +220,16 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
 
     visitDetailsNode(node: DetailsNode) {
         const details = document.createElement("details");
-        const summary = document.createElement("summary");
-        if (node.summary.length > 0) {
-            const prevParent = this.parent;
-            this.parent = summary;
-            for (const child of node.summary) {
-                this.visit(child);
-            }
-            this.parent = prevParent;
-        } else {
-            summary.textContent = "Summary";
-        }
-        details.appendChild(summary);
         this.append(node, details);
+    }
+
+    visitDetailsSummaryNode(node: DetailsSummaryNode) {
+        const summary = document.createElement("summary");
+        this.append(node, summary);
+    }
+
+    visitDetailsContentNode(node: DetailsContentNode) {
+        super.visitDetailsContentNode(node);
     }
 
     visitThematicBreakNode(_: ThematicBreakNode) {

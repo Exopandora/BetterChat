@@ -8,7 +8,9 @@ import {
     CenterAlignNode,
     CodeNode,
     ColorNode,
+    DetailsContentNode,
     DetailsNode,
+    DetailsSummaryNode,
     DocumentNode,
     EmojiNode,
     FootnoteNode,
@@ -242,10 +244,14 @@ describe("Given a simple document node", () => {
         });
         it("renders a details node correctly", () => {
             const document = new DocumentNode([
-                new DetailsNode(
-                    [new StringNode("summary text")],
-                    [new StringNode("details text")],
-                ),
+                new DetailsNode([
+                    new DetailsSummaryNode([
+                        new StringNode("summary text"),
+                    ]),
+                    new DetailsContentNode([
+                        new StringNode("details text"),
+                    ]),
+                ]),
             ]);
             const result = MessageRenderer.render(document);
             const expected = `

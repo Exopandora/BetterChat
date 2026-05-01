@@ -64,6 +64,8 @@ export namespace Styles {
     export const SUPERSCRIPT = new Style("superscript", isNull);
     export const SUBSCRIPT = new Style("subscript", isNull);
     export const DETAILS = new Style("details", isAny, {allowsSlicing: false});
+    export const DETAILS_SUMMARY = new Style("details summary", isNull, {allowsSlicing: false});
+    export const DETAILS_CONTENT = new Style("details content", isNull, {allowsSlicing: false});
     export const THEMATIC_BREAK = new Style("thematic break", isNull, {isStandalone : true});
     export const HEADING_1 = new Style("heading 1", isNull, {allowsSlicing: false});
     export const HEADING_2 = new Style("heading 2", isNull, {allowsSlicing: false});

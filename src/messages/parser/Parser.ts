@@ -4,7 +4,9 @@ import {
     CenterAlignNode,
     CodeNode,
     ColorNode,
+    DetailsContentNode,
     DetailsNode,
+    DetailsSummaryNode,
     DocumentNode,
     EmojiNode,
     FootnoteNode,
@@ -123,8 +125,22 @@ export namespace Parser {
                         nodes.push(new SubscriptNode(children));
                         break;
                     case Styles.DETAILS:
-                        const summary = token.value != null ? [new StringNode(token.value)] : [];
-                        nodes.push(new DetailsNode(summary, children));
+                        const hasSummary = children.length > 0 && children[0] instanceof DetailsSummaryNode;
+                        const hasContents = hasSummary
+                            ? (children.length == 2 && children[1] instanceof DetailsContentNode)
+                            : (children.length == 1 && children[0] instanceof DetailsContentNode);
+                        nodes.push(
+                            new DetailsNode([
+                                hasSummary ? children[0] : new DetailsSummaryNode(token.value != null ? [new StringNode(token.value)] : []),
+                                hasContents ? children[hasSummary ? 1 : 0] : new DetailsContentNode(children),
+                            ]),
+                        );
+                        break;
+                    case Styles.DETAILS_SUMMARY:
+                        nodes.push(new DetailsSummaryNode(children));
+                        break;
+                    case Styles.DETAILS_CONTENT:
+                        nodes.push(new DetailsContentNode(children));
                         break;
                     case Styles.THEMATIC_BREAK:
                         nodes.push(new ThematicBreakNode());

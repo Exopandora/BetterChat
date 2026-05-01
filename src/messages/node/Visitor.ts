@@ -4,7 +4,9 @@ import {
     CenterAlignNode,
     CodeNode,
     ColorNode,
+    DetailsContentNode,
     DetailsNode,
+    DetailsSummaryNode,
     DocumentNode,
     EmojiNode,
     FootnoteNode,
@@ -52,6 +54,8 @@ export interface Visitor {
     visitSuperscriptNode(node: SuperscriptNode): void;
     visitSubscriptNode(node: SubscriptNode): void;
     visitDetailsNode(node: DetailsNode): void;
+    visitDetailsSummaryNode(node: DetailsSummaryNode): void;
+    visitDetailsContentNode(node: DetailsContentNode): void;
     visitThematicBreakNode(node: ThematicBreakNode): void;
     visitHeadingNode(node: HeadingNode): void;
     visitCenterAlignNode(node: CenterAlignNode): void;
@@ -104,6 +108,10 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitSubscriptNode(node);
         } else if (node instanceof DetailsNode) {
             this.visitDetailsNode(node);
+        } else if (node instanceof DetailsSummaryNode) {
+            this.visitDetailsSummaryNode(node);
+        } else if (node instanceof DetailsContentNode) {
+            this.visitDetailsContentNode(node);
         } else if (node instanceof ThematicBreakNode) {
             this.visitThematicBreakNode(node);
         } else if (node instanceof HeadingNode) {
@@ -200,6 +208,14 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitDetailsNode(node: DetailsNode): void {
+        this.visitChildren(node);
+    }
+
+    visitDetailsSummaryNode(node: DetailsSummaryNode): void {
+        this.visitChildren(node);
+    }
+
+    visitDetailsContentNode(node: DetailsContentNode): void {
         this.visitChildren(node);
     }
 

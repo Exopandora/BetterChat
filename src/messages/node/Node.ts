@@ -112,11 +112,20 @@ export class SubscriptNode extends Node {
 }
 
 export class DetailsNode extends Node {
-    readonly summary: Node[];
-
-    constructor(summary: Node[], children: Node[] = []) {
+    constructor(children: Node[] = []) {
         super(children);
-        this.summary = summary;
+    }
+}
+
+export class DetailsSummaryNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
+export class DetailsContentNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
     }
 }
 
@@ -291,6 +300,8 @@ export namespace Nodes {
         SuperscriptNode.name,
         SubscriptNode.name,
         DetailsNode.name,
+        DetailsSummaryNode.name,
+        DetailsContentNode.name,
         ThematicBreakNode.name,
         HeadingNode.name,
         CenterAlignNode.name,
