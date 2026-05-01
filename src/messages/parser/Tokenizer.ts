@@ -25,15 +25,17 @@ export class StyleToken implements Token {
     constructor(
         style: Style,
         type: StyleToken.Type,
-        string: string = "",
-        escaped: boolean = false,
-        value: string | null = null,
+        options?: {
+            string?: string,
+            escaped?: boolean,
+            value?: string | null,
+        },
     ) {
         this.style = style;
         this.type = type;
-        this.string = string;
-        this.escaped = escaped;
-        this.value = value;
+        this.string = options?.string ?? "";
+        this.escaped = options?.escaped ?? false;
+        this.value = options?.value ?? null;
     }
 }
 
@@ -133,15 +135,13 @@ export namespace Tokenizer {
                     if (cursor < index) {
                         tokens.push(new StringToken(message.substring(cursor, index)));
                     }
-                    tokens.push(
-                        new StyleToken(
-                            style,
-                            isEndTag ? StyleToken.Type.END : StyleToken.Type.START,
-                            reader.string.substring(index, tagReader.cursor + 1),
-                            isEscaped,
-                            bbValue,
-                        ),
-                    );
+                    const type = isEndTag ? StyleToken.Type.END : StyleToken.Type.START;
+                    const options = {
+                        string: reader.string.substring(index, tagReader.cursor + 1),
+                        escaped: isEscaped,
+                        value: bbValue,
+                    };
+                    tokens.push(new StyleToken(style, type, options));
                     reader.cursor = tagReader.cursor + 1;
                     cursor = reader.cursor;
                 }

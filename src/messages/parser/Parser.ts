@@ -376,7 +376,7 @@ export namespace Parser {
                         endingTokens.unshift(token);
                     } else {
                         const endingStyleToken = new StyleToken(styleToken.style, StyleToken.Type.END);
-                        const startingStyleToken = new StyleToken(styleToken.style, StyleToken.Type.START, "", false, styleToken.value);
+                        const startingStyleToken = new StyleToken(styleToken.style, StyleToken.Type.START, {value: styleToken.value});
                         endingStyleToken.link = styleToken;
                         startingStyleToken.link = styleToken.link;
                         styleToken.link!!.link = startingStyleToken;
@@ -424,7 +424,7 @@ export namespace Parser {
                     if (match.index > index) {
                         result.push(new StringToken(token.string.substring(index, match.index)));
                     }
-                    const startingStyleToken = new StyleToken(Styles.URL, StyleToken.Type.START, "", false, url);
+                    const startingStyleToken = new StyleToken(Styles.URL, StyleToken.Type.START, {value: url});
                     const endingStyleToken = new StyleToken(Styles.URL, StyleToken.Type.END);
                     startingStyleToken.link = endingStyleToken;
                     endingStyleToken.link = startingStyleToken;

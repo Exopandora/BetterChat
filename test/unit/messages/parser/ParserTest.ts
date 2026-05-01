@@ -95,12 +95,12 @@ describe("Given an array of tokens", () => {
                 new StringToken("abc"),
                 new StringToken("def"),
                 new StringToken("ghi"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("jkl"),
             ];
             const expected = [
                 new StringToken("abcdefghi"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("jkl"),
             ];
             const result = Parser.mergeConsecutiveStringTokens(tokens);
@@ -113,7 +113,7 @@ describe("Given an array of tokens", () => {
                 new StringToken("https://example.org"),
             ];
             const expected = [
-                new StyleToken(Styles.URL, StyleToken.Type.START, "", false, "https://example.org"),
+                new StyleToken(Styles.URL, StyleToken.Type.START, {value: "https://example.org"}),
                 new StringToken("https://example.org"),
                 new StyleToken(Styles.URL, StyleToken.Type.END),
             ];
@@ -127,7 +127,7 @@ describe("Given an array of tokens", () => {
             ];
             const expected = [
                 new StringToken("prefix "),
-                new StyleToken(Styles.URL, StyleToken.Type.START, "", false, "https://example.org"),
+                new StyleToken(Styles.URL, StyleToken.Type.START, {value: "https://example.org"}),
                 new StringToken("https://example.org"),
                 new StyleToken(Styles.URL, StyleToken.Type.END),
             ];
@@ -141,7 +141,7 @@ describe("Given an array of tokens", () => {
             ];
             const expected = [
                 new StringToken("prefix "),
-                new StyleToken(Styles.URL, StyleToken.Type.START, "", false, "https://example.org"),
+                new StyleToken(Styles.URL, StyleToken.Type.START, {value: "https://example.org"}),
                 new StringToken("https://example.org"),
                 new StyleToken(Styles.URL, StyleToken.Type.END),
                 new StringToken(" suffix"),
@@ -156,11 +156,11 @@ describe("Given an array of tokens", () => {
             ];
             const expected = [
                 new StringToken("prefix "),
-                new StyleToken(Styles.URL, StyleToken.Type.START, "", false, "https://example.org"),
+                new StyleToken(Styles.URL, StyleToken.Type.START, {value: "https://example.org"}),
                 new StringToken("https://example.org"),
                 new StyleToken(Styles.URL, StyleToken.Type.END),
                 new StringToken(" middle "),
-                new StyleToken(Styles.URL, StyleToken.Type.START, "", false, "https://example.org"),
+                new StyleToken(Styles.URL, StyleToken.Type.START, {value: "https://example.org"}),
                 new StringToken("https://example.org"),
                 new StyleToken(Styles.URL, StyleToken.Type.END),
             ];
@@ -174,50 +174,50 @@ describe("Given an array of tokens", () => {
         it("returns the correct result", () => {
             const tokens: Token[] = [
                 /*  0 */ new StringToken("abc"),
-                /*  1 */ new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]", false, "value1"),
+                /*  1 */ new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]", value: "value1"}),
                 /*  2 */ new StringToken("def"),
-                /*  3 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, "[i]", false, "value2"),
+                /*  3 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, {string: "[i]", value: "value2"}),
                 /*  4 */ new StringToken("ghi"),
-                /*  5 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "[s]", false, "value3"),
+                /*  5 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "[s]", value: "value3"}),
                 /*  6 */ new StringToken("jkl"),
-                /*  7 */ new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
+                /*  7 */ new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
                 /*  8 */ new StringToken("mno"),
-                /*  9 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, "[/s]"),
+                /*  9 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "[/s]"}),
                 /* 10 */ new StringToken("pqr"),
-                /* 11 */ new StyleToken(Styles.ITALIC, StyleToken.Type.END, "[/i]"),
+                /* 11 */ new StyleToken(Styles.ITALIC, StyleToken.Type.END, {string: "[/i]"}),
             ];
             link(tokens, 1, 7);
             link(tokens, 3, 11);
             link(tokens, 5, 9);
             const expected = [
                 /*  0 */ new StringToken("abc"),
-                /*  1 */ new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]", false, "value1"),
+                /*  1 */ new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]", value: "value1"}),
                 /*  2 */ new StringToken("def"),
                 /*  3 */ new StyleToken(Styles.BOLD, StyleToken.Type.END),
 
-                /*  4 */ new StyleToken(Styles.BOLD, StyleToken.Type.START, "", false, "value1"),
-                /*  5 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, "[i]", false, "value2"),
+                /*  4 */ new StyleToken(Styles.BOLD, StyleToken.Type.START, {value: "value1"}),
+                /*  5 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, {string: "[i]", value: "value2"}),
                 /*  6 */ new StringToken("ghi"),
                 /*  7 */ new StyleToken(Styles.ITALIC, StyleToken.Type.END),
                 /*  8 */ new StyleToken(Styles.BOLD, StyleToken.Type.END),
 
-                /*  9 */ new StyleToken(Styles.BOLD, StyleToken.Type.START, "", false, "value1"),
-                /* 10 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, "", false, "value2"),
-                /* 11 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "[s]", false, "value3"),
+                /*  9 */ new StyleToken(Styles.BOLD, StyleToken.Type.START, {value: "value1"}),
+                /* 10 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, {value: "value2"}),
+                /* 11 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "[s]", value: "value3"}),
                 /* 12 */ new StringToken("jkl"),
                 /* 13 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END),
                 /* 14 */ new StyleToken(Styles.ITALIC, StyleToken.Type.END),
-                /* 15 */ new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
+                /* 15 */ new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
 
-                /* 16 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, "", false, "value2"),
-                /* 17 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "", false, "value3"),
+                /* 16 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, {value: "value2"}),
+                /* 17 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {value: "value3"}),
                 /* 18 */ new StringToken("mno"),
-                /* 19 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, "[/s]"),
+                /* 19 */ new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "[/s]"}),
                 /* 20 */ new StyleToken(Styles.ITALIC, StyleToken.Type.END),
 
-                /* 21 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, "", false, "value2"),
+                /* 21 */ new StyleToken(Styles.ITALIC, StyleToken.Type.START, {value: "value2"}),
                 /* 22 */ new StringToken("pqr"),
-                /* 23 */ new StyleToken(Styles.ITALIC, StyleToken.Type.END, "[/i]"),
+                /* 23 */ new StyleToken(Styles.ITALIC, StyleToken.Type.END, {string: "[/i]"}),
             ];
             link(expected, 1, 3);
             link(expected, 4, 8);
@@ -234,21 +234,21 @@ describe("Given an array of tokens", () => {
         describe("with standalone style tokens", () => {
             it("returns the correct result", () => {
                 const tokens: Token[] = [
-                    new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                     new StringToken("abc"),
-                    new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, "[hr]"),
+                    new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, {string: "[hr]"}),
                     new StringToken("def"),
-                    new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
                 ];
                 link(tokens, 0, 4);
                 const expected = [
-                    new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                     new StringToken("abc"),
                     new StyleToken(Styles.BOLD, StyleToken.Type.END),
-                    new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, "[hr]"),
+                    new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, {string: "[hr]"}),
                     new StyleToken(Styles.BOLD, StyleToken.Type.START),
                     new StringToken("def"),
-                    new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
                 ];
                 link(expected, 0, 2);
                 link(expected, 4, 6);
@@ -259,20 +259,20 @@ describe("Given an array of tokens", () => {
         describe("that do not allow slicing", () => {
             it("when nested", () => {
                 const tokens: Token[] = [
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, "[spoiler]"),
-                    new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, {string: "[spoiler]"}),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                     new StringToken("https://example.com"),
-                    new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, "[/spoiler]"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, {string: "[/spoiler]"}),
                 ];
                 link(tokens, 0, 4);
                 link(tokens, 1, 3);
                 const expected = [
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, "[spoiler]"),
-                    new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, {string: "[spoiler]"}),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                     new StringToken("https://example.com"),
-                    new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, "[/spoiler]"),
+                    new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, {string: "[/spoiler]"}),
                 ];
                 link(expected, 0, 4);
                 link(expected, 1, 3);
@@ -281,24 +281,24 @@ describe("Given an array of tokens", () => {
             });
             it("when overlapping before", () => {
                 const tokens: Token[] = [
-                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "[s]"),
+                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "[s]"}),
                     new StringToken("spo"),
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, "[spoiler]"),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, {string: "[spoiler]"}),
                     new StringToken("iler"),
-                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, "[/s]"),
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, "[/spoiler]"),
+                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "[/s]"}),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, {string: "[/spoiler]"}),
                 ];
                 link(tokens, 0, 4);
                 link(tokens, 2, 5);
                 const expected = [
-                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "[s]"),
+                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "[s]"}),
                     new StringToken("spo"),
                     new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END),
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, "[spoiler]"),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, {string: "[spoiler]"}),
                     new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START),
                     new StringToken("iler"),
-                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, "[/s]"),
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, "[/spoiler]"),
+                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "[/s]"}),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, {string: "[/spoiler]"}),
                 ];
                 link(expected, 0, 2);
                 link(expected, 3, 7);
@@ -308,24 +308,24 @@ describe("Given an array of tokens", () => {
             });
             it("when overlapping after", () => {
                 const tokens: Token[] = [
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, "[spoiler]"),
-                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "[s]"),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, {string: "[spoiler]"}),
+                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "[s]"}),
                     new StringToken("spo"),
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, "[/spoiler]"),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, {string: "[/spoiler]"}),
                     new StringToken("iler"),
-                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, "[/s]"),
+                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "[/s]"}),
                 ];
                 link(tokens, 0, 3);
                 link(tokens, 1, 5);
                 const expected = [
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, "[spoiler]"),
-                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "[s]"),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.START, {string: "[spoiler]"}),
+                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "[s]"}),
                     new StringToken("spo"),
                     new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END),
-                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, "[/spoiler]"),
+                    new StyleToken(Styles.SPOILER, StyleToken.Type.END, {string: "[/spoiler]"}),
                     new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START),
                     new StringToken("iler"),
-                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, "[/s]"),
+                    new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "[/s]"}),
                 ];
                 link(expected, 0, 4);
                 link(expected, 1, 3);
@@ -339,21 +339,21 @@ describe("Given an array of tokens", () => {
         it("converts non string tokens into string tokens within forbidden nesting ranges and linked tokens before the range", () => {
             const tokens: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.ITALIC, StyleToken.Type.START, "[i]"),
+                new StyleToken(Styles.ITALIC, StyleToken.Type.START, {string: "[i]"}),
                 new StringToken("jkl"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
                 new StringToken("mno"),
-                new StyleToken(Styles.ITALIC, StyleToken.Type.END, "[/i]"),
+                new StyleToken(Styles.ITALIC, StyleToken.Type.END, {string: "[/i]"}),
             ];
             link(tokens, 1, 5);
             link(tokens, 3, 7);
             const expected: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("def[i]jkl"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
                 new StringToken("mno[/i]"),
             ];
             link(expected, 1, 3);
@@ -363,21 +363,21 @@ describe("Given an array of tokens", () => {
         it("converts non string tokens into string tokens within forbidden nesting ranges and linked tokens after the range", () => {
             const tokens: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.ITALIC, StyleToken.Type.START, "[i]"),
+                new StyleToken(Styles.ITALIC, StyleToken.Type.START, {string: "[i]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("jkl"),
-                new StyleToken(Styles.ITALIC, StyleToken.Type.END, "[/i]"),
+                new StyleToken(Styles.ITALIC, StyleToken.Type.END, {string: "[/i]"}),
                 new StringToken("mno"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
             ];
             link(tokens, 1, 5);
             link(tokens, 3, 7);
             const expected: Token[] = [
                 new StringToken("abc[i]def"),
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("jkl[/i]mno"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
             ];
             link(expected, 1, 3);
             const result = Parser.applyNestingRule(tokens);
@@ -386,21 +386,21 @@ describe("Given an array of tokens", () => {
         it("converts non string tokens into string tokens within forbidden nesting ranges", () => {
             const tokens: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.ITALIC, StyleToken.Type.START, "[i]"),
+                new StyleToken(Styles.ITALIC, StyleToken.Type.START, {string: "[i]"}),
                 new StringToken("jkl"),
-                new StyleToken(Styles.ITALIC, StyleToken.Type.END, "[/i]"),
+                new StyleToken(Styles.ITALIC, StyleToken.Type.END, {string: "[/i]"}),
                 new StringToken("mno"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
             ];
             link(tokens, 1, 7);
             link(tokens, 3, 5);
             const expected: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("def[i]jkl[/i]mno"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
             ];
             link(expected, 1, 3);
             const result = Parser.applyNestingRule(tokens);
@@ -409,13 +409,13 @@ describe("Given an array of tokens", () => {
         it("does not convert any non string tokens to string tokens outside of forbidden nesting ranges", () => {
             const tokens: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.ITALIC, StyleToken.Type.START, "[i]"),
+                new StyleToken(Styles.ITALIC, StyleToken.Type.START, {string: "[i]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.ITALIC, StyleToken.Type.END, "[/i]"),
+                new StyleToken(Styles.ITALIC, StyleToken.Type.END, {string: "[/i]"}),
                 new StringToken("jkl"),
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("mno"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
             ];
             link(tokens, 1, 3);
             link(tokens, 5, 7);
@@ -426,7 +426,7 @@ describe("Given an array of tokens", () => {
         it("ignores standalone style tokens", () => {
             const tokens: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, "[hr]"),
+                new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, {string: "[hr]"}),
                 new StringToken("def"),
             ];
             const expected = tokens.slice();
@@ -435,17 +435,17 @@ describe("Given an array of tokens", () => {
         });
         it("converts standalone style tokens into string tokens within forbidden nesting ranges", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, "[hr]"),
+                new StyleToken(Styles.THEMATIC_BREAK, StyleToken.Type.START, {string: "[hr]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
             ];
             link(tokens, 0, 4);
             const expected = [
-                new StyleToken(Styles.CODE, StyleToken.Type.START, "[code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.START, {string: "[code]"}),
                 new StringToken("abc[hr]def"),
-                new StyleToken(Styles.CODE, StyleToken.Type.END, "[/code]"),
+                new StyleToken(Styles.CODE, StyleToken.Type.END, {string: "[/code]"}),
             ];
             link(expected, 0, 2);
             const result = Parser.applyNestingRule(tokens);
@@ -552,15 +552,15 @@ describe("Given an array of tokens", () => {
     describe("when applying list rules", () => {
         it("persists valid lists", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.START, "[ol]"),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.START, {string: "[ol]"}),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, {string: "[li]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, {string: "[/li]"}),
                 new StringToken("   \n   "),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, {string: "[li]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
-                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.END, "[/ol]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, {string: "[/li]"}),
+                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.END, {string: "[/ol]"}),
             ];
             link(tokens, 0, 8);
             link(tokens, 1, 3);
@@ -571,16 +571,16 @@ describe("Given an array of tokens", () => {
         });
         it("converts invalid list structures to string tokens", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.START, "[ol]"),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.START, {string: "[ol]"}),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, {string: "[li]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, {string: "[/li]"}),
                 new StringToken("   \n   "),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, {string: "[li]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, {string: "[/li]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.END, "[/ol]"),
+                new StyleToken(Styles.ORDERED_LIST, StyleToken.Type.END, {string: "[/ol]"}),
             ];
             link(tokens, 0, 9);
             link(tokens, 1, 3);
@@ -593,9 +593,9 @@ describe("Given an array of tokens", () => {
         });
         it("converts orphan list item tokens to string tokens", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, "[li]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.START, {string: "[li]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, "[/li]"),
+                new StyleToken(Styles.LIST_ITEM, StyleToken.Type.END, {string: "[/li]"}),
             ];
             link(tokens, 0, 2);
             const expected = [
@@ -608,27 +608,27 @@ describe("Given an array of tokens", () => {
     describe("when applying table rules", () => {
         it("persists valid tables", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.TABLE, StyleToken.Type.START, "[table]"),
+                new StyleToken(Styles.TABLE, StyleToken.Type.START, {string: "[table]"}),
                 new StringToken("   \n   "),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, {string: "[tr]"}),
                 new StringToken("   \n   "),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, {string: "[th]"}),
                 new StringToken("header 1"),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, {string: "[/th]"}),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, {string: "[th]"}),
                 new StringToken("header 2"),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, {string: "[/th]"}),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, {string: "[/tr]"}),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, {string: "[tr]"}),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, {string: "[td]"}),
                 new StringToken("value 1"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, {string: "[/td]"}),
                 new StringToken("   \n   "),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, {string: "[td]"}),
                 new StringToken("value 2"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
-                new StyleToken(Styles.TABLE, StyleToken.Type.END, "[/table]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, {string: "[/td]"}),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, {string: "[/tr]"}),
+                new StyleToken(Styles.TABLE, StyleToken.Type.END, {string: "[/table]"}),
             ];
             link(tokens, 0, 20);
             link(tokens, 2, 10);
@@ -643,25 +643,25 @@ describe("Given an array of tokens", () => {
         });
         it("converts invalid table structures to string tokens", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.TABLE, StyleToken.Type.START, "[table]"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StyleToken(Styles.TABLE, StyleToken.Type.START, {string: "[table]"}),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, {string: "[tr]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, {string: "[th]"}),
                 new StringToken("header 1"),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, {string: "[/th]"}),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, {string: "[th]"}),
                 new StringToken("header 2"),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, {string: "[/th]"}),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, {string: "[/tr]"}),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, {string: "[tr]"}),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, {string: "[td]"}),
                 new StringToken("value 1"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, {string: "[/td]"}),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, {string: "[td]"}),
                 new StringToken("value 2"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
-                new StyleToken(Styles.TABLE, StyleToken.Type.END, "[/table]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, {string: "[/td]"}),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, {string: "[/tr]"}),
+                new StyleToken(Styles.TABLE, StyleToken.Type.END, {string: "[/table]"}),
             ];
             link(tokens, 0, 18);
             link(tokens, 1, 9);
@@ -678,9 +678,9 @@ describe("Given an array of tokens", () => {
         });
         it("converts orphan table row tokens (without data) to string tokens", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, {string: "[tr]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, {string: "[/tr]"}),
             ];
             link(tokens, 0, 2);
             const expected = [
@@ -691,11 +691,11 @@ describe("Given an array of tokens", () => {
         });
         it("converts orphan table row tokens (with data) to string tokens", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, "[tr]"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.START, {string: "[tr]"}),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, {string: "[td]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
-                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, "[/tr]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, {string: "[/td]"}),
+                new StyleToken(Styles.TABLE_ROW, StyleToken.Type.END, {string: "[/tr]"}),
             ];
             link(tokens, 0, 4);
             link(tokens, 1, 3);
@@ -707,9 +707,9 @@ describe("Given an array of tokens", () => {
         });
         it("converts orphan table header tokens to string tokens", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, "[th]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.START, {string: "[th]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, "[/th]"),
+                new StyleToken(Styles.TABLE_HEADER, StyleToken.Type.END, {string: "[/th]"}),
             ];
             link(tokens, 0, 2);
             const expected = [
@@ -720,9 +720,9 @@ describe("Given an array of tokens", () => {
         });
         it("converts orphan table data tokens to string tokens", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, "[td]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.START, {string: "[td]"}),
                 new StringToken("abc"),
-                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, "[/td]"),
+                new StyleToken(Styles.TABLE_DATA, StyleToken.Type.END, {string: "[/td]"}),
             ];
             link(tokens, 0, 2);
             const expected = [
@@ -739,15 +739,15 @@ describe("Given two token arrays", () => {
         it("returns the correct result", () => {
             const tokens: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.URL, StyleToken.Type.START, "[url=[b]]", false, "[b]"),
+                new StyleToken(Styles.URL, StyleToken.Type.START, {string: "[url=[b]]", value: "[b]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, "[/url]"),
+                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
             ];
             link(tokens, 1, 3);
             const others: Token[] = [
                 new StringToken("abc"),
                 new StringToken("[url="),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("]def[/url]"),
             ];
             const expected = [
@@ -761,19 +761,19 @@ describe("Given two token arrays", () => {
         it("inserts style tokens from the second array into string tokens from the first array", () => {
             const tokens: Token[] = [
                 new StringToken("abc[b]def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, "[/url]"),
+                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
             ];
             const others: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, "[/url]"),
+                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
             ];
             const expected = [
                 new StringToken("abc"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, "[/url]"),
+                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
             ];
             const result = Parser.mergeTokenArrays(tokens, others);
             expect(result).toEqual(expected);
@@ -781,24 +781,24 @@ describe("Given two token arrays", () => {
         it("prioritizes style tokens from the other array", () => {
             const tokens: Token[] = [
                 new StringToken("abc"),
-                new StyleToken(Styles.URL, StyleToken.Type.START, "[url=[b]]", false, "[b]"),
+                new StyleToken(Styles.URL, StyleToken.Type.START, {string: "[url=[b]]", value: "[b]"}),
                 new StringToken("def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, "[/url]"),
+                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
                 new StringToken("[b]"),
             ];
             link(tokens, 1, 3);
             const others: Token[] = [
                 new StringToken("abc"),
                 new StringToken("[url="),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("]def[/url]"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
             ];
             const expected = [
                 new StringToken("abc[url="),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("]def[/url]"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
             ];
             const result = Parser.mergeTokenArrays(tokens, others);
             expect(result).toEqual(expected);
@@ -806,18 +806,18 @@ describe("Given two token arrays", () => {
         it("inserts style tokens from the first array into string tokens from the second array", () => {
             const tokens: Token[] = [
                 new StringToken("ab[i]cd"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "~~"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "~~"}),
             ];
             const others: Token[] = [
                 new StringToken("ab"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[i]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[i]"}),
                 new StringToken("cd~~"),
             ];
             const expected = [
                 new StringToken("ab"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[i]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[i]"}),
                 new StringToken("cd"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "~~"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "~~"}),
             ];
             const result = Parser.mergeTokenArrays(tokens, others);
             expect(result).toEqual(expected);
@@ -839,25 +839,25 @@ describe("Given two token arrays", () => {
         });
         it("partitions string tokens correctly", () => {
             const tokens: Token[] = [
-                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "~~"),
+                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "~~"}),
                 new StringToken("str[b]ike"),
-                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, "~~"),
+                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "~~"}),
                 new StringToken("through[/b]"),
             ];
             const others: Token[] = [
                 new StringToken("~~str"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("ike~~through"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
             ];
             const expected = [
-                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, "~~"),
+                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "~~"}),
                 new StringToken("str"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, "[b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
                 new StringToken("ike"),
-                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, "~~"),
+                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "~~"}),
                 new StringToken("through"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.END, "[/b]"),
+                new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
             ];
             const result = Parser.mergeTokenArrays(tokens, others);
             expect(result).toEqual(expected);
