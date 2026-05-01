@@ -7,8 +7,8 @@ export class StringReader {
         this.cursor = cursor;
     }
 
-    canRead(offset = 0): boolean {
-        return this.cursor + offset < this.string.length;
+    canRead(length = 0): boolean {
+        return this.cursor + length < this.string.length;
     }
 
     peek(offset = 0): string {
