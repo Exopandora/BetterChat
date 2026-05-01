@@ -63,8 +63,8 @@ const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
 
 class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     private readonly context: RenderContext<MessageRenderTarget>;
-    private parent: HTMLElement;
-    private footnotes: HTMLElement[] = [];
+    private parent: Element;
+    private footnotes: Element[] = [];
     private insideTable: boolean = false;
 
     constructor(context: RenderContext<MessageRenderTarget>) {
@@ -500,7 +500,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         });
     }
 
-    append(node: Node, element: HTMLElement): void {
+    append(node: Node, element: Element): void {
         this.parent.appendChild(element);
         const prevParent = this.parent;
         this.parent = element;

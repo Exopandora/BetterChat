@@ -47,9 +47,9 @@ export namespace StyleToken {
 }
 
 export class EmojiToken implements Token {
-    readonly emoji: HTMLElement;
+    readonly emoji: SVGSVGElement;
 
-    constructor(emoji: HTMLElement) {
+    constructor(emoji: SVGSVGElement) {
         this.emoji = emoji;
     }
 

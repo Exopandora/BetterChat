@@ -91,9 +91,9 @@ export class CodeNode extends Node {
 }
 
 export class EmojiNode extends Node {
-    readonly node: HTMLElement;
+    readonly node: SVGSVGElement;
 
-    constructor(node: HTMLElement) {
+    constructor(node: SVGSVGElement) {
         super([]);
         this.node = node;
     }

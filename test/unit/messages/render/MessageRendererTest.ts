@@ -204,7 +204,7 @@ describe("Given a simple document node", () => {
         });
         it("renders an emoji node correctly", () => {
             const document = new DocumentNode([
-                new EmojiNode(globalThis.document.createElement("emoji")),
+                new EmojiNode(globalThis.document.createElementNS("http://www.w3.org/2000/svg", "svg")),
             ]);
             const result = MessageRenderer.render(document);
             const expected = `<emoji></emoji>`;
