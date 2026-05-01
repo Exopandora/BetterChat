@@ -7,11 +7,11 @@ export interface Renderer<T extends RenderTarget> {
 export interface RenderTarget {}
 
 export interface NodeRenderer {
-    afterRoot(node: Node): void;
+    beforeRoot(node: Node): void;
 
     render(node: Node): void;
 
-    beforeRoot(node: Node): void;
+    afterRoot(node: Node): void;
 
     getSupportedNodeTypes(): string[];
 }
