@@ -1,62 +1,7 @@
 import {StringReader} from "../../helpers/StringReader";
 import {getVueInstance} from "../../helpers/Util";
 import {Style, Styles} from "../Styles";
-
-export interface Token {
-    readonly string: string;
-}
-
-export class StringToken implements Token {
-    readonly string: string;
-
-    constructor(string: string) {
-        this.string = string;
-    }
-}
-
-export class StyleToken implements Token {
-    readonly string: string;
-    readonly style: Style;
-    readonly type: StyleToken.Type;
-    readonly escaped: boolean;
-    readonly value: string | null;
-    link: StyleToken | null = null;
-
-    constructor(
-        style: Style,
-        type: StyleToken.Type,
-        options?: {
-            string?: string,
-            escaped?: boolean,
-            value?: string | null,
-        },
-    ) {
-        this.style = style;
-        this.type = type;
-        this.string = options?.string ?? "";
-        this.escaped = options?.escaped ?? false;
-        this.value = options?.value ?? null;
-    }
-}
-
-export namespace StyleToken {
-    export enum Type {
-        START,
-        END,
-    }
-}
-
-export class EmojiToken implements Token {
-    readonly emoji: SVGSVGElement;
-
-    constructor(emoji: SVGSVGElement) {
-        this.emoji = emoji;
-    }
-
-    get string(): string {
-        return ":" + getVueInstance(this.emoji).tsEmoji.shortcodes[0] + ":"
-    }
-}
+import {EmojiToken, StringToken, StyleToken, Token, Tokens} from "./Token";
 
 export namespace Tokenizer {
     export function tokenizeHTML(node: HTMLElement): Token[] {

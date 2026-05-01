@@ -38,7 +38,8 @@ import {
     UrlNode
 } from "../node/Node";
 import {Style, Styles} from "../Styles";
-import {EmojiToken, StringToken, StyleToken, Token, Tokenizer} from "./Tokenizer";
+import {EmojiToken, StringToken, StyleToken, Token, Tokens} from "./Token";
+import {Tokenizer} from "./Tokenizer";
 import BlockquoteType = BlockquoteNode.BlockquoteType;
 import ListType = ListNode.ListType;
 
@@ -265,7 +266,7 @@ export namespace Parser {
         if (tokensToConvert.size == 0) {
             return tokens;
         }
-        return mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
+        return Tokens.mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
     }
 
     export function applyListRules(tokens: Token[]): Token[] {
@@ -313,7 +314,7 @@ export namespace Parser {
         if (tokensToConvert.size == 0) {
             return tokens;
         }
-        return mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
+        return Tokens.mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
     }
 
     function isListStyle(style: Style): boolean {
@@ -376,7 +377,7 @@ export namespace Parser {
         if (tokensToConvert.size == 0) {
             return tokens;
         }
-        return mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
+        return Tokens.mergeConsecutiveStringTokens(tokens.map(token => tokensToConvert.has(token) ? new StringToken(token.string) : token));
     }
 
     function isTableCell(style: Style): boolean {
@@ -473,7 +474,7 @@ export namespace Parser {
                     result.push(token);
                 }
             }
-            return mergeConsecutiveStringTokens(result);
+            return Tokens.mergeConsecutiveStringTokens(result);
         }
     }
 
@@ -561,7 +562,7 @@ export namespace Parser {
                 other = otherIterator.next();
             }
         }
-        return mergeConsecutiveStringTokens(result);
+        return Tokens.mergeConsecutiveStringTokens(result);
     }
 
     export function convertOverlappingStyleTokensToStringTokens(tokens: Token[], others: Token[]): Token[] {
@@ -596,28 +597,7 @@ export namespace Parser {
             tokenCursor += token.value.string.length;
             token = tokenIterator.next();
         }
-        return mergeConsecutiveStringTokens(result);
-    }
-
-    export function mergeConsecutiveStringTokens(tokens: Token[]): Token[] {
-        const result: Token[] = [];
-        const tokenIterator = tokens.values();
-        let token = tokenIterator.next();
-        while (!token.done) {
-            let buffer = "";
-            while (!token.done && (token.value instanceof StringToken)) {
-                buffer += token.value.string;
-                token = tokenIterator.next();
-            }
-            if (buffer.length > 0) {
-                result.push(new StringToken(buffer));
-            }
-            if (!token.done) {
-                result.push(token.value);
-            }
-            token = tokenIterator.next();
-        }
-        return result;
+        return Tokens.mergeConsecutiveStringTokens(result);
     }
 
     function parseListType(input: string | null): ListType {

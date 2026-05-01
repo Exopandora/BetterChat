@@ -1,6 +1,7 @@
 import {describe, expect, it} from "@jest/globals";
-import {StringToken, StyleToken, Tokenizer} from "../../../../src/messages/parser/Tokenizer";
 import {Styles} from "../../../../src/messages/Styles";
+import {EmojiToken, StringToken, StyleToken} from "../../../../src/messages/parser/Token";
+import {Tokenizer} from "../../../../src/messages/parser/Tokenizer";
 
 describe("Given a simple string", () => {
     describe("when tokenizing", () => {

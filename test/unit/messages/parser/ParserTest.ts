@@ -11,7 +11,7 @@ import {
     UrlNode
 } from "../../../../src/messages/node/Node";
 import {Parser} from "../../../../src/messages/parser/Parser";
-import {StringToken, StyleToken, Token} from "../../../../src/messages/parser/Tokenizer";
+import {StringToken, StyleToken, Token} from "../../../../src/messages/parser/Token";
 import {Styles} from "../../../../src/messages/Styles";
 // @ts-ignore
 import {createEmojiToken, link} from "../../../fixtures/TestFixtures";
@@ -89,24 +89,6 @@ describe("Given a message element", () => {
 });
 
 describe("Given an array of tokens", () => {
-    describe("when merging consecutive string tokens", () => {
-        it("returns the correct result", () => {
-            const tokens: Token[] = [
-                new StringToken("abc"),
-                new StringToken("def"),
-                new StringToken("ghi"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-                new StringToken("jkl"),
-            ];
-            const expected = [
-                new StringToken("abcdefghi"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-                new StringToken("jkl"),
-            ];
-            const result = Parser.mergeConsecutiveStringTokens(tokens);
-            expect(result).toEqual(expected);
-        });
-    });
     describe("when parsing URLs in string tokens", () => {
         it("parses URLs that span across the entire string token length", () => {
             const tokens: Token[] = [
