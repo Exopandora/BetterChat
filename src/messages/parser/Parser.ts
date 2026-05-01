@@ -219,19 +219,19 @@ export namespace Parser {
                         nodes.push(new BlockquoteNode(token.value, BlockquoteType.DEFAULT, children));
                         break;
                     case Styles.NOTE:
-                        nodes.push(new BlockquoteNode("Note", BlockquoteType.NOTE, children));
+                        nodes.push(new BlockquoteNode(token.value ?? "Note", BlockquoteType.NOTE, children));
                         break;
                     case Styles.TIP:
-                        nodes.push(new BlockquoteNode("Tip", BlockquoteType.TIP, children));
+                        nodes.push(new BlockquoteNode(token.value ?? "Tip", BlockquoteType.TIP, children));
                         break;
                     case Styles.IMPORTANT:
-                        nodes.push(new BlockquoteNode("Important", BlockquoteType.IMPORTANT, children));
+                        nodes.push(new BlockquoteNode(token.value ?? "Important", BlockquoteType.IMPORTANT, children));
                         break;
                     case Styles.WARNING:
-                        nodes.push(new BlockquoteNode("Warning", BlockquoteType.WARNING, children));
+                        nodes.push(new BlockquoteNode(token.value ?? "Warning", BlockquoteType.WARNING, children));
                         break;
                     case Styles.CAUTION:
-                        nodes.push(new BlockquoteNode("Caution", BlockquoteType.CAUTION, children));
+                        nodes.push(new BlockquoteNode(token.value ?? "Caution", BlockquoteType.CAUTION, children));
                         break;
                     case Styles.MERMAID:
                         nodes.push(new MermaidNode(children));
