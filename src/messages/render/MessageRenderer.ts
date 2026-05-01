@@ -20,6 +20,7 @@ import {
     InlineCodeNode,
     InlineMathNode,
     ItalicNode,
+    JustifyAlignNode,
     LeftAlignNode,
     ListItemNode,
     ListNode,
@@ -266,6 +267,16 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         const span = document.createElement("span");
         span.style.display = "flex";
         span.style.justifyContent = "left";
+        if (!this.insideTable) {
+            this.root.dataset.renderFullWidth = "true";
+        }
+        this.append(node, span);
+    }
+
+    visitJustifyAlignNode(node: JustifyAlignNode): void {
+        const span = document.createElement("span");
+        span.classList.add("md-align-block");
+        span.style.textAlign = "justify";
         if (!this.insideTable) {
             this.root.dataset.renderFullWidth = "true";
         }

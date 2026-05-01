@@ -13,6 +13,7 @@ import {
     InlineCodeNode,
     InlineMathNode,
     ItalicNode,
+    JustifyAlignNode,
     LeftAlignNode,
     ListItemNode,
     ListNode,
@@ -56,6 +57,7 @@ export interface Visitor {
     visitCenterAlignNode(node: CenterAlignNode): void;
     visitRightAlignNode(node: RightAlignNode): void;
     visitLeftAlignNode(node: LeftAlignNode): void;
+    visitJustifyAlignNode(node: JustifyAlignNode): void;
     visitHighlightNode(node: HighlightNode): void;
     visitFootnoteNode(node: FootnoteNode): void;
     visitListNode(node: ListNode): void;
@@ -112,6 +114,8 @@ export abstract class AbstractVisitor implements Visitor {
             this.visitRightAlignNode(node);
         } else if (node instanceof LeftAlignNode) {
             this.visitLeftAlignNode(node);
+        } else if (node instanceof JustifyAlignNode) {
+            this.visitJustifyAlignNode(node);
         } else if (node instanceof HighlightNode) {
             this.visitHighlightNode(node);
         } else if (node instanceof FootnoteNode) {
@@ -216,6 +220,10 @@ export abstract class AbstractVisitor implements Visitor {
     }
 
     visitLeftAlignNode(node: LeftAlignNode): void {
+        this.visitChildren(node);
+    }
+
+    visitJustifyAlignNode(node: JustifyAlignNode): void {
         this.visitChildren(node);
     }
 

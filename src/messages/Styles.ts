@@ -74,6 +74,7 @@ export namespace Styles {
     export const CENTER = new Style("center align", isNull, {allowsSlicing: false});
     export const RIGHT = new Style("right align", isNull, {allowsSlicing: false});
     export const LEFT = new Style("left align", isNull, {allowsSlicing: false});
+    export const JUSTIFY = new Style("justify align", isNull, {allowsSlicing: false});
     export const HIGHLIGHT = new Style("highlight", isNull);
     export const FOOTNOTE = new Style("footnote", isNull, {allowsSlicing: false});
     export const ORDERED_LIST = new Style("ordered list", isNull, {allowsSlicing: false});
@@ -145,6 +146,7 @@ export namespace Styles {
         ["center", CENTER],
         ["left", LEFT],
         ["right", RIGHT],
+        ["justify", JUSTIFY],
         ["highlight", HIGHLIGHT],
         ["footnote", FOOTNOTE],
         ["fn", FOOTNOTE],

@@ -153,6 +153,12 @@ export class LeftAlignNode extends Node {
     }
 }
 
+export class JustifyAlignNode extends Node {
+    constructor(children: Node[] = []) {
+        super(children);
+    }
+}
+
 export class HighlightNode extends Node {
     constructor(children: Node[] = []) {
         super(children);
@@ -290,6 +296,7 @@ export namespace Nodes {
         CenterAlignNode.name,
         RightAlignNode.name,
         LeftAlignNode.name,
+        JustifyAlignNode.name,
         HighlightNode.name,
         FootnoteNode.name,
         ListNode.name,

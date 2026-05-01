@@ -13,6 +13,7 @@ import {
     InlineCodeNode,
     InlineMathNode,
     ItalicNode,
+    JustifyAlignNode,
     LeftAlignNode,
     ListItemNode,
     ListNode,
@@ -154,6 +155,9 @@ export namespace Parser {
                         break;
                     case Styles.LEFT:
                         nodes.push(new LeftAlignNode(children));
+                        break;
+                    case Styles.JUSTIFY:
+                        nodes.push(new JustifyAlignNode(children));
                         break;
                     case Styles.HIGHLIGHT:
                         nodes.push(new HighlightNode(children));

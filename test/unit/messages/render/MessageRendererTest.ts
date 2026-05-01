@@ -17,6 +17,7 @@ import {
     InlineCodeNode,
     InlineMathNode,
     ItalicNode,
+    JustifyAlignNode,
     LeftAlignNode,
     ListItemNode,
     ListNode,
@@ -305,6 +306,16 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `<span style="display: flex; justify-content: left;"><span>left aligned text</span></span>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected, "data-render-full-width=\"true\""));
+        });
+        it("renders a justify align node correctly", () => {
+            const document = new DocumentNode([
+                new JustifyAlignNode([
+                    new StringNode("justified text"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `<span class="md-align-block" style="text-align: justify;"><span>justified text</span></span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected, "data-render-full-width=\"true\""));
         });
         it("renders a highlight node correctly", () => {
