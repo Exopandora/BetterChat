@@ -6,7 +6,7 @@ export function link(tokens: Token[], a: number, b: number) {
 }
 
 export function createEmojiToken(code: string): EmojiToken {
-    const svg = document.createElement("svg");
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     (svg as any).__vue__ = {
         tsEmoji: {
             shortcodes: [code],
