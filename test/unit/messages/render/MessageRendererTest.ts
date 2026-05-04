@@ -209,7 +209,7 @@ describe("Given a simple document node", () => {
                 new EmojiNode(globalThis.document.createElementNS("http://www.w3.org/2000/svg", "svg")),
             ]);
             const result = MessageRenderer.render(document);
-            const expected = `<emoji></emoji>`;
+            const expected = `<svg></svg>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders a superscript node correctly", () => {
