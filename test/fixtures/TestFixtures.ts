@@ -7,10 +7,8 @@ export function link(tokens: Token[], a: number, b: number) {
 
 export function createEmojiToken(code: string): EmojiToken {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    (svg as any).__vue__ = {
-        tsEmoji: {
-            shortcodes: [code],
-        }
-    };
-    return new EmojiToken(svg);
+    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svg.setAttribute("viewBox", "0 0 36 36");
+    svg.classList.add("ts-chat-message-content-emoji", "ts-parsed-text-content-emoji");
+    return new EmojiToken(svg, code != null ? ":" + code + ":" : null);
 }
