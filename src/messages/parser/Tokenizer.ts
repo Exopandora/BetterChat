@@ -1,44 +1,8 @@
 import {StringReader} from "../../helpers/StringReader";
-import {getVueInstance} from "../../helpers/Util";
-import {Style, Styles} from "../Styles";
-import {EmojiToken, StringToken, StyleToken, Token, Tokens} from "./Token";
+import {Styles} from "../Styles";
+import {StringToken, StyleToken, Token} from "./Token";
 
 export namespace Tokenizer {
-    export function tokenizeHTML(node: HTMLElement): Token[] {
-        const tokens: Token[] = []
-        for (const child of node.childNodes) {
-            const childElement = child as HTMLElement;
-            if (childElement.tagName == "A") {
-                tokens.push(new StringToken(childElement.textContent));
-            } else if (childElement.tagName == "STRONG") {
-                tokens.push(...wrapStyle(Styles.BOLD, "**", ...tokenizeHTML(childElement)));
-            } else if (childElement.tagName == "DEL") {
-                tokens.push(...wrapStyle(Styles.STRIKETHROUGH, "~~", ...tokenizeHTML(childElement)));
-            } else if (childElement.tagName == "EM") {
-                tokens.push(...wrapStyle(Styles.ITALIC, "__", ...tokenizeHTML(childElement)));
-            } else if (childElement.tagName == "P" && childElement.classList.contains("spoiler")) {
-                tokens.push(...wrapStyle(Styles.SPOILER, "||", ...tokenizeHTML(childElement)));
-            } else if (childElement.tagName == "PRE") {
-                tokens.push(...wrapStyle(Styles.CODE, "```", new StringToken(childElement.textContent)));
-            } else if (childElement.tagName == "CODE") {
-                tokens.push(...wrapStyle(Styles.PRE, "`", new StringToken(childElement.textContent)));
-            } else if (childElement.tagName == "svg" && childElement.dataset.type == "emoji") {
-                tokens.push(new EmojiToken(childElement));
-            } else {
-                tokens.push(new StringToken(childElement.textContent));
-            }
-        }
-        return tokens;
-    }
-
-    function wrapStyle(style: Style, string: string, ...content: Token[]): Token[] {
-        const startingStyleToken = new StyleToken(style, StyleToken.Type.START, string);
-        const endingStyleToken = new StyleToken(style, StyleToken.Type.END, string);
-        startingStyleToken.link = endingStyleToken;
-        endingStyleToken.link = startingStyleToken;
-        return [startingStyleToken, ...content, endingStyleToken];
-    }
-
     export function tokenizeString(message: string): Token[] {
         if (message.length < 8) {
             return [new StringToken(message)];

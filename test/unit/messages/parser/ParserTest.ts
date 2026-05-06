@@ -12,19 +12,20 @@ import {
 } from "../../../../src/messages/node/Node";
 import {Parser} from "../../../../src/messages/parser/Parser";
 import {StringToken, StyleToken, Token} from "../../../../src/messages/parser/Token";
+import {Tokenizer} from "../../../../src/messages/parser/Tokenizer";
 import {Styles} from "../../../../src/messages/Styles";
 // @ts-ignore
-import {createEmojiToken, link} from "../../../fixtures/TestFixtures";
+import {link} from "../../../fixtures/TestFixtures";
 
 describe("Given a message element", () => {
     describe("when parsing", () => {
         type ParseTestParams = {
-            innerHTML: string;
+            tokens: Token[];
             expected: DocumentNode;
         };
         it.each<ParseTestParams>([
             {
-                innerHTML: "<del><span>str[b]ike</span></del><span>through[/b]</span>",
+                tokens: Tokenizer.tokenizeString("[s]str[b]ike[/s]through[/b]"),
                 expected: new DocumentNode([
                     new StrikethroughNode([
                         new StringNode("str"),
@@ -40,7 +41,7 @@ describe("Given a message element", () => {
                 ]),
             },
             {
-                innerHTML: "<del><span>spo[spoiler]iler</span></del><span>[/spoiler]</span>",
+                tokens: Tokenizer.tokenizeString("[s]spo[spoiler]iler[/spoiler][/s]"),
                 expected: new DocumentNode([
                     new StrikethroughNode([
                         new StringNode("spo"),
@@ -53,16 +54,16 @@ describe("Given a message element", () => {
                 ]),
             },
             {
-                innerHTML: "<del><span>spo[code]iler</span></del><span>[/code]</span>",
+                tokens: Tokenizer.tokenizeString("[s]spo[code]iler[/s][/code]"),
                 expected: new DocumentNode([
-                    new StringNode("~~spo"),
+                    new StringNode("[s]spo"),
                     new CodeNode(null, [
-                        new StringNode("iler~~"),
+                        new StringNode("iler[/s]"),
                     ]),
                 ]),
             },
             {
-                innerHTML: "<span>[i]italic[spoiler]text [/i] </span><a href=\"https://example.com\"><span>https://example.com</span></a><span> text[/spoiler]</span>",
+                tokens: Tokenizer.tokenizeString("[i]italic[spoiler]text [/i] https://example.com text[/spoiler]"),
                 expected: new DocumentNode([
                     new ItalicNode([
                         new StringNode("italic"),
@@ -80,9 +81,7 @@ describe("Given a message element", () => {
                 ]),
             },
         ])("returns the correct result for input $innerHTML", (params) => {
-            const message = document.createElement("div");
-            message.innerHTML = params.innerHTML;
-            const result = Parser.parse(message);
+            const result = Parser.parse(params.tokens);
             expect(result).toEqual(params.expected);
         });
     });
@@ -738,114 +737,5 @@ describe("Given two token arrays", () => {
             const result = Parser.convertOverlappingStyleTokensToStringTokens(tokens, others);
             expect(result).toEqual(expected);
         });
-    });
-    describe("when merging", () => {
-        it("inserts style tokens from the second array into string tokens from the first array", () => {
-            const tokens: Token[] = [
-                new StringToken("abc[b]def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
-            ];
-            const others: Token[] = [
-                new StringToken("abc"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-                new StringToken("def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
-            ];
-            const expected = [
-                new StringToken("abc"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-                new StringToken("def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
-            ];
-            const result = Parser.mergeTokenArrays(tokens, others);
-            expect(result).toEqual(expected);
-        });
-        it("prioritizes style tokens from the other array", () => {
-            const tokens: Token[] = [
-                new StringToken("abc"),
-                new StyleToken(Styles.URL, StyleToken.Type.START, {string: "[url=[b]]", value: "[b]"}),
-                new StringToken("def"),
-                new StyleToken(Styles.URL, StyleToken.Type.END, {string: "[/url]"}),
-                new StringToken("[b]"),
-            ];
-            link(tokens, 1, 3);
-            const others: Token[] = [
-                new StringToken("abc"),
-                new StringToken("[url="),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-                new StringToken("]def[/url]"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-            ];
-            const expected = [
-                new StringToken("abc[url="),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-                new StringToken("]def[/url]"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-            ];
-            const result = Parser.mergeTokenArrays(tokens, others);
-            expect(result).toEqual(expected);
-        });
-        it("inserts style tokens from the first array into string tokens from the second array", () => {
-            const tokens: Token[] = [
-                new StringToken("ab[i]cd"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "~~"}),
-            ];
-            const others: Token[] = [
-                new StringToken("ab"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[i]"}),
-                new StringToken("cd~~"),
-            ];
-            const expected = [
-                new StringToken("ab"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[i]"}),
-                new StringToken("cd"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "~~"}),
-            ];
-            const result = Parser.mergeTokenArrays(tokens, others);
-            expect(result).toEqual(expected);
-        });
-        it("handles emojis correctly", () => {
-            const tokens: Token[] = [
-                createEmojiToken("b"),
-                new StringToken("lood"),
-            ];
-            const others: Token[] = [
-                new StringToken(":b:lood"),
-            ];
-            const expected = [
-                createEmojiToken("b"),
-                new StringToken("lood"),
-            ];
-            const result = Parser.mergeTokenArrays(tokens, others);
-            expect(result).toEqual(expected);
-        });
-        it("partitions string tokens correctly", () => {
-            const tokens: Token[] = [
-                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "~~"}),
-                new StringToken("str[b]ike"),
-                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "~~"}),
-                new StringToken("through[/b]"),
-            ];
-            const others: Token[] = [
-                new StringToken("~~str"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-                new StringToken("ike~~through"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
-            ];
-            const expected = [
-                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.START, {string: "~~"}),
-                new StringToken("str"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "[b]"}),
-                new StringToken("ike"),
-                new StyleToken(Styles.STRIKETHROUGH, StyleToken.Type.END, {string: "~~"}),
-                new StringToken("through"),
-                new StyleToken(Styles.BOLD, StyleToken.Type.END, {string: "[/b]"}),
-            ];
-            const result = Parser.mergeTokenArrays(tokens, others);
-            expect(result).toEqual(expected);
-        });
-        // is this possible?
-        // tokens: [ab c][def][ghi][jkl]
-        // others:  ab[c  def  g]hi jkl
     });
 });

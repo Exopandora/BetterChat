@@ -39,16 +39,11 @@ import {
 } from "../node/Node";
 import {Style, Styles} from "../Styles";
 import {EmojiToken, StringToken, StyleToken, Token, Tokens} from "./Token";
-import {Tokenizer} from "./Tokenizer";
 import BlockquoteType = BlockquoteNode.BlockquoteType;
 import ListType = ListNode.ListType;
 
 export namespace Parser {
-    export function parse(node: HTMLElement): DocumentNode {
-        const htmlTokens = Tokenizer.tokenizeHTML(node);
-        const originalMessage = htmlTokens.map(token => token.string).join("");
-        const messageTokens = Tokenizer.tokenizeString(originalMessage);
-        const mergedTokens = mergeTokenArrays(htmlTokens, messageTokens);
+    export function parse(tokens: Token[]): DocumentNode {
         const steps = [
             linkStyleTokens,
             convertToStringToken((token) => token instanceof StyleToken && (token.link == null && !token.style.isStandalone || token.escaped)),
@@ -59,8 +54,7 @@ export namespace Parser {
             sliceOverlappingStyleRanges,
             applyNestingRule, // apply nesting rule again, because [i][code][/code][/i] would be sliced into [i][/i][code][i][/i][/code][i][/i]
         ];
-        const tokens = steps.reduce((result, step) => step(result), mergedTokens);
-        const nodes = parseNodes(tokens);
+        const nodes = parseNodes(steps.reduce((result, step) => step(result), tokens));
         return new DocumentNode(nodes);
     }
 
@@ -502,67 +496,6 @@ export namespace Parser {
             }
         }
         return tokens;
-    }
-
-    // tokens: <pre>----[]---------[]---------[]------------[]----</pre></br>
-    // others: <pre>-----------[]----------[]-----------[]------[]</pre></br>
-    // result: <pre>----[]-----[]--[]------[]-[]--------[]--[]--[]</pre></br>
-    export function mergeTokenArrays(tokens: Token[], others: Token[]): Token[] {
-        const tokenIterator = convertOverlappingStyleTokensToStringTokens(tokens, others).values();
-        const otherIterator = others.values();
-        let token = tokenIterator.next();
-        let other = otherIterator.next();
-        let tokenCursor = 0;
-        let otherCursor = 0;
-        let tokenOffset = 0;
-        let otherOffset = 0;
-        const result: Token[] = [];
-        while (!token.done && !other.done) {
-            if (tokenCursor + token.value.string.length < otherCursor + other.value.string.length) {
-                if (token.value instanceof StringToken && tokenOffset > 0) {
-                    result.push(new StringToken(token.value.string.substring(tokenOffset)));
-                } else {
-                    result.push(token.value);
-                }
-                otherOffset += token.value.string.length - tokenOffset;
-                tokenOffset = 0;
-                tokenCursor += token.value.string.length;
-                token = tokenIterator.next();
-            } else if (tokenCursor + token.value.string.length > otherCursor + other.value.string.length) {
-                if (other.value instanceof StringToken && otherOffset > 0) {
-                    result.push(new StringToken(other.value.string.substring(otherOffset)));
-                } else {
-                    result.push(other.value);
-                }
-                tokenOffset += other.value.string.length - otherOffset;
-                otherOffset = 0;
-                otherCursor += other.value.string.length;
-                other = otherIterator.next();
-            } else {
-                if (token.value instanceof StringToken) {
-                    if (other.value instanceof StringToken) {
-                        result.push(new StringToken(token.value.string.substring(tokenOffset)));
-                    } else {
-                        result.push(other.value);
-                    }
-                } else if (other.value instanceof StringToken) {
-                    if (token.value instanceof StringToken) {
-                        result.push(new StringToken(other.value.string.substring(tokenOffset)));
-                    } else {
-                        result.push(token.value);
-                    }
-                } else {
-                    result.push(token.value);
-                }
-                tokenOffset = 0;
-                tokenCursor += token.value.string.length;
-                token = tokenIterator.next();
-                otherOffset = 0;
-                otherCursor += other.value.string.length;
-                other = otherIterator.next();
-            }
-        }
-        return Tokens.mergeConsecutiveStringTokens(result);
     }
 
     export function convertOverlappingStyleTokensToStringTokens(tokens: Token[], others: Token[]): Token[] {
