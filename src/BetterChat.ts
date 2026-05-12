@@ -146,13 +146,13 @@ namespace EventHandler {
         root.appendChild(widgetWrapper);
     }
 
-    export function onChatInputAdded(node: HTMLElement) {
+    export function onChatInputContentAdded(chatInputContent: HTMLElement) {
         if (!settings.getValueForKey("enabled")) {
             return;
         }
         let prevConnectionId: string | null = null;
         let prevMessage: Message | null = null;
-        node.addEventListener("keydown", (event: KeyboardEvent) => {
+        chatInputContent.addEventListener("keydown", (event: KeyboardEvent) => {
             const activeConnection = getActiveConnection();
             if (activeConnection == null) {
                 return;
@@ -162,7 +162,7 @@ namespace EventHandler {
                 prevMessage = null;
             }
             const ownID = activeConnection.activeDetailItem.chat.identity;
-            const chatInputContainer: ChatInputContainer = getVueInstance(node.closest("div.ts-chat-input-container"));
+            const chatInputContainer: ChatInputContainer = getVueInstance(chatInputContent.closest("div.ts-chat-input-container"));
             const currentText = chatInputContainer?.actualMsg;
             if (event.key === "ArrowUp" && (currentText?.length == 0 || currentText == prevMessage?.original)) {
                 const messages = findOwnMessages(activeConnection, ownID);
@@ -235,8 +235,8 @@ namespace DocumentObserver {
                 if (chatSettingsIcon != null) {
                     EventHandler.onChatSettingsAdded(element);
                 }
-            } else if (element.classList.contains("ProseMirror")) {
-                EventHandler.onChatInputAdded(element);
+            } else if (element.classList.contains("ts-chat-input-container-content")) {
+                EventHandler.onChatInputContentAdded(element);
             }
         }
     }
