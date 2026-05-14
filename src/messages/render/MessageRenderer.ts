@@ -351,28 +351,32 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitTaskListItemNode(node: TaskListItemNode): void {
-        const li = document.createElement("li");
-        li.classList.add("task-list-item");
-        if (node.checked) {
-            ImageLoader.loadIcon("checkbox_checked").then((svg) => {
-                const [background, checkmark] = svg.querySelectorAll("path");
-                background!!.style.fill = "MediumSpringGreen";
-                checkmark!!.style.stroke = "white";
-                svg.classList.add("task-list-item-checkbox");
-                svg.setAttribute("width", "13");
-                svg.setAttribute("height", "13");
-                li.prepend(svg);
-            });
-        } else {
-            ImageLoader.loadIcon("checkbox_unchecked").then((svg) => {
-                const background = svg.querySelector("path")!!
-                background.style.fill = "#9C9DA1";
-                svg.classList.add("task-list-item-checkbox");
-                svg.setAttribute("width", "13");
-                svg.setAttribute("height", "13");
-                li.prepend(svg);
-            });
+        const checkboxBackground = document.createElement("div");
+        checkboxBackground.classList.add("ts-checkbox-background");
+        const checkboxInner = document.createElement("div");
+        checkboxInner.classList.add("ts-checkbox-inner");
+        checkboxInner.appendChild(checkboxBackground);
+        const checkbox = document.createElement("div");
+        checkbox.classList.add("ts-checkbox", "inline");
+        checkbox.appendChild(checkboxInner);
+        const checkIcon = ImageLoader.loadIcon("check");
+        if (checkIcon != null) {
+            checkIcon.classList.add("ts-checkbox-checkmark");
+            const path = checkIcon.querySelector("path")!!;
+            path.style.stroke = "var(--tsv-icon-base)";
+            path.classList.add("ts-checkbox-checkmark-path");
+            (path.parentNode as Element)?.remove();
+            checkIcon.appendChild(path);
+            checkboxBackground.appendChild(checkIcon);
         }
+        if (node.checked) {
+            checkbox.dataset.checked = "true";
+            checkboxBackground.classList.add("checked");
+        } else {
+            checkbox.dataset.checked = "false";
+        }
+        const li = document.createElement("li");
+        li.appendChild(checkbox);
         this.append(node, li);
     }
 
