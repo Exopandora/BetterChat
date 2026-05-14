@@ -382,6 +382,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
 
     visitTableNode(node: TableNode): void {
         const table = document.createElement("table");
+        table.classList.add("md-table");
         this.parent.appendChild(table);
         const prevParent = this.parent;
         this.parent = table;

@@ -164,19 +164,6 @@ betterchat-message ol.betterchat-list-style-type-upper-alpha {
 	padding-inline-start: calc(1ch + 1.5ch);
 }
 
-betterchat-message table, betterchat-message th, betterchat-message tr, betterchat-message td {
-	border-collapse: collapse;
-	padding: .5rem;
-}
-
-betterchat-message tr:nth-child(1) {
-	border-bottom: var(--presence-separator-presence) 3px solid;
-}
-
-betterchat-message tr {
-	border-bottom: var(--presence-separator-presence) 1px solid;
-}
-
 betterchat-message th {
 	font-weight: bold;
 }

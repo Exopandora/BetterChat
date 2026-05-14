@@ -558,7 +558,7 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <table>
+                <table class="md-table">
                     <tr>
                         <th>
                             <span>header 1</span>
