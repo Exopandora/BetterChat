@@ -279,8 +279,9 @@ describe("Given a simple document node", () => {
                 ]),
             ]);
             const result = MessageRenderer.render(document);
-            const expected = `<span style="display: flex; justify-content: center;"><span>centered text</span></span>`;
-            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected, "data-render-full-width=\"true\""));
+            // noinspection XmlDeprecatedElement,HtmlDeprecatedTag
+            const expected = `<center class="md-align-block"><span>centered text</span></center>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders a right align node correctly", () => {
             const document = new DocumentNode([

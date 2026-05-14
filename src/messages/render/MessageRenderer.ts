@@ -256,13 +256,10 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitCenterAlignNode(node: CenterAlignNode): void {
-        const span = document.createElement("span");
-        span.style.display = "flex";
-        span.style.justifyContent = "center";
-        if (!this.insideTable) {
-            this.root.dataset.renderFullWidth = "true";
-        }
-        this.append(node, span);
+        // noinspection JSDeprecatedSymbols
+        const center = document.createElement("center");
+        center.classList.add("md-align-block")
+        this.append(node, center);
     }
 
     visitRightAlignNode(node: RightAlignNode): void {
