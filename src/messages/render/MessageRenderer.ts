@@ -67,7 +67,6 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     private readonly context: RenderContext<MessageRenderTarget>;
     private parent: Element;
     private footnotes: Element[] = [];
-    private insideTable: boolean = false;
 
     constructor(context: RenderContext<MessageRenderTarget>) {
         super();
@@ -384,13 +383,11 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         this.parent.appendChild(table);
         const prevParent = this.parent;
         this.parent = table;
-        this.insideTable = true;
         for (const child of node.children) {
             if (child instanceof TableRowNode) {
                 this.visit(child);
             }
         }
-        this.insideTable = false;
         this.parent = prevParent;
     }
 
