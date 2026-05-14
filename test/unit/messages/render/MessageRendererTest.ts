@@ -310,8 +310,8 @@ describe("Given a simple document node", () => {
                 ]),
             ]);
             const result = MessageRenderer.render(document);
-            const expected = `<span class="md-align-block" style="text-align: justify;"><span>justified text</span></span>`;
-            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected, "data-render-full-width=\"true\""));
+            const expected = `<div class="md-align-block" style="text-align: justify;"><span>justified text</span></div>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders a highlight node correctly", () => {
             const document = new DocumentNode([
