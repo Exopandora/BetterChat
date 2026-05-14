@@ -154,7 +154,7 @@ export namespace Attachments {
     }
 
     async function tryCreateFactory(url: URL): Promise<AttachmentFactory<any> | null> {
-        const response = await fetch(url.href, {
+        return await fetch(url.href, {
             method: "GET",
             headers: {
                 "User-Agent": navigator.userAgent,
@@ -163,24 +163,25 @@ export namespace Attachments {
                 'Origin': url.toString(),
             },
             signal: AbortSignal.timeout(5000),
-        });
-        if (response.status == 200 && response.headers.has("Content-Type")) {
-            const contentType = response.headers.get("Content-Type");
-            if (contentType != null) {
-                if (contentType.startsWith("image/")) {
-                    return await ImageEmbed.tryCreateFactory(url.href);
-                } else if (contentType.startsWith("video/")) {
-                    return await VideoEmbed.tryCreateFactory(url.href);
-                } else if (contentType.startsWith("audio/")) {
-                    return await AudioEmbed.tryCreateFactory(url.href);
-                } else if (contentType == "application/ogg") {
-                    return await MultimediaEmbed.tryCreateFactory(url.href);
-                } else if (isHtmlOrXmlContentType(contentType)) {
-                    return await GenericEmbed.tryCreateFactory(url.href, await response.text());
+        }).then(async (response) => {
+            if (response.status == 200 && response.headers.has("Content-Type")) {
+                const contentType = response.headers.get("Content-Type");
+                if (contentType != null) {
+                    if (contentType.startsWith("image/")) {
+                        return ImageEmbed.tryCreateFactory(url.href);
+                    } else if (contentType.startsWith("video/")) {
+                        return VideoEmbed.tryCreateFactory(url.href);
+                    } else if (contentType.startsWith("audio/")) {
+                        return AudioEmbed.tryCreateFactory(url.href);
+                    } else if (contentType == "application/ogg") {
+                        return MultimediaEmbed.tryCreateFactory(url.href);
+                    } else if (isHtmlOrXmlContentType(contentType)) {
+                        return GenericEmbed.tryCreateFactory(url.href, await response.text());
+                    }
                 }
             }
-        }
-        return null;
+            return null;
+        }).catch(() => null);
     }
 
     function isHtmlOrXmlContentType(contentType: string): boolean {
