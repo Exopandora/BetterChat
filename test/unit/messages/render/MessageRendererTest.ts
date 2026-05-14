@@ -658,21 +658,48 @@ describe("Given a simple document node", () => {
                 </span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
-        it("renders an blockquote node correctly", () => {
+        it("renders a blockquote node correctly", () => {
             const document = new DocumentNode([
-                new BlockquoteNode("title", BlockquoteType.TIP, [
+                new BlockquoteNode(null, BlockquoteType.DEFAULT, [
                     new StringNode("blockquote content"),
                 ]),
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <blockquote class="callout-tip">
-                    <div class="blockquote-content-wrapper">
-                        <p class="blockquote-title">
-                            title
-                        </p>
-                        <span>blockquote content</span>
+                <blockquote>
+                    <span>blockquote content</span>
+                </blockquote>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a blockquote node (note callout) correctly", () => {
+            const document = new DocumentNode([
+                new BlockquoteNode("title", BlockquoteType.NOTE, [
+                    new StringNode("note content"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <blockquote class="md-callout md-callout-note" data-callout="note">
+                    <div class="md-callout-title">
+                        title
                     </div>
+                    <span>note content</span>
+                </blockquote>`;
+            expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
+        });
+        it("renders a blockquote node (tip callout) correctly", () => {
+            const document = new DocumentNode([
+                new BlockquoteNode("title", BlockquoteType.TIP, [
+                    new StringNode("tip content"),
+                ]),
+            ]);
+            const result = MessageRenderer.render(document);
+            const expected = `
+                <blockquote class="md-callout md-callout-tip" data-callout="tip">
+                    <div class="md-callout-title">
+                        title
+                    </div>
+                    <span>tip content</span>
                 </blockquote>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });

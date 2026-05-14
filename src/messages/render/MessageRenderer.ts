@@ -444,37 +444,35 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         const blockquote = document.createElement("blockquote");
         switch (node.type) {
             case BlockquoteNode.BlockquoteType.NOTE:
-                blockquote.classList.add("callout-note");
+                blockquote.classList.add("md-callout", "md-callout-note");
+                blockquote.dataset.callout = "note";
                 break;
             case BlockquoteNode.BlockquoteType.TIP:
-                blockquote.classList.add("callout-tip");
+                blockquote.classList.add("md-callout", "md-callout-tip");
+                blockquote.dataset.callout = "tip";
                 break;
             case BlockquoteNode.BlockquoteType.IMPORTANT:
-                blockquote.classList.add("callout-important");
+                blockquote.classList.add("md-callout", "md-callout-important");
+                blockquote.dataset.callout = "important";
                 break;
             case BlockquoteNode.BlockquoteType.WARNING:
-                blockquote.classList.add("callout-warning");
+                blockquote.classList.add("md-callout", "md-callout-warning");
+                blockquote.dataset.callout = "warning";
                 break;
             case BlockquoteNode.BlockquoteType.CAUTION:
-                blockquote.classList.add("callout-caution");
+                blockquote.classList.add("md-callout", "md-callout-caution");
+                blockquote.dataset.callout = "caution";
                 break;
             default:
                 break;
         }
-        const content = document.createElement("div");
-        content.classList.add("blockquote-content-wrapper");
-        blockquote.appendChild(content);
         if (node.title != null) {
-            const title = document.createElement("p");
-            title.classList.add("blockquote-title");
+            const title = document.createElement("div");
+            title.classList.add("md-callout-title");
             title.textContent = node.title;
-            content.appendChild(title);
+            blockquote.appendChild(title);
         }
-        this.parent.appendChild(blockquote);
-        const prevParent = this.parent;
-        this.parent = content;
-        this.visitChildren(node);
-        this.parent = prevParent;
+        this.append(node, blockquote);
     }
 
     visitMermaidNode(node: MermaidNode): void {
