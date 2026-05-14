@@ -195,8 +195,6 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         a.target = "_blank";
         a.rel = "noreferrer noopener";
         a.tabIndex = -1;
-        a.dataset.originalTitle = "null";
-        a.style.display = "inline-block";
         this.append(node, a);
         let href = node.url || a.textContent;
         if (href.match(/^\w+:\/\/\S+$/) == null) {
@@ -205,9 +203,11 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         const invalid = href.match(/^((?:(?:https?|ts3file|ts3server|teamspeak):\/\/|www\.)[^\s<>\[\]]+[^<>.,:;"')\[\]\s])$/) == null;
         if (invalid) {
             a.classList.add("betterchat-invalid-link");
+        } else {
+            a.classList.add("ts-parsed-link")
         }
         a.href = href;
-        a.onclick = (event: PointerEvent) => {
+        a.addEventListener("click", (event: PointerEvent) => {
             if (invalid) {
                 setClipboardString(a.href);
                 Tooltips.setTooltipContentUntilHidden(a, "Copied to clipboard!");
@@ -216,7 +216,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             }
             event.stopPropagation();
             event.preventDefault();
-        };
+        });
         Tooltips.create(a, "Links to: " + href);
     }
 

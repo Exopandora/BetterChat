@@ -69,7 +69,7 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <a target="_blank" rel="noreferrer noopener" tabindex="-1" data-original-title="null" style="display: inline-block;" href="https://example.com">
+                <a target="_blank" rel="noreferrer noopener" tabindex="-1" class="ts-parsed-link" href="https://example.com">
                     <span>
                         example.com
                     </span>
@@ -81,7 +81,7 @@ describe("Given a simple document node", () => {
                 new UrlNode("https://invalid.com[]"),
             ]);
             const result = MessageRenderer.render(document);
-            const expected = `<a target="_blank" rel="noreferrer noopener" tabindex="-1" data-original-title="null" style="display: inline-block;" class="betterchat-invalid-link" href="https://invalid.com[]"></a>`;
+            const expected = `<a target="_blank" rel="noreferrer noopener" tabindex="-1" class="betterchat-invalid-link" href="https://invalid.com[]"></a>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders a bold node correctly", () => {
