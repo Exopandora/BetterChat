@@ -141,22 +141,27 @@ betterchat-message ul.betterchat-list-style-type-square {
 
 betterchat-message ol.betterchat-list-style-type-decimal {
 	list-style-type: decimal;
+	padding-inline-start: calc(1ch + 1.5ch);
 }
 
 betterchat-message ol.betterchat-list-style-type-lower-roman {
 	list-style-type: lower-roman;
+	padding-inline-start: calc(1ch + 1.5ch);
 }
 
 betterchat-message ol.betterchat-list-style-type-upper-roman {
 	list-style-type: upper-roman;
+	padding-inline-start: calc(1ch + 1.5ch);
 }
 
 betterchat-message ol.betterchat-list-style-type-lower-alpha {
 	list-style-type: lower-alpha;
+	padding-inline-start: calc(1ch + 1.5ch);
 }
 
 betterchat-message ol.betterchat-list-style-type-upper-alpha {
 	list-style-type: upper-alpha;
+	padding-inline-start: calc(1ch + 1.5ch);
 }
 
 betterchat-message li {
