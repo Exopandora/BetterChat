@@ -25,10 +25,11 @@ export function ZoomDiagramControls(panZoomInstance: SvgPanZoom.Instance): HTMLE
     });
     const reset = document.createElement("div");
     reset.classList.add("mermaid-diagram-control-element", "mermaid-diagram-control-element-reset-zoom");
-    ImageLoader.loadIcon("reset").then((svg) => {
-        svg.style.removeProperty("fill");
-        reset.appendChild(svg);
-    });
+    const resetIcon = ImageLoader.loadIcon("reset");
+    if (resetIcon != null) {
+        resetIcon.style.removeProperty("fill");
+        reset.appendChild(resetIcon);
+    }
     reset.addEventListener("click", (event: PointerEvent) => {
         panZoomInstance.reset();
         event.stopPropagation();

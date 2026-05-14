@@ -1,28 +1,16 @@
+import {getVueInstance} from "./Util";
+
 export namespace ImageLoader {
-    const cache: Map<string, HTMLElement> = new Map<string, HTMLElement>();
+    const iconData: { [key: string]: string } = getVueInstance(document.querySelector("#app"))?.$store?._vm?.IconData;
 
-    export async function loadIcon(name: string): Promise<HTMLElement> {
-        if (cache.has(name)) {
-            return Promise.resolve(cache.get(name)!!.cloneNode(true) as HTMLElement);
+    export function loadIcon(name: string): SVGSVGElement | null {
+        if (iconData == null) {
+            return null;
         }
-        const response = await fetch(`tsui://default/images/icons/${name}.svg`);
-        const text = await response.text();
-        const svg = new DOMParser().parseFromString(text, "image/svg+xml").documentElement;
-        removeTsvClasses(svg);
-        cache.set(name, svg);
-        return svg;
-    }
-
-    function removeTsvClasses(element: Element) {
-        const remove: string[] = [];
-        element.classList.forEach((value) => {
-            if (value.startsWith("ts")) {
-                remove.push(value);
-            }
-        });
-        element.classList.remove(...remove);
-        for (const child of element.children) {
-            removeTsvClasses(child);
+        const data = iconData[name];
+        if (data == null) {
+            return null;
         }
+        return new DOMParser().parseFromString(data, "text/html").getElementsByTagName("svg")[0];
     }
 }

@@ -3,9 +3,10 @@ import {ImageLoader} from "../../helpers/ImageLoader";
 export function MaximizeDiagramControls(onMaximize: () => void): HTMLElement {
     const maximize = document.createElement("div");
     maximize.classList.add("mermaid-diagram-control-element");
-    ImageLoader.loadIcon("stream_maximize").then((svg) => {
-        maximize.appendChild(svg);
-    });
+    const streamMaximizeIcon = ImageLoader.loadIcon("stream-maximize");
+    if (streamMaximizeIcon != null) {
+        maximize.appendChild(streamMaximizeIcon);
+    }
     maximize.addEventListener("click", (event: PointerEvent) => {
         onMaximize();
         event.stopPropagation();

@@ -14,18 +14,17 @@ export function ModalOverlay(
     contentFactory(lightBoxContentPlatterInner);
     const itemIconStack = document.createElement("div");
     itemIconStack.classList.add("tsv-icon", "tsv-item-icon-stack");
-    ImageLoader.loadIcon("item_close").then((svg) => {
-        for (const path of svg.querySelectorAll("path")) {
+    const itemCloseIcon = ImageLoader.loadIcon("item-close");
+    if (itemCloseIcon != null) {
+        for (const path of itemCloseIcon.querySelectorAll("path")) {
             path.classList.add("tsv-icon-base-fill");
         }
-        svg.classList.add("tsv-icon");
-        svg.setAttribute("role", "presentation");
-        svg.setAttribute("width", "22");
-        svg.setAttribute("height", "22");
-        itemIconStack.appendChild(svg);
-    }).catch((err) => {
-        console.error(err);
-    });
+        itemCloseIcon.classList.add("tsv-icon");
+        itemCloseIcon.setAttribute("role", "presentation");
+        itemCloseIcon.setAttribute("width", "22");
+        itemCloseIcon.setAttribute("height", "22");
+        itemIconStack.appendChild(itemCloseIcon);
+    }
     const iconStack = document.createElement("div");
     iconStack.classList.add("tsv-icon", "tsv-icon-stack");
     iconStack.appendChild(itemIconStack);
