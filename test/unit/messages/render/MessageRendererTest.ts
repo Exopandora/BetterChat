@@ -106,12 +106,7 @@ describe("Given a simple document node", () => {
                 ]),
             ]);
             const result = MessageRenderer.render(document);
-            const expected = `
-                <span style="text-decoration: underline;">
-                    <span>
-                        underlined text
-                    </span>
-                </span>`;
+            const expected = `<u><span>underlined text</span></u>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders an italic node correctly", () => {
