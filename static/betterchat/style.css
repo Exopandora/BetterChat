@@ -127,10 +127,6 @@ betterchat-message h6 {
 	font-size: revert;
 }
 
-betterchat-message .highlighted-text-snippet {
-	background: olive;
-}
-
 betterchat-message ul.betterchat-list-style-type-disc {
 	list-style-type: disc;
 }

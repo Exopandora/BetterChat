@@ -321,11 +321,11 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <span class="highlighted-text-snippet">
+                <mark class="md-highlight">
                     <span>
                         highlighted text
                     </span>
-                </span>`;
+                </mark>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders a footnote node correctly", () => {

@@ -283,9 +283,9 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitHighlightNode(node: HighlightNode): void {
-        const span = document.createElement("span");
-        span.classList.add("highlighted-text-snippet");
-        this.append(node, span);
+        const mark = document.createElement("mark");
+        mark.classList.add("md-highlight");
+        this.append(node, mark);
     }
 
     visitFootnoteNode(node: FootnoteNode): void {
