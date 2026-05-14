@@ -342,12 +342,13 @@ describe("Given a simple document node", () => {
                     additional content
                 </span>
                 <hr>
-                <sup>1</sup>
-                <span>
-                    <span>
-                        footnote
-                    </span>
-                </span>`;
+                <section class="md-footnotes">
+                    <ol>
+                        <li>
+                            <span>footnote</span>
+                        </li>
+                    </ol>
+                </section>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders a list node (disc type) correctly", () => {

@@ -66,7 +66,7 @@ const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
 class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     private readonly context: RenderContext<MessageRenderTarget>;
     private parent: Element;
-    private footnotes: Element[] = [];
+    private footnotes: HTMLLIElement[] = [];
 
     constructor(context: RenderContext<MessageRenderTarget>) {
         super();
@@ -85,17 +85,14 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     afterRoot(_: Node): void {
         if (this.footnotes.length > 0) {
             this.root.appendChild(document.createElement("hr"));
-            for (let x = 0; x < this.footnotes.length; x++) {
-                const sup = document.createElement("sup");
-                sup.textContent = (x + 1).toString();
-                this.root.appendChild(sup);
-                this.root.appendChild(this.footnotes[x]);
-                if (x + 1 < this.footnotes.length) {
-                    const newline = document.createElement("span");
-                    newline.textContent = "\n";
-                    this.root.appendChild(newline);
-                }
+            const section = document.createElement("section");
+            section.classList.add("md-footnotes");
+            const ol = document.createElement("ol");
+            section.appendChild(ol);
+            for (const footnote of this.footnotes) {
+                ol.appendChild(footnote);
             }
+            this.root.appendChild(section);
         }
     }
 
@@ -293,9 +290,10 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         sup.textContent = (this.footnotes.length + 1).toString();
         this.parent.appendChild(sup);
         const prevParent = this.parent;
-        this.parent = document.createElement("span");
+        const footnote = document.createElement("li");
+        this.footnotes.push(footnote);
+        this.parent = footnote;
         this.visitChildren(node);
-        this.footnotes.push(this.parent);
         this.parent = prevParent;
     }
 
