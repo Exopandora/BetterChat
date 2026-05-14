@@ -61,7 +61,7 @@ describe("Given a simple document node", () => {
             const expected = `<span>string</span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
-        it("renders an url node with a valid link correctly", () => {
+        it("renders a url node with a valid link correctly", () => {
             const document = new DocumentNode([
                 new UrlNode("https://example.com", [
                     new StringNode(`example.com`),
@@ -76,7 +76,7 @@ describe("Given a simple document node", () => {
                 </a>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
-        it("renders an url node with an invalid link correctly", () => {
+        it("renders a url node with an invalid link correctly", () => {
             const document = new DocumentNode([
                 new UrlNode("https://invalid.com[]"),
             ]);
