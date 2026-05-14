@@ -273,13 +273,10 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitLeftAlignNode(node: LeftAlignNode): void {
-        const span = document.createElement("span");
-        span.style.display = "flex";
-        span.style.justifyContent = "left";
-        if (!this.insideTable) {
-            this.root.dataset.renderFullWidth = "true";
-        }
-        this.append(node, span);
+        const div = document.createElement("div");
+        div.classList.add("md-align-block");
+        div.style.textAlign = "left";
+        this.append(node, div);
     }
 
     visitJustifyAlignNode(node: JustifyAlignNode): void {
