@@ -32,10 +32,6 @@ export type ChatInputContainer = {
     insertUnparsedContent(content: string): void;
 }
 
-export type VirtualListItem = {
-    onItemChanged(): void;
-}
-
 export type AppController = {
     connections: Connection[];
 }

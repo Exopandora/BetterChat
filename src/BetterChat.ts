@@ -14,7 +14,7 @@ import {Attachments} from "./messages/Attachments";
 import {Parser} from "./messages/parser/Parser";
 import {Tokenizer} from "./messages/parser/Tokenizer";
 import {MessageRenderer} from "./messages/render/MessageRenderer";
-import {ChatInputContainer, Message, VirtualListItem} from "./types/TSClient";
+import {ChatInputContainer, Message} from "./types/TSClient";
 
 const settings = new Settings("betterchat", {
     "enabled": true,
@@ -52,24 +52,32 @@ function modifyMessageNode(node: HTMLElement) {
         }
     }
     if (settings.getValueForKey("embeds") && !node.classList.contains("ts-reply-original") && !node.classList.contains("ts-reply-shortened")) {
+        const dataIdx = (node.closest(".tsv-virtual-list-item") as HTMLElement)?.dataset?.idx;
+        if (dataIdx == null || dataIdx == "-1") {
+            return;
+        }
         const links = Array.from(node.parentElement!!.querySelectorAll("a"))
             .map(link => link.href);
         Attachments.parse(links)
-            .then((attachments) => onAttachmentsGenerated(node, attachments))
-            .finally(() => { onMessageHeightChanged(node) });
-    } else {
-        onMessageHeightChanged(node);
+            .then((attachments) => {
+                const current = (node.closest(".tsv-virtual-list-item") as HTMLElement)?.dataset?.idx;
+                if (current != null && current == dataIdx) {
+                    onAttachmentsGenerated(node, attachments);
+                }
+            });
     }
-    node.dataset.parsed = "true";
 }
 
 function onAttachmentsGenerated(node: HTMLElement, attachments: HTMLElement[]) {
     if (attachments.length > 0) {
-        const renderedMessage = node.closest("div.ts-rendered-message")!!;
+        const renderedMessage = node.closest("div.ts-rendered-message");
+        if (renderedMessage == null) {
+            return;
+        }
         let container = renderedMessage.querySelector("div.ts-chat-message-attachment-container");
         if (container == null) {
             container = document.createElement("div");
-            container.classList.add("ts-chat-message-attachment-container", "ts-chat-message-attachments", "ts-timestamp-margin-left");
+            container.classList.add("ts-chat-message-attachment-container", "ts-chat-message-attachments", "ts-timestamp-margin-left", "betterchat-attachment-container");
             const chatRoomEventBody = renderedMessage.querySelector("div.ts-chat-room-event-body");
             if (chatRoomEventBody != null) {
                 const tsvFlex = document.createElement("div");
@@ -85,22 +93,20 @@ function onAttachmentsGenerated(node: HTMLElement, attachments: HTMLElement[]) {
             inner.classList.add("ts-chat-message-attachment-inner");
             inner.appendChild(attachment);
             const outer = document.createElement("div");
-            outer.classList.add("ts-chat-message-attachment");
+            outer.classList.add("ts-chat-message-attachment", "betterchat-message-attachment");
             outer.appendChild(inner);
             container.appendChild(outer);
         }
     }
 }
 
-function removeAttachments(node: Element) {
-    for (const attachment of node.querySelectorAll(".ts-chat-message-attachment-container")) {
+function removeBetterChatAttachments(node: Element) {
+    for (const attachment of node.querySelectorAll(".ts-chat-message-attachment.betterchat-message-attachment")) {
         attachment.remove();
     }
-    onMessageHeightChanged(node);
-}
-
-function onMessageHeightChanged(node: Element) {
-    (getVueInstance(node.closest("div.tsv-virtual-list-item")) as (VirtualListItem | null))?.onItemChanged();
+    for (const attachment of node.querySelectorAll(".ts-chat-message-attachment-container.betterchat-attachment-container")) {
+        attachment.remove();
+    }
 }
 
 namespace EventHandler {
@@ -108,14 +114,13 @@ namespace EventHandler {
         try {
             if (node.nodeType == Node.ELEMENT_NODE && settings.getValueForKey("enabled")) {
                 const element = node as Element;
+                removeBetterChatAttachments(element);
                 const messageNodes = element.querySelectorAll(".ts-chat-message-content.ts-parsed-text-content");
                 for (const messageNode of messageNodes) {
-                    if (!isModifiedMessageNode(messageNode as HTMLElement)) {
-                        modifyMessageNode(messageNode as HTMLElement);
-                    }
+                    modifyMessageNode(messageNode as HTMLElement);
                 }
                 if (getVueInstance(element)?.isRedacted) {
-                    removeAttachments(element);
+                    removeBetterChatAttachments(element);
                 }
             }
         } catch (e) {
@@ -124,12 +129,10 @@ namespace EventHandler {
     }
 
     export function onMessageRemoved(chatMessageContent: HTMLElement, previousSibling: HTMLElement) {
-        if (isModifiedMessageNode(chatMessageContent)) {
-            Tooltips.destroy(chatMessageContent, true);
-            const renderedMessage = previousSibling.closest(".ts-rendered-message");
-            if (renderedMessage != null) {
-                removeAttachments(renderedMessage);
-            }
+        Tooltips.destroy(chatMessageContent, true);
+        const renderedMessage = previousSibling.closest(".ts-rendered-message");
+        if (renderedMessage != null) {
+            removeBetterChatAttachments(renderedMessage);
         }
     }
 
@@ -186,12 +189,30 @@ namespace EventHandler {
         });
     }
 
+    const virtualListItemObserver = new MutationObserver((mutations: MutationRecord[]) => {
+        for (const mutation of mutations) {
+            if (mutation.type == "attributes" && mutation.attributeName == "data-idx") {
+                const renderedMessage = (mutation.target as HTMLElement).querySelector(".ts-rendered-message");
+                if (renderedMessage != null) {
+                    EventHandler.onMessageAdded(renderedMessage);
+                }
+            }
+        }
+    });
+
     export function onViewRemoved() {
         Tooltips.destroyAll();
+        virtualListItemObserver.disconnect();
     }
 
-    function isModifiedMessageNode(node: HTMLElement): string | undefined {
-        return node.dataset.parsed;
+    export function onListItemAdded(element: HTMLElement) {
+        virtualListItemObserver.observe(element, {
+            attributes: true,
+        });
+        const renderedMessage = element.querySelector(".ts-rendered-message");
+        if (renderedMessage != null) {
+            EventHandler.onMessageAdded(renderedMessage);
+        }
     }
 }
 
@@ -223,13 +244,8 @@ namespace DocumentObserver {
     function onNodeAdded(node: Node) {
         if (node.nodeType == Node.ELEMENT_NODE && (node as HTMLElement).tagName == "DIV") {
             const element = node as HTMLElement;
-            if (element.classList.contains("ts-rendered-message")) {
-                EventHandler.onMessageAdded(element);
-            } else if (element.classList.contains("tsv-virtual-list-item")) {
-                const renderedMessage = element.querySelector(".ts-rendered-message");
-                if (renderedMessage != null) {
-                    EventHandler.onMessageAdded(renderedMessage);
-                }
+            if (element.classList.contains("tsv-virtual-list-item")) {
+                EventHandler.onListItemAdded(element);
             } else if (element.classList.contains("ts-appearance-settings")) {
                 const chatSettingsIcon = document.querySelector("div.tsv-settings div.tsv-settings-categories .tsv-selected svg.tsv-icon-settings-chat");
                 if (chatSettingsIcon != null) {
