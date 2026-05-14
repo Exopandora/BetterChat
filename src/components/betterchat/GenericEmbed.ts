@@ -1,24 +1,20 @@
-import {ModalHelper} from "../../helpers/ModalHelper";
 import {Tooltips} from "../../helpers/Tooltips";
-import {truncateString} from "../../helpers/Util";
+import {openImagePreview, truncateString} from "../../helpers/Util";
 import getMetaData from "../../lib/metadata-scraper";
 import {GenericEmbedAttachmentFactory} from "../../messages/Attachments";
-import {ImageModalOverlay} from "../tsclient/ImageModalOverlay";
 
 export function GenericEmbed(factory: GenericEmbedAttachmentFactory): HTMLElement {
     const node = factory.cloneNode();
     const title = node.querySelector("div.betterchat-attachment-title-container a")!!;
     Tooltips.create(title, "Links to: " + factory.url);
     const img = node.querySelector("img.betterchat-attachment-image") as HTMLImageElement;
-    if (img != null) {
-        img.onclick = (event: PointerEvent) => {
-            if (event.shiftKey) {
-                ModalHelper.show(ImageModalOverlay(img.src));
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        };
-    }
+    img?.addEventListener("click", (event: PointerEvent) => {
+        if (event.shiftKey) {
+            openImagePreview(img.src, img.getAttribute("alt"), img.getAttribute("title"));
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
     return node;
 }
 

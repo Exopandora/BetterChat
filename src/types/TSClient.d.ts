@@ -33,7 +33,16 @@ export type ChatInputContainer = {
 }
 
 export type AppController = {
+    events: TSUIEventSystem;
     connections: Connection[];
+}
+
+export type TSUIEventSystem = {
+    onInvokeLightboxEmitter: EventEmitter;
+}
+
+export type EventEmitter = {
+    fire(event: any): void;
 }
 
 type TSClientInternal = {

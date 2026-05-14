@@ -1,14 +1,13 @@
-import {ModalHelper} from "../../helpers/ModalHelper";
+import {openImagePreview} from "../../helpers/Util";
 import {ImageEmbedAttachmentFactory} from "../../messages/Attachments";
-import {ImageModalOverlay} from "../tsclient/ImageModalOverlay";
 
 export function ImageEmbed(factory: ImageEmbedAttachmentFactory): HTMLElement {
     const node = factory.cloneNode();
-    node.onclick = (event: PointerEvent) => {
-        ModalHelper.show(ImageModalOverlay(factory.url));
+    node.addEventListener("click", (event: PointerEvent) => {
+        openImagePreview(factory.url);
         event.stopPropagation();
         event.preventDefault();
-    };
+    })
     return node;
 }
 

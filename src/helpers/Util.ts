@@ -59,6 +59,30 @@ export function truncateString(string: string, size: number): string {
     return string;
 }
 
+export function openImagePreview(
+    url: string,
+    alt: string | null = null,
+    title: string | null = null,
+): void {
+    getAppController().events.onInvokeLightboxEmitter.fire({
+        invocation: {
+            url: url,
+            thumbnailUrl: "",
+            contentType: "image",
+            contentSize: null,
+            footerActions: [],
+            headerLabel: "",
+            bodyLabel: "",
+            interactive: {
+                kind: "image",
+                src: url,
+                alt: alt || "",
+                title: title || void 0,
+            },
+        },
+    });
+}
+
 export function setClipboardString(text: string) {
     const element = document.createElement("textarea");
     element.value = text;
