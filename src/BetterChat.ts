@@ -114,8 +114,8 @@ namespace EventHandler {
                     removeBetterChatAttachments(element);
                 }
             }
-        } catch (e) {
-            return;
+        } catch (error) {
+            console.error(error);
         }
     }
 
