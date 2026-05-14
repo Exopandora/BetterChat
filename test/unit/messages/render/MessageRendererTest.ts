@@ -167,11 +167,11 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <p class="spoiler has-tooltip" aria-hidden="true" data-original-title="null">
+                <span class="md-spoiler">
                     <span>
                         hidden text
                     </span>
-                </p>`;
+                </span>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders an inline code node correctly", () => {

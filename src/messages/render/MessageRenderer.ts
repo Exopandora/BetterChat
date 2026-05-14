@@ -161,20 +161,17 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitSpoilerNode(node: SpoilerNode): void {
-        const p = document.createElement("p");
-        p.classList.add("spoiler");
-        p.classList.add("has-tooltip");
-        p.ariaHidden = "true";
-        p.dataset.originalTitle = "null";
-        this.append(node, p);
-        const childTooltips = Tooltips.create(p, "Click to reveal spoiler");
-        p.onclick = (event: PointerEvent) => {
-            p.setAttribute("visible", "true");
-            Tooltips.destroy(p);
+        const span = document.createElement("span");
+        span.classList.add("md-spoiler");
+        this.append(node, span);
+        const childTooltips = Tooltips.disableNestedTooltips(span);
+        span.addEventListener("click", (event: PointerEvent) => {
+            span.setAttribute("visible", "");
+            Tooltips.destroy(span);
             Tooltips.enableAll(childTooltips);
             event.stopPropagation();
             event.preventDefault();
-        };
+        });
     }
 
     visitStrikethroughNode(node: StrikethroughNode): void {
