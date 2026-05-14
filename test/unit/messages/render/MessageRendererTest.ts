@@ -176,12 +176,7 @@ describe("Given a simple document node", () => {
                 ]),
             ]);
             const result = MessageRenderer.render(document);
-            const expected = `
-                <code class="inline-code">
-                    <span>
-                        inline code
-                    </span>
-                </code>`;
+            const expected = `<code><span>inline code</span></code>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders a code node correctly", () => {

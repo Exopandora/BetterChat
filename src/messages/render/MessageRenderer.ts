@@ -107,7 +107,6 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
 
     visitInlineCodeNode(node: InlineCodeNode): void {
         const code = document.createElement("code");
-        code.classList.add("inline-code");
         this.append(node, code);
     }
 
