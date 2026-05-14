@@ -1,5 +1,4 @@
-import {afterEach, describe, expect, it, jest} from '@jest/globals';
-import mermaid from "mermaid";
+import {afterEach, describe, expect, it} from '@jest/globals';
 import formatXml from "xml-formatter";
 import {Tooltips} from "../../../../src/helpers/Tooltips";
 import {
@@ -42,8 +41,6 @@ import {
 import {MessageRenderer} from "../../../../src/messages/render/MessageRenderer";
 import BlockquoteType = BlockquoteNode.BlockquoteType;
 import ListType = ListNode.ListType;
-
-jest.mock("mermaid");
 
 describe("Given a simple document node", () => {
     describe("when rendering a message", () => {
@@ -704,29 +701,25 @@ describe("Given a simple document node", () => {
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders an mermaid node correctly", () => {
-            ((mermaid.initialize as jest.Mock<typeof mermaid.initialize>)).mockReturnValue(void 0);
-            ((mermaid.run as jest.Mock<typeof mermaid.run>)).mockRejectedValueOnce({ str: "mock"});
-            const document = new DocumentNode([
-                new MermaidNode([
-                    new StringNode(`
-                        sequenceDiagram
+            const diagramSource = `sequenceDiagram
                             Alice->>+John: Hello John, how are you?
                             Alice->>+John: John, can you hear me?
                             John-->>-Alice: Hi Alice, I can hear you!
-                            John-->>-Alice: I feel great!
-                    `),
+                            John-->>-Alice: I feel great!`;
+            const document = new DocumentNode([
+                new MermaidNode([
+                    new StringNode(diagramSource),
                 ]),
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <div class="mermaid-diagram-preview">
-                    <pre>
-                        sequenceDiagram
+                <div class="md-offline-mermaid-preview" data-mermaid-source="${diagramSource.trim()}">
+                    <div class="md-mermaid-meta-bar">Diagram</div>
+                    <pre class="language-mermaid">sequenceDiagram
                             Alice-&gt;&gt;+John: Hello John, how are you?
                             Alice-&gt;&gt;+John: John, can you hear me?
                             John--&gt;&gt;-Alice: Hi Alice, I can hear you!
-                            John--&gt;&gt;-Alice: I feel great!
-                    </pre>
+                            John--&gt;&gt;-Alice: I feel great!</pre>
                 </div>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });

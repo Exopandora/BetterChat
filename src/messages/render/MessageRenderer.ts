@@ -1,9 +1,5 @@
 import katex from "katex";
-import mermaid from "mermaid";
-import {MaximizeDiagramControls} from "../../components/betterchat/MaximizeDiagramControls";
-import {MermaidModalOverlay} from "../../components/tsclient/MermaidModalOverlay";
 import {ImageLoader} from "../../helpers/ImageLoader";
-import {ModalHelper} from "../../helpers/ModalHelper";
 import {Tooltips} from "../../helpers/Tooltips";
 import {getVueInstance, setClipboardString} from "../../helpers/Util";
 import {
@@ -47,12 +43,6 @@ import {
 } from "../node/Node";
 import {AbstractVisitor} from "../node/Visitor";
 import {AbstractRenderer, NodeRenderer, RenderContext, RenderTarget} from "./Renderer";
-
-mermaid.initialize({
-    securityLevel: "antiscript",
-    startOnLoad: false,
-    theme: "dark",
-});
 
 const HEADING_SIZE_TO_ELEMENT_TAG = new Map<number, string>([
     [1, "h1"],
@@ -476,26 +466,23 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitMermaidNode(node: MermaidNode): void {
-        const pre = document.createElement("pre");
         const prevParent = this.parent;
         this.parent = document.createElement("span");
         this.visitChildren(node);
         const source = this.parent.textContent;
-        pre.textContent = source;
         this.parent = prevParent;
+        const pre = document.createElement("pre");
+        pre.textContent = source;
+        pre.classList.add("language-mermaid");
+        const title = document.createElement("div");
+        title.classList.add("md-mermaid-meta-bar");
+        title.textContent = "Diagram";
         const div = document.createElement("div");
-        div.classList.add("mermaid-diagram-preview");
+        div.classList.add("md-offline-mermaid-preview");
+        div.dataset.mermaidSource = source.trim();
+        div.appendChild(title);
         div.appendChild(pre);
         this.parent.appendChild(div);
-        mermaid.run({
-            nodes: [pre],
-        }).then(() => {
-            div.appendChild(MaximizeDiagramControls(() => {
-                ModalHelper.show(MermaidModalOverlay(source));
-            }));
-        }).catch((error) => {
-            pre.textContent = error.str;
-        });
     }
 
     append(node: Node, element: Element, wrapper: Element = element): void {
