@@ -499,10 +499,10 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         });
     }
 
-    append(node: Node, element: Element): void {
+    append(node: Node, element: Element, wrapper: Element = element): void {
         this.parent.appendChild(element);
         const prevParent = this.parent;
-        this.parent = element;
+        this.parent = wrapper;
         this.visitChildren(node);
         this.parent = prevParent;
     }
