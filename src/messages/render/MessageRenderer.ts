@@ -112,20 +112,36 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitCodeNode(node: CodeNode): void {
-        const pre = document.createElement("pre");
         const code = document.createElement("code");
-        code.classList.add("hljs");
+        code.classList.add("cm-highlighted");
+        const pre = document.createElement("pre");
+        if (node.language != null) {
+            pre.dataset.codeLang = node.language;
+            pre.dataset.codeLangLabel = node.language;
+        }
         pre.appendChild(code);
-        this.append(node, code);
+        this.append(node, pre, code);
+        code.dataset.code = btoa(code.textContent);
         const app = getVueInstance(document.body.querySelector("#app"));
         if (app != null) {
             const config = {
-                code: code.textContent,
+                code: code.textContent.trimStart(),
                 lang: node.language,
                 onlyUpdate: false,
                 withLangHtml: false,
             };
             app.$options.directives.highlightjs.bind(code, {value: config});
+            if (node.language == null) {
+                window.requestIdleCallback(() => {
+                    const lang = Array.from(code.classList)
+                        .find((clazz) => clazz.startsWith("language-"))
+                        ?.replace("language-", "");
+                    if (lang != null) {
+                        pre.dataset.codeLang = lang;
+                        pre.dataset.codeLangLabel = lang + " (Auto)";
+                    }
+                });
+            }
         }
     }
 

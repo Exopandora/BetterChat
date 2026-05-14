@@ -196,12 +196,8 @@ describe("Given a simple document node", () => {
                 ]),
             ]);
             const result = MessageRenderer.render(document);
-            const expected = `
-                <code class="hljs">
-                    <span>
-                        multiline code
-                    </span>
-                </code>`;
+            const base64encodedCode = btoa("multiline code")
+            const expected = `<pre><code class="cm-highlighted" data-code="${base64encodedCode}"><span>multiline code</span></code></pre>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders an emoji node correctly", () => {
