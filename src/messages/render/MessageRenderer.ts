@@ -240,7 +240,9 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitDetailsContentNode(node: DetailsContentNode) {
-        super.visitDetailsContentNode(node);
+        const div = document.createElement("div");
+        div.classList.add("md-details-content");
+        this.append(node, div);
     }
 
     visitThematicBreakNode(_: ThematicBreakNode) {

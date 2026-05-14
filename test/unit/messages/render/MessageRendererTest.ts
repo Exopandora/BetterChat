@@ -247,7 +247,9 @@ describe("Given a simple document node", () => {
                             summary text
                         </span>
                     </summary>
-                    <span>details text</span>
+                    <div class="md-details-content">
+                        <span>details text</span>
+                    </div>
                 </details>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
