@@ -1,7 +1,7 @@
 import katex from "katex";
 import {ImageLoader} from "../../helpers/ImageLoader";
 import {Tooltips} from "../../helpers/Tooltips";
-import {getVueInstance, setClipboardString} from "../../helpers/Util";
+import {getAppController, getVueInstance} from "../../helpers/Util";
 import {
     BlockquoteNode,
     BoldNode,
@@ -194,7 +194,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         a.href = href;
         a.addEventListener("click", (event: PointerEvent) => {
             if (invalid) {
-                setClipboardString(a.href);
+                getAppController().copyTextToClipboard(href);
                 Tooltips.setTooltipContentUntilHidden(a, "Copied to clipboard!");
             } else {
                 window.open(href);

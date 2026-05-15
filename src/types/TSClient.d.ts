@@ -35,6 +35,7 @@ export type ChatInputContainer = {
 export type AppController = {
     events: TSUIEventSystem;
     connections: Connection[];
+    copyTextToClipboard(text: string): void;
 }
 
 export type TSUIEventSystem = {
