@@ -88,5 +88,5 @@ export function openImagePreview(
 }
 
 export function translate(key: string, options: { [key: string]: any } = {}): string {
-    return getApp()._vm._i18n.t(key, options);
+    return getApp()._i18n.t(key, options);
 }
