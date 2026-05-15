@@ -7,6 +7,10 @@ It works in both compact and detailed view.
 BetterChat readds support for BBCodes in chat, just like in TeamSpeak 3.
 Currently, the following tags are supported:
 
+> [!NOTE]
+> For BetterChat 5.0.0 and later, Markdown and BBCode syntax can no longer be mixed.
+> When a message contains any BBTag, all Markdown formatting will be ignored.
+
 ### Common ###
 | Code      | Syntax                                                                            | Example                                    |
 |-----------|-----------------------------------------------------------------------------------|--------------------------------------------|
