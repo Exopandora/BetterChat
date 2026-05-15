@@ -116,8 +116,50 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
                 withLangHtml: false,
             };
             app.$options.directives.highlightjs.bind(code, {value: config});
-            if (node.language == null) {
-                window.requestIdleCallback(() => {
+            window.requestIdleCallback(() => {
+                const lines: globalThis.Node[] = [];
+                const buffer: globalThis.Node[] = [];
+                for (const child of code.childNodes) {
+                    if (child instanceof Text) {
+                        const split = child.textContent.split("\n");
+                        for (let x = 0; x < split.length; x++) {
+                            buffer.push(document.createTextNode(split[x]));
+                            if (x < split.length - 1) {
+                                const line = document.createElement("span");
+                                line.classList.add("md-code-line");
+                                line.append(...buffer);
+                                lines.push(line);
+                                buffer.splice(0, buffer.length);
+                            }
+                        }
+                    } else if (child instanceof HTMLElement) {
+                        const split = child.textContent.split("\n");
+                        for (let x = 0; x < split.length; x++) {
+                            const clone = child.cloneNode(false) as HTMLElement;
+                            clone.textContent = split[x];
+                            buffer.push(clone);
+                            if (x < split.length - 1) {
+                                const line = document.createElement("span");
+                                line.classList.add("md-code-line");
+                                line.append(...buffer);
+                                lines.push(line);
+                                buffer.splice(0, buffer.length);
+                            }
+                        }
+                    }
+                }
+                if (buffer.length > 1) {
+                    const line = document.createElement("span");
+                    line.classList.add("md-code-line");
+                    line.append(...buffer);
+                    lines.push(line);
+                    buffer.splice(0, buffer.length);
+                }
+                while (code.firstChild) {
+                    code.removeChild(code.lastChild as globalThis.Node);
+                }
+                code.append(...lines);
+                if (node.language == null) {
                     const lang = Array.from(code.classList)
                         .find((clazz) => clazz.startsWith("language-"))
                         ?.replace("language-", "");
@@ -125,8 +167,8 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
                         pre.dataset.codeLang = lang;
                         pre.dataset.codeLangLabel = lang + " (" + (translate("universal.automatic_shortform") ?? "auto") + ")";
                     }
-                });
-            }
+                }
+            });
         }
     }
 
