@@ -74,7 +74,6 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
 
     afterRoot(_: Node): void {
         if (this.footnotes.length > 0) {
-            this.root.appendChild(document.createElement("hr"));
             const section = document.createElement("section");
             section.classList.add("md-footnotes");
             const ol = document.createElement("ol");

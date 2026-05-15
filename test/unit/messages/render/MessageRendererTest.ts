@@ -346,7 +346,6 @@ describe("Given a simple document node", () => {
                 <span>
                     additional content
                 </span>
-                <hr>
                 <section class="md-footnotes">
                     <ol>
                         <li>
