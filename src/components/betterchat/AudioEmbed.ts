@@ -13,8 +13,8 @@ export namespace AudioEmbed {
     export function tryCreateFactory(url: string): Promise<AudioEmbedAttachmentFactory> {
         return new Promise((resolve, reject) => {
             const audio = document.createElement("audio");
-            audio.oncanplay = () => resolve(new AudioEmbedAttachmentFactory(audio, url));
-            audio.onerror = () => reject();
+            audio.addEventListener("canplay", (_: Event) => resolve(new AudioEmbedAttachmentFactory(audio, url)));
+            audio.addEventListener("error", (e: ErrorEvent) => reject(e));
             audio.src = url;
         });
     }

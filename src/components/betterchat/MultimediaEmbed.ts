@@ -1,4 +1,4 @@
-import { MultimediaEmbedAttachmentFactory } from "../../messages/Attachments";
+import {MultimediaEmbedAttachmentFactory} from "../../messages/Attachments";
 
 export function MultimediaEmbed(factory: MultimediaEmbedAttachmentFactory): HTMLElement {
     const container = document.createElement("div");
@@ -21,8 +21,8 @@ export namespace MultimediaEmbed {
     export function tryCreateFactory(url: string): Promise<MultimediaEmbedAttachmentFactory> {
         return new Promise((resolve, reject) => {
             const video = document.createElement("video");
-            video.oncanplay = () => resolve(new MultimediaEmbedAttachmentFactory(video, url, video.videoWidth, video.videoHeight));
-            video.onerror = () => reject();
+            video.addEventListener("canplay", (_: Event) => resolve(new MultimediaEmbedAttachmentFactory(video, url, video.videoWidth, video.videoHeight)));
+            video.addEventListener("error", (e: ErrorEvent) => reject(e));
             video.src = url;
         });
     }

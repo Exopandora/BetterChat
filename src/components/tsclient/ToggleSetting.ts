@@ -31,11 +31,11 @@ export function ToggleSetting(title: string, description: string, configKey: str
     toggle.appendChild(toggleInner);
     const toggleWrapper = document.createElement("div");
     toggleWrapper.classList.add("ts-toggle-wrapper", "ts-flex", "row");
-    toggleWrapper.onclick = () => {
+    toggleWrapper.addEventListener("click", (_: PointerEvent) => {
         const enabled = !settings.getValueForKey(configKey);
         settings.setValueForKey(configKey, enabled);
         updateToggle(enabled);
-    };
+    });
     toggleWrapper.appendChild(label);
     toggleWrapper.appendChild(toggle);
     const container = document.createElement("div");

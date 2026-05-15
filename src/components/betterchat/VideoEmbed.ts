@@ -16,8 +16,8 @@ export namespace VideoEmbed {
     export function tryCreateFactory(url: string): Promise<VideoEmbedAttachmentFactory> {
         return new Promise((resolve, reject) => {
             const video = document.createElement("video");
-            video.oncanplay = () => resolve(new VideoEmbedAttachmentFactory(video, url));
-            video.onerror = () => reject();
+            video.addEventListener("canplay", (_: Event) => resolve(new VideoEmbedAttachmentFactory(video, url)));
+            video.addEventListener("error", (e: ErrorEvent) => reject(e));
             video.src = url;
         });
     }

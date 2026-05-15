@@ -15,7 +15,7 @@ export namespace ImageEmbed {
     export function tryCreateFactory(url: string): Promise<ImageEmbedAttachmentFactory> {
         return new Promise((resolve, reject) => {
             const img = document.createElement("img");
-            img.onload = () => {
+            img.addEventListener("load", () => {
                 img.classList.add("display");
                 img.style.cursor = "pointer";
                 const backing = document.createElement("img");
@@ -29,8 +29,8 @@ export namespace ImageEmbed {
                 integration.classList.add("ts-chat-message-attachment-integration");
                 integration.appendChild(container);
                 resolve(new ImageEmbedAttachmentFactory(integration, url));
-            };
-            img.onerror = () => reject();
+            });
+            img.addEventListener("error", (e: ErrorEvent) => reject(e));
             img.src = url;
         });
     }
