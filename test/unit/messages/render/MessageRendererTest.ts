@@ -1,6 +1,7 @@
-import {afterEach, describe, expect, it} from '@jest/globals';
+import {afterEach, describe, expect, it, jest} from '@jest/globals';
 import formatXml from "xml-formatter";
 import {Tooltips} from "../../../../src/helpers/Tooltips";
+import {translate} from "../../../../src/helpers/Util";
 import {
     BlockquoteNode,
     BoldNode,
@@ -42,6 +43,11 @@ import {MessageRenderer} from "../../../../src/messages/render/MessageRenderer";
 import BlockquoteType = BlockquoteNode.BlockquoteType;
 import ListType = ListNode.ListType;
 
+jest.mock("../../../../src/helpers/Util", () => ({
+    ...jest.requireActual<typeof import("../../../../src/helpers/Util")>("../../../../src/helpers/Util"),
+    translate: jest.fn(),
+}));
+
 describe("Given a simple document node", () => {
     describe("when rendering a message", () => {
         const formatMessage = function (message: string, attributes: string | null = null): string {
@@ -64,6 +70,7 @@ describe("Given a simple document node", () => {
                     new StringNode(`example.com`),
                 ]),
             ]);
+            (translate as jest.Mock<typeof translate>).mockReturnValue("Links to: https://example.com");
             const result = MessageRenderer.render(document);
             const expected = `
                 <a target="_blank" rel="noreferrer noopener" tabindex="-1" class="ts-parsed-link" href="https://example.com">
@@ -77,6 +84,7 @@ describe("Given a simple document node", () => {
             const document = new DocumentNode([
                 new UrlNode("https://invalid.com[]"),
             ]);
+            (translate as jest.Mock<typeof translate>).mockReturnValue("Links to: https://invalid.com[]");
             const result = MessageRenderer.render(document);
             const expected = `<a target="_blank" rel="noreferrer noopener" tabindex="-1" class="betterchat-invalid-link" href="https://invalid.com[]"></a>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
