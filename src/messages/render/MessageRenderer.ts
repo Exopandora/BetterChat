@@ -149,7 +149,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
                         }
                     }
                 }
-                if (buffer.length > 1) {
+                if (buffer.length > 0) {
                     const line = document.createElement("span");
                     line.classList.add("md-code-line");
                     line.append(...buffer);
