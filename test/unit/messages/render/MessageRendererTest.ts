@@ -591,7 +591,7 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <span>
+                <div class="md-offline-math-preview" data-math-source="9+10=21">
                     <span class="katex-display">
                         <span class="katex">
                             <span class="katex-html" aria-hidden="true">
@@ -626,7 +626,7 @@ describe("Given a simple document node", () => {
                             </span>
                         </span>
                     </span>
-                </span>`;
+                </div>`;
             expect(formatXml(result.outerHTML)).toEqual(formatMessage(expected));
         });
         it("renders an inline math node correctly", () => {

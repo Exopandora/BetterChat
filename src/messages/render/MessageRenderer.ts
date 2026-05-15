@@ -450,15 +450,16 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
     }
 
     visitMathNode(node: MathNode): void {
-        const span = document.createElement("span");
-        this.append(node, span);
-        katex.render(span.textContent, span, {
+        const div = document.createElement("div");
+        this.append(node, div);
+        div.classList.add("md-offline-math-preview");
+        div.dataset.mathSource = div.textContent.trim();
+        katex.render(div.textContent, div, {
             displayMode: true,
             output: "html",
             trust: false,
             throwOnError: false,
         });
-        this.parent.appendChild(span);
     }
 
     visitInlineMathNode(node: InlineMathNode): void {
