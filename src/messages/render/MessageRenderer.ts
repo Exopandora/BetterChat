@@ -106,11 +106,12 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         }
         pre.appendChild(code);
         this.append(node, pre, code);
-        code.dataset.code = btoa(code.textContent);
+        const trimmedCode = code.textContent.trimStart();
+        code.dataset.code = btoa(trimmedCode);
         const app = getVueInstance(document.body.querySelector("#app"));
         if (app != null) {
             const config = {
-                code: code.textContent.trimStart(),
+                code: trimmedCode,
                 lang: node.language,
                 onlyUpdate: false,
                 withLangHtml: false,
