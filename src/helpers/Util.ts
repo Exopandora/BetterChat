@@ -1,7 +1,11 @@
 import {AppController, ChatInputContainer, Connection, Message} from "../types/TSClient";
 
 export function getAppController(): AppController {
-    return getVueInstance(document.body.querySelector("#app"))?.appController;
+    return getApp()?.appController;
+}
+
+function getApp(): any {
+    return getVueInstance(document.body.querySelector("#app"));
 }
 
 export function getVueInstance(node: Node | null): any {
@@ -81,4 +85,8 @@ export function openImagePreview(
             },
         },
     });
+}
+
+export function translate(key: string, options: { [key: string]: any } = {}): string {
+    return getApp()._vm._i18n.t(key, options);
 }

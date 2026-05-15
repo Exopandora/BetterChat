@@ -1,12 +1,12 @@
 import {Tooltips} from "../../helpers/Tooltips";
-import {openImagePreview, truncateString} from "../../helpers/Util";
+import {openImagePreview, translate, truncateString} from "../../helpers/Util";
 import getMetaData from "../../lib/metadata-scraper";
 import {GenericEmbedAttachmentFactory} from "../../messages/Attachments";
 
 export function GenericEmbed(factory: GenericEmbedAttachmentFactory): HTMLElement {
     const node = factory.cloneNode();
     const title = node.querySelector("div.betterchat-attachment-title-container a")!!;
-    Tooltips.create(title, "Links to: " + factory.url);
+    Tooltips.create(title, translate("chat.message.link.links_to", {url: factory.url}));
     const img = node.querySelector("img.betterchat-attachment-image") as HTMLImageElement;
     img?.addEventListener("click", (event: PointerEvent) => {
         if (event.shiftKey) {

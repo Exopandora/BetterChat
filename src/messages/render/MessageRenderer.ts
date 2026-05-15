@@ -1,7 +1,7 @@
 import katex from "katex";
 import {ImageLoader} from "../../helpers/ImageLoader";
 import {Tooltips} from "../../helpers/Tooltips";
-import {getAppController, getVueInstance} from "../../helpers/Util";
+import {getAppController, getVueInstance, translate} from "../../helpers/Util";
 import {
     BlockquoteNode,
     BoldNode,
@@ -123,7 +123,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
                         ?.replace("language-", "");
                     if (lang != null) {
                         pre.dataset.codeLang = lang;
-                        pre.dataset.codeLangLabel = lang + " (Auto)";
+                        pre.dataset.codeLangLabel = lang + " (" + (translate("universal.automatic_shortform") ?? "auto") + ")";
                     }
                 });
             }
@@ -202,7 +202,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             event.stopPropagation();
             event.preventDefault();
         });
-        Tooltips.create(a, "Links to: " + href);
+        Tooltips.create(a, translate("chat.message.link.links_to", {url: href}));
     }
 
     visitSuperscriptNode(node: SuperscriptNode) {
