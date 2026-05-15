@@ -246,7 +246,7 @@ describe("Given a simple document node", () => {
             ]);
             const result = MessageRenderer.render(document);
             const expected = `
-                <details>
+                <details class="md-details-preview">
                     <summary>
                         <span>
                             summary text

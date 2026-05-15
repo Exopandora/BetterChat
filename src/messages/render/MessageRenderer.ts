@@ -260,6 +260,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
 
     visitDetailsNode(node: DetailsNode) {
         const details = document.createElement("details");
+        details.classList.add("md-details-preview");
         this.append(node, details);
     }
 
