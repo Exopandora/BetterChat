@@ -126,7 +126,7 @@ export namespace Parser {
                             : (children.length == 1 && children[0] instanceof DetailsContentNode);
                         nodes.push(
                             new DetailsNode([
-                                hasSummary ? children[0] : new DetailsSummaryNode(token.value != null ? [new StringNode(token.value)] : []),
+                                hasSummary ? children[0] : new DetailsSummaryNode(token.value != null ? [new StringNode(token.value)] : [new StringNode("Details")]),
                                 hasContents ? children[hasSummary ? 1 : 0] : new DetailsContentNode(children),
                             ]),
                         );
