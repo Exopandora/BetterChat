@@ -36,6 +36,7 @@ export type AppController = {
     events: TSUIEventSystem;
     connections: Connection[];
     copyTextToClipboard(text: string): void;
+    openExternalLink(link: string): void;
 }
 
 export type TSUIEventSystem = {

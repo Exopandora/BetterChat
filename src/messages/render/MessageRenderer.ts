@@ -197,7 +197,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
                 getAppController().copyTextToClipboard(href);
                 Tooltips.setTooltipContentUntilHidden(a, "Copied to clipboard!");
             } else {
-                window.open(href);
+                getAppController().openExternalLink(href);
             }
             event.stopPropagation();
             event.preventDefault();
