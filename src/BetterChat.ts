@@ -32,7 +32,8 @@ function modifyMessageNode(node: HTMLElement) {
         }
     }
     if (settings.getValueForKey("chatStyling")) {
-        const tokens = Tokenizer.tokenizeString(getVueInstance(node)._props.data);
+        const vue = getVueInstance(node);
+        const tokens = Tokenizer.tokenizeString(vue._props.data);
         if (tokens.length > 1) {
             const document = Parser.parse(tokens);
             const html = MessageRenderer.render(document);
@@ -40,6 +41,7 @@ function modifyMessageNode(node: HTMLElement) {
                 node.removeChild(node.lastChild as Node);
             }
             node.appendChild(html);
+            vue.onRendered();
         }
     }
     if (settings.getValueForKey("embeds") && !node.classList.contains("ts-reply-original") && !node.classList.contains("ts-reply-shortened")) {
