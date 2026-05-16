@@ -1,6 +1,7 @@
+import {Emoji, EmojiHelper} from "../../helpers/EmojiHelper";
 import {StringReader} from "../../helpers/StringReader";
 import {Styles} from "../Styles";
-import {StringToken, StyleToken, Token} from "./Token";
+import {EmojiToken, StringToken, StyleToken, Token} from "./Token";
 
 export namespace Tokenizer {
     export function tokenizeString(message: string): Token[] {
@@ -14,6 +15,9 @@ export namespace Tokenizer {
             switch (reader.peek()) {
                 case "[":
                     cursor = tryParseBBTag(message, tokens, reader, cursor);
+                    break;
+                case ":":
+                    cursor = tryParseEmoji(message, tokens, reader, cursor);
                     break;
                 default:
                     reader.skip();
@@ -71,6 +75,44 @@ export namespace Tokenizer {
             }
         }
         return cursor;
+    }
+
+    function tryParseEmoji(message: string, tokens: Token[], reader: StringReader, cursor: number): number {
+        if (reader.read() != ":") {
+            return cursor;
+        }
+        const shortcodeReader = reader.copy();
+        while (shortcodeReader.canRead() && isAllowedEmojiShortcodeChar(shortcodeReader.peek())) {
+            shortcodeReader.skip();
+        }
+        if (shortcodeReader.canRead() && shortcodeReader.peek() == ":") {
+            const shortcode = message.substring(reader.cursor, shortcodeReader.cursor);
+            const emoji = EmojiHelper.getEmojiByShortcode(shortcode);
+            if (emoji != null) {
+                if (cursor < reader.cursor) {
+                    tokens.push(new StringToken(message.substring(cursor, reader.cursor - 1)));
+                }
+                tokens.push(createEmojiToken(emoji, shortcode));
+                reader.cursor = shortcodeReader.cursor + 1;
+                return reader.cursor;
+            }
+        }
+        return cursor;
+    }
+
+    export function createEmojiToken(emoji: Emoji, shortcode: string): EmojiToken {
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.viewBox.baseVal.x = 0;
+        svg.viewBox.baseVal.y = 0;
+        svg.viewBox.baseVal.width = 36;
+        svg.viewBox.baseVal.height = 36;
+        svg.classList.add("ts-chat-message-content-emoji", "ts-parsed-text-content-emoji");
+        svg.innerHTML = emoji.svgContent;
+        return new EmojiToken(svg, ":" + shortcode + ":");
+    }
+
+    function isAllowedEmojiShortcodeChar(char: string): boolean {
+        return char >= "a" && char <= "z" || char == "_";
     }
 
     function isAllowedBBCodeChar(char: string): boolean {

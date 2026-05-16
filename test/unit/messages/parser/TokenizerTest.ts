@@ -1,7 +1,13 @@
-import {describe, expect, it} from "@jest/globals";
+import {describe, expect, it, jest} from "@jest/globals";
+import {EmojiHelper} from "../../../../src/helpers/EmojiHelper";
+import {translate} from "../../../../src/helpers/Util";
 import {Styles} from "../../../../src/messages/Styles";
-import {StringToken, StyleToken} from "../../../../src/messages/parser/Token";
+import {EmojiToken, StringToken, StyleToken} from "../../../../src/messages/parser/Token";
 import {Tokenizer} from "../../../../src/messages/parser/Tokenizer";
+import getEmojiByShortcode = EmojiHelper.getEmojiByShortcode;
+import createEmojiToken = Tokenizer.createEmojiToken;
+
+jest.mock("../../../../src/helpers/EmojiHelper");
 
 describe("Given a simple string", () => {
     describe("when tokenizing", () => {
@@ -33,6 +39,26 @@ describe("Given a string containing an escaped tag", () => {
             const expected = [
                 new StringToken("abc"),
                 new StyleToken(Styles.BOLD, StyleToken.Type.START, {string: "\\[b]", escaped: true}),
+                new StringToken("def"),
+            ];
+            expect(result).toEqual(expected);
+        });
+    });
+});
+
+describe("Given a string containing an emoji", () => {
+    describe("when tokenizing", () => {
+        it("returns the correct result", () => {
+            const mockEmoji = {
+                hexcode: "mock",
+                shortcodes: ["b"],
+                svgContent: "<path>mock</path>",
+            };
+            (getEmojiByShortcode as jest.Mock<typeof getEmojiByShortcode>).mockReturnValue(mockEmoji);
+            const result = Tokenizer.tokenizeString("abc:b:def");
+            const expected = [
+                new StringToken("abc"),
+                createEmojiToken(mockEmoji, "b"),
                 new StringToken("def"),
             ];
             expect(result).toEqual(expected);
