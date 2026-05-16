@@ -11,55 +11,66 @@ export namespace Tokenizer {
         const reader = new StringReader(message);
         let cursor = 0;
         while (reader.canRead()) {
-            if (reader.read() != "[") {
-                continue;
-            }
-            // try parse bbcode tag
-            const isEscaped = reader.cursor > 1 && reader.peek(-2) == "\\";
-            const tagReader = reader.copy();
-            const isEndTag = tagReader.canRead() && tagReader.peek() == "/";
-            if (isEndTag) {
-                tagReader.skip();
-            }
-            while (tagReader.canRead() && isAllowedBBCodeChar(tagReader.peek())) {
-                tagReader.skip();
-            }
-            let bbCode: string | null = null;
-            let bbValue: string | null = null;
-            if (!isEndTag && tagReader.canRead() && tagReader.peek() == "=") { // parse value
-                const valueReader = tagReader.copy();
-                valueReader.skip();
-                bbValue = readBBValue(valueReader);
-                if (valueReader.canRead() && valueReader.peek() == "]") {
-                    bbCode = message.substring(reader.cursor, tagReader.cursor).toLowerCase();
-                    tagReader.cursor = valueReader.cursor;
-                }
-            } else if (tagReader.canRead() && tagReader.peek() == "]") { // bbcode tag found
-                bbCode = message.substring(reader.cursor + (isEndTag ? 1 : 0), tagReader.cursor).toLowerCase();
-            }
-            if (bbCode != null) { // validate parsed result
-                const style = Styles.fromBBCode(bbCode);
-                if (style != null && ((isEndTag && bbValue == null) || style.isValidValue(bbValue))) {
-                    const index = reader.cursor - 1 - (isEscaped ? 1 : 0);
-                    if (cursor < index) {
-                        tokens.push(new StringToken(message.substring(cursor, index)));
-                    }
-                    const type = isEndTag ? StyleToken.Type.END : StyleToken.Type.START;
-                    const options = {
-                        string: reader.string.substring(index, tagReader.cursor + 1),
-                        escaped: isEscaped,
-                        value: bbValue,
-                    };
-                    tokens.push(new StyleToken(style, type, options));
-                    reader.cursor = tagReader.cursor + 1;
-                    cursor = reader.cursor;
-                }
+            switch (reader.peek()) {
+                case "[":
+                    cursor = tryParseBBTag(message, tokens, reader, cursor);
+                    break;
+                default:
+                    reader.skip();
+                    break;
             }
         }
         if (cursor < reader.cursor) {
             tokens.push(new StringToken(message.substring(cursor, reader.cursor)));
         }
         return tokens;
+    }
+
+    function tryParseBBTag(message: string, tokens: Token[], reader: StringReader, cursor: number): number {
+        if (reader.read() != "[") {
+            return cursor;
+        }
+        const isEscaped = reader.cursor > 1 && reader.peek(-2) == "\\";
+        const tagReader = reader.copy();
+        const isEndTag = tagReader.canRead() && tagReader.peek() == "/";
+        if (isEndTag) {
+            tagReader.skip();
+        }
+        while (tagReader.canRead() && isAllowedBBCodeChar(tagReader.peek())) {
+            tagReader.skip();
+        }
+        let bbCode: string | null = null;
+        let bbValue: string | null = null;
+        if (!isEndTag && tagReader.canRead() && tagReader.peek() == "=") { // parse value
+            const valueReader = tagReader.copy();
+            valueReader.skip();
+            bbValue = readBBValue(valueReader);
+            if (valueReader.canRead() && valueReader.peek() == "]") {
+                bbCode = message.substring(reader.cursor, tagReader.cursor).toLowerCase();
+                tagReader.cursor = valueReader.cursor;
+            }
+        } else if (tagReader.canRead() && tagReader.peek() == "]") { // bbcode tag found
+            bbCode = message.substring(reader.cursor + (isEndTag ? 1 : 0), tagReader.cursor).toLowerCase();
+        }
+        if (bbCode != null) { // validate parsed result
+            const style = Styles.fromBBCode(bbCode);
+            if (style != null && ((isEndTag && bbValue == null) || style.isValidValue(bbValue))) {
+                const index = reader.cursor - 1 - (isEscaped ? 1 : 0);
+                if (cursor < index) {
+                    tokens.push(new StringToken(message.substring(cursor, index)));
+                }
+                const type = isEndTag ? StyleToken.Type.END : StyleToken.Type.START;
+                const options = {
+                    string: reader.string.substring(index, tagReader.cursor + 1),
+                    escaped: isEscaped,
+                    value: bbValue,
+                };
+                tokens.push(new StyleToken(style, type, options));
+                reader.cursor = tagReader.cursor + 1;
+                return reader.cursor;
+            }
+        }
+        return cursor;
     }
 
     function isAllowedBBCodeChar(char: string): boolean {
