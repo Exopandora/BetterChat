@@ -1,5 +1,6 @@
 import {SettingsWidget} from "./components/tsclient/SettingsWidget";
 import {ToggleSetting} from "./components/tsclient/ToggleSetting";
+import {EmojiHelper} from "./helpers/EmojiHelper";
 import {Settings} from "./helpers/Settings";
 import {Tooltips} from "./helpers/Tooltips";
 import {
@@ -11,11 +12,11 @@ import {
     setChatInput
 } from "./helpers/Util";
 import {Attachments} from "./messages/Attachments";
+import {EmojiNode, StringNode} from "./messages/node/Node";
 import {Parser} from "./messages/parser/Parser";
 import {Tokenizer} from "./messages/parser/Tokenizer";
 import {MessageRenderer} from "./messages/render/MessageRenderer";
 import {ChatInputContainer, Message} from "./types/TSClient";
-import {EmojiHelper} from "./helpers/EmojiHelper";
 
 const settings = new Settings("betterchat", {
     "enabled": true,
@@ -35,8 +36,8 @@ function modifyMessageNode(node: HTMLElement) {
     if (settings.getValueForKey("chatStyling")) {
         const vue = getVueInstance(node);
         const tokens = Tokenizer.tokenizeString(vue._props.data);
-        if (tokens.length > 1) {
-            const document = Parser.parse(tokens);
+        const document = Parser.parse(tokens);
+        if (document.children.find(node => !(node instanceof StringNode) && !(node instanceof EmojiNode)) != null) {
             const html = MessageRenderer.render(document);
             while (node.firstChild) {
                 node.removeChild(node.lastChild as Node);
