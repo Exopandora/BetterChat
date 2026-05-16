@@ -15,6 +15,7 @@ import {Parser} from "./messages/parser/Parser";
 import {Tokenizer} from "./messages/parser/Tokenizer";
 import {MessageRenderer} from "./messages/render/MessageRenderer";
 import {ChatInputContainer, Message} from "./types/TSClient";
+import {EmojiHelper} from "./helpers/EmojiHelper";
 
 const settings = new Settings("betterchat", {
     "enabled": true,
@@ -263,3 +264,5 @@ namespace DocumentObserver {
 settings.populateSettings(() => {
     DocumentObserver.observe(document.body);
 });
+
+EmojiHelper.init();
