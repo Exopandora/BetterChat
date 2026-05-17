@@ -47,8 +47,8 @@ Currently, the following tags are supported:
 | latex       | [latex]2+2=4[/latex]                   | ![latex](images/bbcodes/latex.png)             |
 | math or tex | [math]2+2=4[/math] or [tex]2+2=4[/tex] | ![math](images/bbcodes/math.png)               |
 | pre         | [pre]inline code[/pre]                 | ![pre](images/bbcodes/pre.png)                 |
-| superscript | [sup]superscript[/sup]                 | ![superscript](images/bbcodes/superscript.png) |
 | subscript   | [sub]subscript[/sub]                   | ![subscript](images/bbcodes/subscript.png)     |
+| superscript | [sup]superscript[/sup]                 | ![superscript](images/bbcodes/superscript.png) |
 
 ### Reveal ###
 | Code    | Syntax                                                                           | Example                                                                                                                 |
