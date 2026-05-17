@@ -71,13 +71,13 @@ export namespace Tooltips {
 }
 
 tippy.setDefaultProps({
-    delay: 150,
+    delay: [400, 100],
     duration: 150,
     arrow: "<div class=\"v-popper__arrow-outer\"></div><div class=\"v-popper__arrow-inner\"></div>",
     offset: [0, 5],
     maxWidth: "none",
     onCreate(instance: Instance) {
-        instance.popper.classList.add("ts-disable-pointer-events", "v-popper__popper");
+        instance.popper.classList.add("v-popper__popper", "v-popper--theme-tooltip", "v-popper__popper--shown", "v-popper__popper--show-to");
         instance.popper.setAttribute("data-popper-placement", "top");
         const box = instance.popper.querySelector("div.tippy-box");
         if (box != null && !box.classList.contains("v-popper__wrapper")) {
