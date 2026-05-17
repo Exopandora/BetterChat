@@ -35,6 +35,7 @@
 	white-space: normal;
 	word-break: normal;
 	overflow-wrap: break-word;
+	user-select: text;
 }
 
 .betterchat-attachment-header {
