@@ -230,6 +230,7 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
         const invalid = href.match(/^((?:(?:https?|ts3file|ts3server|teamspeak):\/\/|www\.)[^\s<>\[\]]+[^<>.,:;"')\[\]\s])$/) == null;
         if (invalid) {
             a.classList.add("betterchat-invalid-link");
+            Tooltips.create(a, translate("chat.message.link.links_to", {url: href}));
         } else {
             a.classList.add("ts-parsed-link")
         }
@@ -238,13 +239,10 @@ class MessageNodeRenderer extends AbstractVisitor implements NodeRenderer {
             if (invalid) {
                 getAppController().copyTextToClipboard(href);
                 Tooltips.setTooltipContentUntilHidden(a, "Copied to clipboard!");
-            } else {
-                getAppController().openExternalLink(href);
             }
             event.stopPropagation();
             event.preventDefault();
         });
-        Tooltips.create(a, translate("chat.message.link.links_to", {url: href}));
     }
 
     visitSuperscriptNode(node: SuperscriptNode) {
