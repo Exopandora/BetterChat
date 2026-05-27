@@ -142,6 +142,7 @@ The resulting archive can be found in the `build/dist` directory.
 
 | TeamSpeak 6 | Windows       | Linux         | MacOS         |
 |-------------|---------------|---------------|---------------|
+| Beta 4.1    | 5.1.0+        | 5.1.0+        | 5.1.0+        |
 | Beta 4      | 5.0.0+        | 5.0.0+        | 5.0.0+        |
 | Beta 3.4    | 3.4.0 - 4.1.0 | 3.4.0 - 4.1.0 | 3.4.0 - 4.1.0 |
 | Beta 3.3    | -             | -             | -             |
