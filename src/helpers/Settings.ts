@@ -8,12 +8,13 @@ type Preferences = {
 
 export class Settings {
     private readonly id: string;
-    private readonly defaults: Preferences = {};
-    private userPreferences: Preferences = {...this.defaults};
+    private readonly defaults: Preferences;
+    private userPreferences: Preferences;
 
     constructor(id: string, defaults: Preferences = {}) {
         this.id = id;
-        this.defaults = Object.entries(defaults);
+        this.defaults = {...defaults};
+        this.userPreferences = {...defaults};
     }
 
     saveConfiguration() {
