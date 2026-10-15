@@ -1,22 +1,22 @@
 {
   "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@babel/plugin-transform-modules-commonjs": "^7.28.6",
+    "@babel/core": "^7.29.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.29.7",
     "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
-    "@jest/globals": "^30.4.1",
-    "babel-jest": "^30.4.1",
+    "@jest/globals": "^30.5.2",
+    "babel-jest": "^30.5.2",
     "cross-env": "^10.1.0",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.2",
     "esbuild-copy-static-files": "^0.1.0",
-    "jest": "^30.4.2",
-    "jest-environment-jsdom": "^30.4.1",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "jsdom": "^29.1.1",
-    "katex": "^0.16.46",
+    "katex": "^0.19.0",
     "tippy.js": "^6.3.7",
-    "ts-jest": "^29.4.9",
+    "ts-jest": "^29.4.15",
     "typescript": "^6.0.3",
     "xml-formatter": "^3.7.0",
-    "zip-a-folder": "^6.1.1"
+    "zip-a-folder": "^6.2.0"
   },
   "scripts": {
     "clean": "npx rimraf ./build",
@@ -27,5 +27,10 @@
     "build:debug": "cross-env DEBUG=true npm run build",
     "test": "jest",
     "test:coverage": "jest --collectCoverage=true"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "@parcel/watcher@2.6.0": true,
+    "unrs-resolver@1.12.2": true
   }
 }
