@@ -8,6 +8,7 @@ import {
     findOwnMessages,
     findPreviousMessage,
     getActiveConnection,
+    getMessageUid,
     getVueInstance,
     setChatInput
 } from "./helpers/Util";
@@ -33,9 +34,12 @@ function modifyMessageNode(node: HTMLElement) {
             return;
         }
     }
+    const vue = getVueInstance(node);
+    if (vue == undefined) {
+        return;
+    }
     if (settings.getValueForKey("chatStyling")) {
-        const vue = getVueInstance(node);
-        const tokens = Tokenizer.tokenizeString(vue._props.data);
+        const tokens = Tokenizer.tokenizeString(vue.data);
         const document = Parser.parse(tokens);
         if (document.children.find(node => !(node instanceof StringNode) && !(node instanceof EmojiNode)) != null) {
             const html = MessageRenderer.render(document);
@@ -47,19 +51,20 @@ function modifyMessageNode(node: HTMLElement) {
         }
     }
     if (settings.getValueForKey("embeds") && !node.classList.contains("ts-reply-original") && !node.classList.contains("ts-reply-shortened")) {
-        const dataIdx = (node.closest(".tsv-virtual-list-item") as HTMLElement)?.dataset?.idx;
-        if (dataIdx == null || dataIdx == "-1") {
+        const messageUid = getMessageUid(node.closest(".ts-rendered-message"));
+        if (messageUid == null) {
             return;
         }
         const links = Array.from(node.parentElement!!.querySelectorAll("a"))
             .map(link => link.href);
-        Attachments.parse(links)
-            .then((attachments) => {
-                const current = (node.closest(".tsv-virtual-list-item") as HTMLElement)?.dataset?.idx;
-                if (current != null && current == dataIdx) {
+        if (links.length > 0) {
+            Attachments.parse(links).then((attachments) => {
+                const current = getMessageUid(node.closest(".ts-rendered-message"));
+                if (current != null && current == messageUid) {
                     onAttachmentsGenerated(node, attachments);
                 }
             });
+        }
     }
 }
 
@@ -105,10 +110,18 @@ function removeBetterChatAttachments(node: Element) {
 }
 
 namespace EventHandler {
-    export function onMessageAdded(node: Node) {
+    export function onMessageChanged(node: Node) {
         try {
             if (node.nodeType == Node.ELEMENT_NODE && settings.getValueForKey("enabled")) {
                 const element = node as Element;
+                const messageUid = getMessageUid(element);
+                if (messageUid == null) {
+                    return;
+                } else if (element.getAttribute("betterchat-message-uid") == messageUid) {
+                    return;
+                } else {
+                    element.setAttribute("betterchat-message-uid", messageUid);
+                }
                 removeBetterChatAttachments(element);
                 const messageNodes = element.querySelectorAll(".ts-chat-message-content.ts-parsed-text-content");
                 for (const messageNode of messageNodes) {
@@ -186,10 +199,21 @@ namespace EventHandler {
 
     const virtualListItemObserver = new MutationObserver((mutations: MutationRecord[]) => {
         for (const mutation of mutations) {
-            if (mutation.type == "attributes" && mutation.attributeName == "data-idx") {
-                const renderedMessage = (mutation.target as HTMLElement).querySelector(".ts-rendered-message");
+            if (mutation.type == "attributes") {
+                const element = mutation.target as HTMLElement
+                const renderedMessage = element.querySelector(".ts-rendered-message");
                 if (renderedMessage != null) {
-                    EventHandler.onMessageAdded(renderedMessage);
+                    const renderedMessageObserver = new MutationObserver((_: MutationRecord[]) => {
+                        const updatedMessage = element.querySelector(".ts-rendered-message");
+                        if (updatedMessage != null) {
+                            EventHandler.onMessageChanged(updatedMessage);
+                        }
+                    });
+                    renderedMessageObserver.observe(element, {
+                        childList: true,
+                        subtree: true,
+                    })
+                    EventHandler.onMessageChanged(renderedMessage);
                 }
             }
         }
@@ -201,12 +225,14 @@ namespace EventHandler {
     }
 
     export function onListItemAdded(element: HTMLElement) {
-        virtualListItemObserver.observe(element, {
-            attributes: true,
-        });
         const renderedMessage = element.querySelector(".ts-rendered-message");
         if (renderedMessage != null) {
-            EventHandler.onMessageAdded(renderedMessage);
+            virtualListItemObserver.observe(element, {
+                attributes: true,
+                attributeOldValue: true,
+                attributeFilter: ["aria-hidden"],
+            });
+            EventHandler.onMessageChanged(renderedMessage);
         }
     }
 }

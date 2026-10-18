@@ -12,6 +12,14 @@ export function getVueInstance(node: Node | null): any {
     return (node as any)?.__vue__
 }
 
+export function getMessageUid(renderedMessage: Element | null): string | null {
+    const vue = getVueInstance(renderedMessage);
+    if (vue == null) {
+        return null;
+    }
+    return vue.event?.id ?? vue.uniqueId;
+}
+
 export function findOwnMessages(connection: Connection, ownID: string): Message[] {
     return connection.activeDetailItem.chat.messages
         .filter(message => message.sender?.uid == ownID && !message.sender.isQueryClient && !message.isSystem)
