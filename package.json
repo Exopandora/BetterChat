@@ -1,7 +1,7 @@
 {
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/plugin-transform-modules-commonjs": "^7.29.7",
+    "@babel/core": "^8.1.0",
+    "@babel/plugin-transform-modules-commonjs": "^8.0.1",
     "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
     "@jest/globals": "^30.5.2",
     "babel-jest": "^30.5.2",
@@ -10,13 +10,13 @@
     "esbuild-copy-static-files": "^0.1.0",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
-    "jsdom": "^29.1.1",
-    "katex": "^0.19.0",
+    "jsdom": "^31.0.0",
+    "katex": "^0.19.1",
     "tippy.js": "^6.3.7",
     "ts-jest": "^29.4.15",
     "typescript": "^6.0.3",
     "xml-formatter": "^3.7.0",
-    "zip-a-folder": "^6.2.0"
+    "zip-a-folder": "^7.0.1"
   },
   "scripts": {
     "clean": "npx rimraf ./build",
